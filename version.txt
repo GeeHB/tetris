@@ -1,0 +1,7 @@
+V0.4.3
++ affichages curses + menu
++ affichages pygame
+- highscores à corriger
+- menus
+- affiichage cozmo
+
