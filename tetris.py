@@ -23,7 +23,8 @@ from tetrisGame import tetrisGame
 PYTHON_MIN_MAJOR = 3
 PYTHON_MIN_MINOR = 7
 
-MAX_LEVEL_ACCELERATION = 24     # Passé ce niveau il n'y a plus d'accelération
+MAX_LEVEL_ACCELERATION = 10     # Passé ce niveau il n'y a plus d'accelération
+NEXT_LEVEL_ACCELERATION = 24
 DEBUG_MESSAGE_DURATION = 1      # Durée d'afficage des messages en secondes
 INITIAL_SPEED = 700             # Vitesse initiale (pour le niveau 1)
 MOVES_UPDATE_LEVEL = 250        # Changement de niveau après x déplacements
@@ -252,7 +253,7 @@ class tetris(object):
         if level < MAX_LEVEL_ACCELERATION:
             newDuration = currentDuration
             for _ in range(incLevel):
-                newDuration -= (newDuration / (1 + MAX_LEVEL_ACCELERATION))
+                newDuration -= (newDuration / (1 + NEXT_LEVEL_ACCELERATION))
             return newDuration
         else:
             # Passé le seuil on n'accelère plus

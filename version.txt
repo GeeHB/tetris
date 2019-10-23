@@ -1,7 +1,9 @@
-V0.4.3
+V0.4.4
 + affichages curses + menu
 + affichages pygame
 - highscores à corriger
 - menus
-- affiichage cozmo
+- affichage cozmo
 
+Fixed :
+    + Accélération du jeu
