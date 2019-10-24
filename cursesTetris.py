@@ -42,7 +42,7 @@ class cursesTetris(tetrisGame):
     term_ = None      # Ecran curses
     
     # Dimensions & position
-    gameWidth_ , gameHeight_, gameLeft_, gameTop_ = 0, 0, 0, 0
+    gameLeft_, gameTop_, gameWidth_ , gameHeight_ = 0, 0, 0, 0
     
     # Construction
     def __init__(self):
@@ -298,5 +298,5 @@ class cursesTetris(tetrisGame):
     def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
         x,y,w,h = self._changeCoordonateSystem(0,0, False)
         for row in range(height):
-            self.term_.addstr(y + row, x, ' ' * 2 * width, curses.color_pair(colourID))
+            self.term_.addstr(y + row, x, ' ' * w * width, curses.color_pair(colourID))
 # EOF

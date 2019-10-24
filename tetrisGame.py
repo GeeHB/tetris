@@ -116,9 +116,9 @@ class tetrisGame(eventHandler):
             self.drawBoard()
 
             # Affichage du score et du niveau
-            self._drawNumValue(0, 0)
-            self._drawNumValue(1, 1)
-            self._drawNumValue(2, 0)
+            self._drawNumValue(0, self.board_.score())
+            self._drawNumValue(1, self.board_.level())
+            self._drawNumValue(2, self.board_.lines())
 
             # C'est parti
             self.status_ = self.GAME_RUNNING
@@ -191,7 +191,7 @@ class tetrisGame(eventHandler):
     #   (x,y) sont les coordonnées à translater
     #   inBoard : Dans l'espace de jeu (True) ou dans la zone "pièce suivante"
     #   retourne le tuple (x,y, dx, dy) dans le nouveau système ou dx, dy 
-    #   sont les incréments (ie la largeur reèlle des blocs à l'écran) 
+    #   sont les incréments (ie la largeur et la hauteur reèlles des blocs à l'écran) 
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         return (x,y,1,1)
 
@@ -239,19 +239,19 @@ class tetrisGame(eventHandler):
 
     # Le score vient de changer
     def scoreChanged(self, newScore):
-        self._drawNumValue(0, 'Score', newScore)
+        self._drawNumValue(0, newScore)
         self._updateDisplay()
 
     # Changement de niveau
     def levelChanged(self, newLevel):
-        self._drawNumValue(1, 'Niveau', newLevel)
+        self._drawNumValue(1, newLevel)
         self._updateDisplay()
 
     # Toutes les lignes complêtes ont été retirées
     def allLinesCompletedRemoved(self, rowCount, totalRows):
         # Réaffichage de l'espace de jeu
         self.drawBoard()
-        self._drawNumValue(2, 'Lignes', totalRows)
+        self._drawNumValue(2, totalRows)
         self._updateDisplay()
 
     # L'index de la pièce suivante vient d'être modifié

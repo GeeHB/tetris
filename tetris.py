@@ -24,7 +24,7 @@ PYTHON_MIN_MAJOR = 3
 PYTHON_MIN_MINOR = 7
 
 MAX_LEVEL_ACCELERATION = 10     # Passé ce niveau il n'y a plus d'accelération
-NEXT_LEVEL_ACCELERATION = 24
+ACCELERATION_STEP = 24          # Ratio (1 / x) d'accélération du jeu
 DEBUG_MESSAGE_DURATION = 1      # Durée d'afficage des messages en secondes
 INITIAL_SPEED = 700             # Vitesse initiale (pour le niveau 1)
 MOVES_UPDATE_LEVEL = 250        # Changement de niveau après x déplacements
@@ -101,9 +101,8 @@ class tetris(object):
 
         # Gestion du jeu
         while self.gameHandler_.isRunning():
-
-            ts = now
             diff = 0
+            ts = now
 
             # Pendant l'intervalle de descente, on peut bouger la pièce
             while self.gameHandler_.isRunning() and diff < seqDuration :
@@ -141,11 +140,9 @@ class tetris(object):
         try:
             file = open(SCORES_FILE)
             for line in file :
-                # ajout du score
                 if len(line) > 0:
                     value = int(line)
-                    # Pas déja présent ?
-                    if not value in scores:
+                    if not value in scores: # Pas déja présent ?
                         scores.append(value)
             file.close()
 
@@ -253,7 +250,7 @@ class tetris(object):
         if level < MAX_LEVEL_ACCELERATION:
             newDuration = currentDuration
             for _ in range(incLevel):
-                newDuration -= (newDuration / (1 + NEXT_LEVEL_ACCELERATION))
+                newDuration -= (newDuration / (1 + ACCELERATION_STEP))
             return newDuration
         else:
             # Passé le seuil on n'accelère plus
@@ -338,6 +335,6 @@ if myTetris.isReady():
     # Démarrage du jeu
     myTetris.start()
 
-    # Fin / libérations
+    # Fin & libérations
     myTetris.end()
 #EOF 
