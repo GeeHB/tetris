@@ -6,4 +6,5 @@ V0.4.4
 - affichage cozmo
 
 Fixed :
-    + Accélération du jeu
+    + Accélération du jeu - Le système n'accélère plus après le 10ème niveau (param. MAX_LEVEL_ACCELERATION) 
+    + Optimisation des affichages des textes

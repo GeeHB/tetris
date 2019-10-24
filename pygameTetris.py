@@ -168,7 +168,7 @@ class pygameTetris(tetrisGame):
         pygame.display.update()
 
     # Affichage d'un texte avec effacement de l'ancienne valeur
-    def _drawText(self, text, index):
+    def _drawText(self, index, text):
         font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)
         label = font.render(text, 1, self.colours_[COLOUR_ID_TEXT].base_)
 
@@ -176,11 +176,11 @@ class pygameTetris(tetrisGame):
         top = self.gameTop_ + 60 * (1 + index)
         
         # Effacer l'ancien
-        if None != self.textDims_[index] :
-            pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BKGRND].base_, (left, top, self.textDims_[index][0], self.textDims_[index][1]))
+        if None != self.itemDims_[index] :
+            pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BKGRND].base_, (left, top, self.itemDims_[index][0], self.itemDims_[index][1]))
     
         # Affichage
-        self.textDims_[index] = font.size(text) # Récupération de la taille ...
+        self.itemDims_[index] = font.size(text) # Récupération de la taille ...
         self.win_.blit(label, (left, top))
     
     # Dessin des bordures
@@ -203,7 +203,7 @@ class pygameTetris(tetrisGame):
         left = self.gameLeft_ + BOX_WIDTH * board.PLAYFIELD_WIDTH + 45
         top = self.gameTop_ + BOX_HEIGHT * (board.PLAYFIELD_HEIGHT - 5) - FONT_SIZE
         font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)
-        label = font.render('Pièce suivante', 1, self.colours_[COLOUR_ID_TEXT].base_)
+        label = font.render(self.itemTexts_[3], 1, self.colours_[COLOUR_ID_TEXT].base_)
         self.win_.blit(label, (left, top - 50))
 
         # Dessin de la bordure pour la pièce suivante

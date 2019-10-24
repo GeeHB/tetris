@@ -226,9 +226,9 @@ class cursesTetris(tetrisGame):
         # puis on reaffiche tout ...
         self._drawBorders()
         self.drawBoard()
-        self._drawNumValue(0, 'Score', self.board_.score())
-        self._drawNumValue(1, 'Niveau', self.board_.level())
-        self._drawNumValue(2, 'Lignes', self.board_.lines())       
+        self._drawNumValue(0, self.board_.score())
+        self._drawNumValue(1, self.board_.level())
+        self._drawNumValue(2, self.board_.lines())       
         self._drawNextPiece(self.board_.nextPieceIndex())
 
     # Affichage du tableau des meilleurs scores
@@ -243,12 +243,12 @@ class cursesTetris(tetrisGame):
         self.term_.refresh()
 
     # Affichage d'une valeur numérique avec effacement de l'ancienne valeur
-    def _drawNumValue(self, index, label, value):
+    def _drawNumValue(self, index, value):
         boxTop = self.gameTop_ + PIECE_HEIGHT + 5 + 3 * index
         boxLeft = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
-        text = label + ": " +  str(value) + ' ' * 12
+        text = self.itemTexts_[index] + ": " +  str(value) + ' ' * self.itemDims_[index] # Affichage et effacement
         self.term_.addstr(boxTop, boxLeft, text, curses.color_pair(0))
-        
+        self.itemDims_[index] = len(text) # Longueur du texte
 
     # Dessin des bordures (esapde de jeu et éventuellement pièces suivantes)
     def _drawBorders(self):

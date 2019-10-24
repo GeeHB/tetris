@@ -64,7 +64,8 @@ class tetrisGame(eventHandler):
     status_ = GAME_CREATED  # Par défaut l'objet est "juste" crée
     currentPos_ = None      # Ou se trouve la pièce actuelle (pour pouvoir l'effacer ...)
 
-    textDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
+    itemTexts_     = ["Score", "Niveau", "Lignes", "Pièce suivante"]
+    itemDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
 
     # Dimensions & position
     gameWidth_ , gameHeight_, gameLeft_, gameTop_ = 0, 0, 0, 0
@@ -115,9 +116,9 @@ class tetrisGame(eventHandler):
             self.drawBoard()
 
             # Affichage du score et du niveau
-            self._drawNumValue(0, 'Score', 0)
-            self._drawNumValue(1, 'Niveau', 1)
-            self._drawNumValue(2, 'Lignes', 0)
+            self._drawNumValue(0, 0)
+            self._drawNumValue(1, 1)
+            self._drawNumValue(2, 0)
 
             # C'est parti
             self.status_ = self.GAME_RUNNING
@@ -171,15 +172,15 @@ class tetrisGame(eventHandler):
         pass
 
     
-    def _drawNumValue(self, index, label, value):
+    def _drawNumValue(self, index, value):
                
-        text = label + " : " + self._formatNumber(value)
+        text = self.itemTexts_[index] + " : " + self._formatNumber(value)
         
         # Appel de la méthode surchargée
-        self._drawText(text, index)
+        self._drawText(index, text)
     
     # Affichage d'un texte avec effacement de l'ancienne valeur
-    def _drawText(self, text, index):
+    def _drawText(self, index, text):
         pass
 
     # Dessin des bordures (esapde de jeu et éventuellement pièces suivantes)
