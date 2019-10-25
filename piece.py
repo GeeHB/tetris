@@ -6,9 +6,9 @@
 #
 #   Description :   Définition des objets piece et pieceStatus pour la modélistation d'un tetramino
 #
-#   Version     :   0.4.3
+#   Version     :   0.4.7
 #
-#   Date        :   22 octobre 2019
+#   Date        :   25 octobre 2019
 #
 
 # Quelques "constantes"
@@ -151,21 +151,6 @@ class piece(object):
 
         # On retourne la pièce dans l'état "key"
         return self.points_[key]
-
-    # Affichage de la pièce dans l'état courant
-    # Cette méthode est appelée par la fonction print()
-    #
-    def __repr__(self):
-        output = "Index de rotation : " + str(self.rotate_)
-        if self.maxRotate_ > 0: 
-            for line in self.points_[self.rotate_]:
-                output = output+"\n\t"
-                for value in line:
-                    val = " " if value == 0 else str(value)
-                    output = output + val + " "
-        else:
-            output += "\nPas de données"
-        return output
 
 # Classe pieceStatus
 #   Information sur la position et l'état d'une pièce

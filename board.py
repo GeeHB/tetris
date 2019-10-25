@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.3
+#   Version     :   0.4.7
 #
-#   Date        :   22 octobre 2019
+#   Date        :   25 octobre 2019
 # 
 
 import random
@@ -64,9 +64,7 @@ class board(object):
 
     playField_  = []    # Matrice de jeu
 
-    score_      = 0     # Score et nombre de lignes effacées
-    lines_      = 0
-    level_      = 1     # niveau
+    score_, lines_, level_ = 0, 0, 1     # Score, nombre de lignes effacées et niveau
     
     parameters_ = None  # Paramètres du jeu
     
@@ -160,15 +158,13 @@ class board(object):
     
     # Retourne le tuple (datas, couleur)
     def nextPieceDatas(self):
-        if self.nextIndex_ < 0 or self.nextIndex_ >= len(self.tetraminos_):
-            # L'index doit être correct
+        if self.nextIndex_ < 0 or self.nextIndex_ >= len(self.tetraminos_): # L'index doit être correct
             raise IndexError
         return (self.tetraminos_[self.nextIndex_].datas(), self.tetraminos_[self.nextIndex_].colour())
 
     # Piece selon son index et selon son etat ...
     def pieceDatas(self, index, rotIndex):
-        if index < 0 or index >= len(self.tetraminos_) or rotIndex < 0 or rotIndex >= self.tetraminos_[index].maxRotations():
-            # L'index doit être correct
+        if index < 0 or index >= len(self.tetraminos_) or rotIndex < 0 or rotIndex >= self.tetraminos_[index].maxRotations(): # L'index doit être correct
             raise IndexError
         return self.tetraminos_[index][rotIndex]
 
@@ -181,9 +177,10 @@ class board(object):
         # La pièce est en haut, pas encore visible et centrée horizontalement
         self.currentPiece_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2)
         self.currentPiece_.topPos_ = PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
-        self.currentPiece_.minHeight_ = -1
+        self.currentPiece_.minHeight_ = -1  # Pas d'ombre
         self.currentPiece_.rotationIndex_ = 0
-
+        self.tetraminos_[self.currentPiece_.index_].rotateBack()    # Réinitialisation du compteur de rotations
+        
         # On previent le gestionnaire d'affichage
         self.eventHandler_.nextPieceIndexChanged(self.nextIndex_)
 
@@ -211,25 +208,6 @@ class board(object):
 
         # Non => on annule la rotation
         self.tetraminos_[self.currentPiece_.index_].rotateRight()
-        return False
-
-    # Dans le sens des aiguilles d'une montre
-    def rotateRight(self):
-        
-        # On fait tourner la pièce
-        self.tetraminos_[self.currentPiece_.index_].rotateRight()
-
-        # Possible ?
-        if True == self._canMove():
-            # On met à jour l'indice de rotation
-            self.currentPiece_.rotationIndex_ = 1
-            
-            # La pièce peut tourner
-            self.piecePosChanged()
-            return True
-
-        # Non => on annule la rotation
-        self.tetraminos_[self.currentPiece_.index_].rotateLeft()          
         return False
 
     # Déplacement de la pièce
@@ -291,7 +269,6 @@ class board(object):
         self.currentPiece_.topPos_ = bottom
 
         # Je suis maintenant en bas ...
-        #self._putPiece()
         self.piecePosChanged() # La pièce doit être affichée en bas
         self._reachLowerPos(delta)
     
@@ -349,16 +326,16 @@ class board(object):
         return currentTop+1
 
     # Dépôt du tetramino à l'emplacement courant
-    def _putPiece(self, color = None):
-        if None == color:
+    def _putPiece(self, colour = None):
+        if None == colour:
             # Ajout de la pièce dans son état "normal"
             vertPos = self.currentPiece_.topPos_
 
             # ... et à sa couleur
-            realColor = self.tetraminos_[self.currentPiece_.index_].colourIndex_
+            realColour = self.tetraminos_[self.currentPiece_.index_].colourIndex_
         else:
             vertPos = self.currentPiece_.shadowTopPos_
-            realColor = color
+            realColour = colour
 
          # Récupération des données de la pièce
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
@@ -369,7 +346,7 @@ class board(object):
         for y in range(maxY, PIECE_HEIGHT):
             for x in range(PIECE_WIDTH):
                 if not 0 == datas[y][x] and (vertPos - y) < PLAYFIELD_HEIGHT:
-                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColor
+                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
 
     # Effacement d'une ligne (pleine)
     def _clearLine(self, index):
@@ -417,8 +394,7 @@ class board(object):
         for line in range(self.currentPiece_.topPos_ - PIECE_HEIGHT + 1, maxY):
             currentLineValue = 1 # On reinitialise le compteur
             for col in range(PLAYFIELD_WIDTH):
-                # Un seul emplacement vide et la ligne n'est pas pleine !
-                currentLineValue *= self.playField_[line][col]
+                currentLineValue *= self.playField_[line][col]  # Un seul emplacement vide et la ligne n'est pas pleine !
 
             # La ligne courante est effectivement pleine
             if not 0 == currentLineValue:
@@ -432,7 +408,6 @@ class board(object):
 
         # Mise à jour du score
         completedCount = len(completedLines)
-        # Base = http://tetris.wikia.com/wiki/Scoring
         if completedCount >= 1:
             delta = 0
             if 1 == completedCount:
@@ -461,10 +436,6 @@ class board(object):
             # Le score aussi a changé
             self.eventHandler_.scoreChanged(self.score_)
 
-        # Réinitialisation du compteur de rotations
-        # pour que les pièces non-utilisées soient toujours dans la bonne position
-        self.tetraminos_[self.currentPiece_.index_].rotateBack()
-        
         # Nouvelle pièce
         self.newPiece()
 

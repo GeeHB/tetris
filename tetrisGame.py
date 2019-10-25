@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.3
+#   Version     :   0.4.7
 #
-#   Date        :   22 octobre 2019
+#   Date        :   25 octobre 2019
 #
 
 from eventHandler import eventHandler

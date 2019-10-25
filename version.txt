@@ -1,11 +1,8 @@
-V0.4.6
-+ affichages curses + menu
-+ affichages pygame
-- menus
-- affichage cozmo
+V0.4.7
 
 Fixed :
     + Correction de bugs mineurs
     + Accélération du jeu - Le système n'accélère plus après le 10ème niveau (param. MAX_LEVEL_ACCELERATION) 
     + Optimisation des affichages des textes
     + Corrections de la gestion des scores
+    + Retrait des méthodes inutilisées
