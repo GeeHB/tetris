@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.7
+#   Version     :   0.4.8
 #
-#   Date        :   25 octobre 2019
+#   Date        :   5 mai 2020
 # 
 
 import random
@@ -29,7 +29,7 @@ PLAYFIELD_HEIGHT = 20
 
 # Valorisation du score (en %)
 #
-SCORE_NO_SHADOW     = 25    # +25% sans ombre
+SCORE_NO_SHADOW     = 25    # +25% sans "ombre"
 SCORE_SPEED_GAME    = 5     # 5% * {nombre ligne de hauteur de chute} => incite à jouer vite
 SCORE_DIRTY_LINES   = 1     # 1% par ligne "sale" en début de jeu
 

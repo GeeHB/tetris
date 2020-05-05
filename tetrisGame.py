@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.7
+#   Version     :   0.4.8
 #
-#   Date        :   25 octobre 2019
+#   Date        :   5 mai 2020
 #
 
 from eventHandler import eventHandler
@@ -65,7 +65,7 @@ class tetrisGame(eventHandler):
     currentPos_ = None      # Ou se trouve la pièce actuelle (pour pouvoir l'effacer ...)
 
     itemTexts_     = ["Score", "Niveau", "Lignes", "Pièce suivante"]
-    itemDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
+    itemDims_      = [0, 0, 0]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
 
     # Dimensions & position
     gameWidth_ , gameHeight_, gameLeft_, gameTop_ = 0, 0, 0, 0

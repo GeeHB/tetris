@@ -1,8 +1,4 @@
-V0.4.7
-
-Fixed :
-    + Correction de bugs mineurs
-    + Accélération du jeu - Le système n'accélère plus après le 10ème niveau (param. MAX_LEVEL_ACCELERATION) 
-    + Optimisation des affichages des textes
-    + Corrections de la gestion des scores
-    + Retrait des méthodes inutilisées
+V0.4.8
+Date : 05/05/2020
+Fixed : initialisatoin
+    

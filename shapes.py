@@ -15,9 +15,9 @@
 #
 #   Description :   Définition des tetraminos
 #
-#   Version     :   0.4.7
+#   Version     :   0.4.8
 #
-#   Date        :   25 octobre 2019
+#   Date        :   5 mai 2020
 #
 
 # Les "pièces"
