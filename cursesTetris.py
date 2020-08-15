@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.8
+#   Version     :   0.4.9
 #
-#   Date        :   5 mai 2020
+#   Date        :   15 aout 2020
 #
 
 import curses, sys, time, os, termios, fcntl
@@ -43,6 +43,8 @@ class cursesTetris(tetrisGame):
     
     # Dimensions & position
     gameLeft_, gameTop_, gameWidth_ , gameHeight_ = 0, 0, 0, 0
+
+    itemDims_      = [0, 0, 0]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
     
     # Construction
     def __init__(self):

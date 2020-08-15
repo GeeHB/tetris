@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.8
+#   Version     :   0.4.9
 #
-#   Date        :   5 mai 2020
+#   Date        :   15 aout 2020
 # 
 
 import random
@@ -39,7 +39,7 @@ class tetrisParameters:
     startLevel_ = 1
     dirtyLines_ = 7
     shadow_ = False
-    gui_ = False
+    gui_ = True
 
     # Constructeur par recopie
     def __init__(self, other = None):

@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.8
+#   Version     :   0.4.9
 #
-#   Date        :   5 mai 2020
+#   Date        :   15 aout 2020
 #
 
 import pygame
@@ -66,6 +66,8 @@ class pygameTetris(tetrisGame):
     win_            = None          # "Fenêtre" d'affichage
     winHeight_, winWidth_ = 0,0     # Dimensions de la fenêtre
     colours_        = []            # Table des couleurs
+
+    itemDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
     
     # Méthodes
     #
@@ -176,7 +178,7 @@ class pygameTetris(tetrisGame):
         top = self.gameTop_ + 60 * (1 + index)
         
         # Effacer l'ancien
-        if None != self.itemDims_[index] :
+        if None != self.itemDims_[index] and 2 == len(self.itemDims_[index]) :
             pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BKGRND].base_, (left, top, self.itemDims_[index][0], self.itemDims_[index][1]))
     
         # Affichage
