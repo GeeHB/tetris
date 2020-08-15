@@ -1,4 +1,4 @@
-V0.4.9
+V0.4.10
     Date : 15/85/2020
     Fixed : Bug PYGame à l'initialisation sour MacOS
 

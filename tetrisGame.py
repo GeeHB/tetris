@@ -9,7 +9,7 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.9
+#   Version     :   0.4.10
 #
 #   Date        :   15 aout 2020
 #
@@ -68,13 +68,18 @@ class tetrisGame(eventHandler):
 
     # Dimensions & position
     gameWidth_ , gameHeight_, gameLeft_, gameTop_ = 0, 0, 0, 0
+    itemDims_ = None
 
     # Méthodes
     #  
 
     # Construction
     def __init__(self):
+        # Initalisation des données membres
         self.status_ = self.GAME_CREATED
+        
+        # Dimensions de la zone de texte pour les scores, les lignes et le niveau
+        self.itemDims_  = [None] * 3
 
     # Destruction
     def __del__(self):

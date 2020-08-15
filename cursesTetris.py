@@ -9,7 +9,7 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.9
+#   Version     :   0.4.10
 #
 #   Date        :   15 aout 2020
 #
@@ -43,8 +43,6 @@ class cursesTetris(tetrisGame):
     
     # Dimensions & position
     gameLeft_, gameTop_, gameWidth_ , gameHeight_ = 0, 0, 0, 0
-
-    itemDims_      = [0, 0, 0]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
     
     # Construction
     def __init__(self):
@@ -55,6 +53,9 @@ class cursesTetris(tetrisGame):
         self.term_.keypad(True)   # Tous les caractères
         self.term_.nodelay(True)  # Lecture etat clavier non-bloquant
         curses.curs_set(0)        # Pas de curseur
+
+        # Dimensions de la zone de texte pour les scores, les lignes et le niveau
+        self.itemDims_  = [0] * 3
 
     # Méthodes surchargées de gameRendering
     #
