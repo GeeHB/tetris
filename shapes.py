@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   shapes.py
+#   File     :   shapes.py
 #
 #                   Défintions des 7 tetraminos possibles
 #

@@ -4,5 +4,5 @@ V0.4.10
 
 V0.4.8
     Date : 05/05/2020
-    Fixed : initialisatoin
+    Fixed : initialisation
     

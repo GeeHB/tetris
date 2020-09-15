@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   board.py
+#   File     :   board.py
 #
 #   Auteur      :   JHB
 #

@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   tetrisGame.py
+#   File     :   tetrisGame.py
 #
 #   Auteur      :   JHB
 #

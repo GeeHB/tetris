@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   eventHandler.py
+#   File     :   eventHandler.py
 #
 #   Auteur      :   JHB
 #

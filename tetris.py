@@ -2,7 +2,7 @@
 
 # coding=UTF-8
 #
-#   Fichier     :   tetris.py
+#   File     :   tetris.py
 #
 #   Auteur      :   JHB
 #
@@ -25,10 +25,10 @@ from tetrisGame import tetrisGame
 PYTHON_MIN_MAJOR = 3
 PYTHON_MIN_MINOR = 7
 
-MAX_LEVEL_ACCELERATION = 10     # Passé ce niveau il n'y a plus d'accelération
-ACCELERATION_STEP = 24          # Ratio (1 / x) d'accélération du jeu
-DEBUG_MESSAGE_DURATION = 1      # Durée d'afficage des messages en secondes
-INITIAL_SPEED = 700             # Vitesse initiale (pour le niveau 1)
+MAX_LEVEL_ACCELERATION = 12     # Passé ce niveau il n'y a plus d'accelération
+ACCELERATION_STEP = 0.18       # % d'augmentation de la vitesse
+DEBUG_MESSAGE_DURATION = 1      # Durée d'affichage des messages en secondes
+INITIAL_SPEED = 1200            # Vitesse initiale (pour le niveau 1)
 MOVES_UPDATE_LEVEL = 250        # Changement de niveau après x déplacements
 
 SCORES_FILE = 'scores.high'     # Fichier des scores
@@ -54,7 +54,6 @@ class tetris(object):
         if False == params.gui_:
             self.gameHandler_ = cursesTetris()
         else:
-            #self.gameHandler_ = cursesTetris()
             self.gameHandler_ = pygameTetris()
 
     # La partie peut-elle commencer ?
@@ -93,7 +92,7 @@ class tetris(object):
 
          # "Vitesse" initiale
         seqCount = 0
-        seqDuration = self._updateSpeed(INITIAL_SPEED * 1000000, self.params_.startLevel_, 0)
+        seqDuration = self._updateSpeed(INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
         ts, now = 0, 0
         uWait = 5 / 1000.0   # en ms.
 
@@ -124,7 +123,7 @@ class tetris(object):
                 self.gameHandler_.levelChanged(level)
 
                 # Accelération
-                seqDuration = self._updateSpeed(seqDuration, 1, level)
+                seqDuration = self._updateSpeed(seqDuration, level, 1)
 
         # La partie est terminée !
 
@@ -249,14 +248,15 @@ class tetris(object):
 
     # Mise à jour de la vitesse (ie. délai max. d'attente entre 2 descentes auto.)
     def _updateSpeed(self, currentDuration, level, incLevel = 1):
-        if level < MAX_LEVEL_ACCELERATION:
-            newDuration = currentDuration
-            for _ in range(incLevel):
-                newDuration -= (newDuration / (1 + ACCELERATION_STEP))
-            return newDuration
-        else:
-            # Passé le seuil on n'accelère plus
+        if level >= MAX_LEVEL_ACCELERATION :
             return currentDuration
+        
+        # duration = currentDuration * acc ^ incLevel
+        duration = currentDuration
+        acc = (1.0 - ACCELERATION_STEP)
+        for _ in range(incLevel):
+            duration*=acc
+        return duration
 
     # Menu principal du jeu
     #   retourne True si la partie doit commencer et False pour indiquer la fin du jeu
@@ -302,41 +302,43 @@ class tetris(object):
 # Boucle principale du jeu
 #
 
-# Vérification de la version minimale de python
-ver = sys.version_info
-if ver.major < PYTHON_MIN_MAJOR or (ver.major == PYTHON_MIN_MAJOR and ver.minor < PYTHON_MIN_MINOR):
-    out = str(PYTHON_MIN_MAJOR) + "." + str(PYTHON_MIN_MINOR)
-    print("Python doit être au minimum en version", out)
-    exit(1) 
+if __name__ == '__main__':
+    # Vérification de la version minimale de python
+    ver = sys.version_info
+    if ver.major < PYTHON_MIN_MAJOR or (ver.major == PYTHON_MIN_MAJOR and ver.minor < PYTHON_MIN_MINOR):
+        out = str(PYTHON_MIN_MAJOR) + "." + str(PYTHON_MIN_MINOR)
+        print("Python doit être au minimum en version", out)
+        exit(1) 
 
-# nCurses n'existe pas sous Windows !
-if platform.system() == "Windows":
-    print("L'application ne fonctionne pas dans l'environnement Windows")
-    exit(1)
+    # Maintenant que les causes d'erreur(s) sont écartées ...
+    import time
+    from board import board, tetrisParameters
 
-# Maintenant que les causes d'erreur(s) sont écartées ...
-import time
-from cursesTetris import cursesTetris
-from board import board, tetrisParameters
+    params = tetrisParameters()
 
-params = tetrisParameters()
+    # Pygame est-il disponible ?
+    try:
+        from pygameTetris import pygameTetris
+        params.gui_ = True  # Interface graphique disponible
+    except ModuleNotFoundError:
+        # PYGame n'est pas installé
+        params.gui_ = False
 
-# Pygame est-il disponible ?
-try:
-    from pygameTetris import pygameTetris
-    params.gui_ = True  # Interface graphique disponible
-except ModuleNotFoundError:
-    # PYGame n'est pas installé
-    params.gui_ = False
+        # nCurses n'existe pas sous Windows !
+        if platform.system() == "Windows":
+            print("L'application ne fonctionne pas dans l'environnement Windows")
+            exit(1)
 
-#
-# le jeu ...
-#
-myTetris = tetris(params) 
-if myTetris.isReady():    
-    # Démarrage du jeu
-    myTetris.start()
+        from cursesTetris import cursesTetris
+    
+    #
+    # le jeu ...
+    #
+    myTetris = tetris(params) 
+    if myTetris.isReady():    
+        # Démarrage du jeu
+        myTetris.start()
 
-    # Fin & libérations
-    myTetris.end()
+        # Fin & libérations
+        myTetris.end()
 #EOF 

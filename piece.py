@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   piece.py
+#   File     :   piece.py
 #
 #   Auteur      :   JHB
 #

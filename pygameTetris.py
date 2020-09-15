@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   pygameTetris.py
+#   File     :   pygameTetris.py
 #
 #   Auteur      :   JHB
 #
@@ -19,7 +19,7 @@ from tetrisGame import *
 
 # Constantes de l'application
 #
-BOX_WIDTH       = 35    # Dimensions d'un carré
+BOX_WIDTH       = 25    # Dimensions d'un carré
 BOX_HEIGHT      = BOX_WIDTH
 
 # Palette de couleurs
@@ -120,7 +120,7 @@ class pygameTetris(tetrisGame):
 
         if 0 != rets[1] :
             # Des erreurs !
-            return "L'initialisation de pygame a retournée " + str(rets[1]) + " erreur(s)"
+            return "L'initialisation de pygame a retourné " + str(rets[1]) + " erreur(s)"
 
         # Création de la fenêtre
         self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.RESIZABLE)

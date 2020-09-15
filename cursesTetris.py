@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   Fichier     :   cursesTetris.py
+#   File     :   cursesTetris.py
 #
 #   Auteur      :   JHB
 #
