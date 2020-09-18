@@ -1,8 +1,20 @@
-V0.4.10
-    Date : 15/85/2020
+v0.5.1-2
+    * 18/08/2020
+    + beginning of translation process
+    + Add command line options
+        - remove "basic" text-based ui
+    ? resize the pygame::window
+    + Minor bug fixes:
+        + new acceleration algo (slower at level 1 & faster at level 10)
+        - game board no longer sticked to the window's bottom
+    ? Handle pygame::event.QUIT
+    + code review for simplification(s)
+
+v0.4.10
+    Date : 15/08/2020
     Fixed : Bug PYGame à l'initialisation sour MacOS
 
-V0.4.8
+v0.4.8
     Date : 05/05/2020
     Fixed : initialisation
     

@@ -6,9 +6,9 @@
 #
 #   Auteur      :   JHB
 #
-#   Description :   Jeu "tetris" 
+#   Description :   The "tetris" game 
 #
-#   Remarque    :   Nécessite Python 3.xx
+#   Remarque    :   Need Python 3.xx or higher
 #
 #   Version     :   0.4.10
 #
@@ -16,76 +16,168 @@
 #
 
 import platform, sys
+from cmdLineParser import cmdLineParser
+from colorizer import colorizer, backColor, textColor, textAttribute    # for text coloration in console mode
 from tetrisGame import tetrisGame
+from board import PLAYFIELD_HEIGHT, tetrisParameters
 
-# Quelques constantes
+# Public consts
 #
 
-# Version minimale de Python
 PYTHON_MIN_MAJOR = 3
 PYTHON_MIN_MINOR = 7
 
-MAX_LEVEL_ACCELERATION = 12     # Passé ce niveau il n'y a plus d'accelération
-ACCELERATION_STEP = 0.18       # % d'augmentation de la vitesse
-DEBUG_MESSAGE_DURATION = 1      # Durée d'affichage des messages en secondes
-INITIAL_SPEED = 1200            # Vitesse initiale (pour le niveau 1)
-MOVES_UPDATE_LEVEL = 250        # Changement de niveau après x déplacements
+MAX_LEVEL_ACCELERATION = 12     # No more acceleration when this level is reached
+ACCELERATION_STEP = 0.18        # Growing speed % per level
+INITIAL_SPEED = 1200            # Level 1 speed (larger is slower)
+MOVES_UPDATE_LEVEL = 250        # Change level criterium (# of pieces going down one step)
 
-SCORES_FILE = 'scores.high'     # Fichier des scores
+SCORES_FILE = 'scores.high'     # Scores' file
 
-# Classe tetris
-#   Gestion des parties et des scores
+# Command line options
+#
+
+CMD_OPTION_CHAR = "-"
+
+CMD_OPTION_START_LEVEL = "level"
+CMD_OPTION_SHADOW = "shadow"
+CMD_OPTION_DIRTY_LINES = "lines"
+CMD_OPTION_USER = "me"
+
+CMD_OPTION_CONSOLE = "c"         # Console mode
+
+# tetris object
+#   Handles game and scores 
 #
 class tetris(object):
     # Données membres
     #
-    gameData_ = None        # Données du jeu
-    gameHandler_ = None     # Gestionnaire / afficheur du jeu
+    gameData_       = None        # Game's datas
+    displayMgr_     = None        # Display manager
+    txtColours_     = colorizer(True)
 
-    params_ = None
-
-    # Moteur d'affichage
+    params_ = tetrisParameters()
 
     # Construction
+    #
     def __init__(self, params):
-        # Initalisation des données membres
         self.params_ = params
 
-        if False == params.gui_:
-            self.gameHandler_ = cursesTetris()
-        else:
-            self.gameHandler_ = pygameTetris()
+    # Parse the command line
+    #
+    #   return True if no error where found
+    #
+    def parseCmdLine(self):
+        parameters = cmdLineParser(CMD_OPTION_CHAR)
 
-    # La partie peut-elle commencer ?
-    def isReady(self):
-        # Validation du moteur d'affichage
-        error = self.gameHandler_.checkEnvironment()
-        if len(error) > 0:
-            print("Impossible de lancer la partie. Message : ", error)
+        if 0 == parameters.size():
+            # No parameters use default and start game !
+            return True
+        else:
+            # Console display mode ?
+            self.params_.useGUI_ = (parameters.findAndRemoveOption(CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
+
+            # Start level
+            index =  parameters.findAndRemoveOption(CMD_OPTION_START_LEVEL)
+            if not parameters.NO_INDEX == index:
+                # Num. value expected
+                try :
+                    rets = parameters.parameterOrValue(index + 1)
+                    if rets[1] == False : 
+                        self.params_.startLevel_ = int(rets[0])
+                        if self.params_.startLevel_ <= 0 or self.params_.startLevel_ > 15:
+                            self._usage()
+                            return False
+                except IndexError:
+                    # no value ...
+                    self._usage()
+                    return False
+                
+            # # of dirty lines
+            index =  parameters.findAndRemoveOption(CMD_OPTION_DIRTY_LINES)
+            if not parameters.NO_INDEX == index:
+                # num. value expected
+                try :
+                    rets = parameters.parameterOrValue(index + 1)
+                    if rets[1] == False : 
+                        self.params_.dirtyLines_ = int(rets[0])
+                        if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= PLAYFIELD_HEIGHT:
+                            self._usage()
+                            exit(1)
+                except IndexError:
+                    # no value ...
+                    self._usage()
+                    return False
+
+             # username (for score)
+            index =  parameters.findAndRemoveOption(CMD_OPTION_USER)
+            if not parameters.NO_INDEX == index:
+                # username expected
+                try :
+                    rets = parameters.parameterOrValue(index + 1)
+                    if rets[1] == False : 
+                        self.params_.user_ = rets[0]
+                except IndexError:
+                    # no value ...
+                    self._usage()
+                    return False
+            
+            # Display pieces'shadow ?
+            self.params_.shadow_ = not (parameters.findAndRemoveOption(CMD_OPTION_SHADOW) == parameters.NO_INDEX)
+
+        # There should be no options left
+        if parameters.options() > 0:
+            self._usage()
             return False
 
-        # Gestionnaire de jeu
-        self.gameData_ = board(self.gameHandler_)
-        self.gameHandler_.setBoard(self.gameData_)
+        # Ok
+        return True
+        
+    # Can we start the game ?
+    def isReady(self):
 
-        # Oui
+        # Display mode
+        #
+        if self.params_.useGUI_:
+            if self.params_.pygameAvailable_:
+                self.displayMgr_ = pygameTetris()
+            else:
+                # GUI wanted but no pygame => try curses
+                print("Error - pygame not installed try with curses")
+                params.useGUI_ = False
+
+        if False == params.useGUI_:
+            if self.params_.cursesAvailable_:
+                self.displayMgr_ = cursesTetris()
+            else:
+                print("Error - curses not installed")
+                
+        # No display ?
+        if not self.displayMgr_:
+            print("Error - no display handler. Ending game")
+            return False
+
+        # Check display manager
+        error = self.displayMgr_.checkEnvironment()
+        if len(error) > 0:
+            print("Display init. error. Message : ", error)
+            return False
+
+        self.gameData_ = board(self.displayMgr_)
+        self.displayMgr_.setBoard(self.gameData_)
+
+        # yes !
         return True
 
-    # Démarrage du jeu
+    # Starting the game
     def start(self):
-        # Préparation de l'espace de jeu
-        self.gameData_.setParameters(self.params_)
-        
-        # Gestion des parties
-        while True == self._mainMenu():
-            self._newGame()
+        self.gameData_.setParameters(self.params_)        
+        self._newGame()
 
-        # Le jeu est terminé !
-
-    # Fin du jeu
+    # Game ending
     def end(self):
-        if None != self.gameHandler_:
-            self.gameHandler_.end()
+        if self.displayMgr_:
+            self.displayMgr_.end()
 
     # Lancement d'une partie
     def _newGame(self):
@@ -98,15 +190,15 @@ class tetris(object):
 
         # On part !
         self.gameData_.setParameters(self.params_)
-        self.gameHandler_.start()
+        self.displayMgr_.start()
 
         # Gestion du jeu
-        while self.gameHandler_.isRunning():
+        while self.displayMgr_.isRunning():
             diff = 0
             ts = now
 
             # Pendant l'intervalle de descente, on peut bouger la pièce
-            while self.gameHandler_.isRunning() and diff < seqDuration :
+            while self.displayMgr_.isRunning() and diff < seqDuration :
                 self._handleGameKeys()
                 time.sleep(uWait) # usleep(5000)
                 now = time.monotonic_ns() # Fonctionne aussi sous macOS à partir de Python 3.7
@@ -120,15 +212,15 @@ class tetris(object):
             if 0 == (seqCount % MOVES_UPDATE_LEVEL):
                 # Un niveau de plus
                 level = self.gameData_.incLevel()
-                self.gameHandler_.levelChanged(level)
+                self.displayMgr_.levelChanged(level)
 
                 # Accelération
                 seqDuration = self._updateSpeed(seqDuration, level, 1)
 
-        # La partie est terminée !
+        # the game is over
 
         # On affiche les meilleurs scores
-        self._hallOfFame(self.gameData_.score())
+        #self._hallOfFame(self.gameData_.score())
 
     # Méthodes privées
     #
@@ -194,56 +286,23 @@ class tetris(object):
     def _hallOfFame(self, currentScore):
         tops = self._newScore(currentScore)
         scoreIndex = -1
-
-        # Ajout des lignes
-        lines = []
-        i = 1
-        for top in tops:
-            sLine = str(i) + ("  - " if i < 10 else " - " ) + str(top)
-            lines.append(sLine)
-
-            # Mon score ?
-            if top == currentScore:
-                scoreIndex = i - 1
-
-            # Score suivant  
-            i+=1
-
-        # Le score n'est pas dans les meilleurs => je l'affiche
-        if scoreIndex == -1 :
-            line = "Votre score : " + str(currentScore)
-            lines += line
-            scoreIndex=len(lines) - 1   # On met en surbrillance cette ligne
-        else:
-            # Modification du tableau => enregistrement
-            self._saveScores(tops)
-
-        # Affichage ...
-        self.gameHandler_.drawText(lines, "Meilleurs scores", scoreIndex)
-
-        # ... jusqu'à ce que l'utilisateur appuie sur une touche
-        inputChar = self.gameHandler_.KEY_NOEVENT
-        while self.gameHandler_.KEY_NOEVENT == inputChar:
-            inputChar = self.gameHandler_.checkKeyboard()
-
-        # On efface
-        self.gameHandler_.clearText()
+        
     
     # Analyse du clavier pendant la phase de jeu
     def _handleGameKeys(self):
-        inputChar = self.gameHandler_.checkKeyboard()
-        if self.gameHandler_.KEY_STOP == inputChar:
+        inputChar = self.displayMgr_.checkKeyboard()
+        if self.displayMgr_.KEY_STOP == inputChar:
             # Fin de partie
-            self.gameHandler_.end()
-        elif self.gameHandler_.KEY_RIGHT == inputChar:
+            self.displayMgr_.end()
+        elif self.displayMgr_.KEY_RIGHT == inputChar:
             self.gameData_.right()
-        elif self.gameHandler_.KEY_LEFT == inputChar:
+        elif self.displayMgr_.KEY_LEFT == inputChar:
             self.gameData_.left()
-        elif self.gameHandler_.KEY_ROTATE_LEFT == inputChar:
+        elif self.displayMgr_.KEY_ROTATE_LEFT == inputChar:
             self.gameData_.rotateLeft()
-        elif self.gameHandler_.KEY_DOWN == inputChar:
+        elif self.displayMgr_.KEY_DOWN == inputChar:
             self.gameData_.down()
-        elif self.gameHandler_.KEY_FALL == inputChar:
+        elif self.displayMgr_.KEY_FALL == inputChar:
             self.gameData_.fall()
 
     # Mise à jour de la vitesse (ie. délai max. d'attente entre 2 descentes auto.)
@@ -258,45 +317,15 @@ class tetris(object):
             duration*=acc
         return duration
 
-    # Menu principal du jeu
-    #   retourne True si la partie doit commencer et False pour indiquer la fin du jeu
-    def _mainMenu(self):
-        self.gameHandler_.drawText(["\"Entrée\" - Démarrer la partie", "\"o\" - Mode ombré", "\"n\" - Mode normal", "\"0\",\"1\",...,\"9\" - Nombre de ligne de handicap  ", "\"q\" - Quitter le jeu"], "Menu")
-        
-        startGame = True
-        quitMenu = False
-        
-        # Lecture du clavier
-        while False == quitMenu:
-            inputChar = self.gameHandler_.checkKeyboard()
-            #if '' != inputChar : print(inputChar)
-            if self.gameHandler_.KEY_NOEVENT != inputChar:
-                # Sortie du jeu ?
-                if self.gameHandler_.KEY_QUIT == inputChar:
-                    quitMenu = True
-                    startGame = False
-                # Nouvelle partie ?
-                #elif self.gameHandler_.KEY_START == inputChar or inputChar == chr(10):
-                elif self.gameHandler_.KEY_START == inputChar:
-                    quitMenu = True
-                    startGame = True
-                # Ombre
-                elif self.gameHandler_.KEY_SHADOW_MODE == inputChar:
-                    self.params_.shadow_ = True
-                # Pas d'ombre
-                elif self.gameHandler_.KEY_NORMAL_MODE == inputChar:
-                    self.params_.shadow_ = False
-                # Nombre de ligne de handicap ?
-                else:
-                    if inputChar < 255 :
-                        # C'est un "simple" caractère
-                        num = ord(chr(inputChar)) - ord('0')
-                        if num >= 0 and num <= 9:
-                            self.params_.dirtyLines_ = num
-
-        # On réaffiche l'écran
-        self.gameHandler_.clearText()
-        return startGame
+    # Show usage
+    #
+    def _usage(self):
+        print(self.txtColours_.colored("\tetris.py", formatAttr=[textAttribute.GRAS]))
+        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.FONCE]), ": Start the game at {numLevel}")
+        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_SHADOW, formatAttr=[textAttribute.FONCE]), ": Display shadow ot the piece at the bottom of the playfiled")
+        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.FONCE]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
+        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.FONCE]), ": Set the name of the current player")
+        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_CONSOLE, formatAttr=[textAttribute.FONCE]), ": Console display mode (if nCurses is available)")
 
 #
 # Boucle principale du jeu
@@ -316,26 +345,27 @@ if __name__ == '__main__':
 
     params = tetrisParameters()
 
-    # Pygame est-il disponible ?
+    # Test Pygame presence
     try:
         from pygameTetris import pygameTetris
-        params.gui_ = True  # Interface graphique disponible
+        params.pygameAvailable_ = True
     except ModuleNotFoundError:
-        # PYGame n'est pas installé
-        params.gui_ = False
+        # PYGame isn't installed
+        params.pygameAvailable_ = False
 
-        # nCurses n'existe pas sous Windows !
-        if platform.system() == "Windows":
-            print("L'application ne fonctionne pas dans l'environnement Windows")
-            exit(1)
-
-        from cursesTetris import cursesTetris
+    # At least can we use nCurses ?
+    if False == params.pygameAvailable_:
+        try:
+            from cursesTetris import cursesTetris
+            params.cursesAvailable_ = True
+        except ModuleNotFoundError:
+            params.cursesAvailable_ = False
     
     #
-    # le jeu ...
+    # the game ...
     #
     myTetris = tetris(params) 
-    if myTetris.isReady():    
+    if myTetris.parseCmdLine() and myTetris.isReady():    
         # Démarrage du jeu
         myTetris.start()
 

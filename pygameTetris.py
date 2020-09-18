@@ -99,7 +99,7 @@ class pygameTetris(tetrisGame):
         self.gameWidth_ = board.PLAYFIELD_HEIGHT * BOX_WIDTH
         self.gameHeight_ = board.PLAYFIELD_HEIGHT * BOX_HEIGHT
         self.gameLeft_ = 2 * BOX_WIDTH
-        self.gameTop_ = self.winHeight_ - self.gameHeight_    # Aligné sur le bas
+        self.gameTop_ = self.winHeight_ - self.gameHeight_   - 1 # Aligné sur le bas
 
     # Méthodes surchargées de eventHandler
     #
@@ -193,6 +193,7 @@ class pygameTetris(tetrisGame):
         width = board.PLAYFIELD_WIDTH * BOX_WIDTH + 2
         height = board.PLAYFIELD_HEIGHT * BOX_HEIGHT + 2
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left, top +  height - 1))
+        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top +  height - 1))
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left + width - 1, top),(left + width - 1, top +  height - 1))
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
 

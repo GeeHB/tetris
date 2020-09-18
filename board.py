@@ -20,45 +20,50 @@ from shapes import shapes
 from eventHandler import eventHandler
 
 #
-#   Constantes publiques
+#   Public consts
 #
 
-# Dimensions de l'espace de jeu
+# Playfield's dimensions
+#
 PLAYFIELD_WIDTH = 10
 PLAYFIELD_HEIGHT = 20
 
-# Valorisation du score (en %)
+# Score valorisation (in %)
 #
-SCORE_NO_SHADOW     = 25    # +25% sans "ombre"
-SCORE_SPEED_GAME    = 5     # 5% * {nombre ligne de hauteur de chute} => incite à jouer vite
-SCORE_DIRTY_LINES   = 1     # 1% par ligne "sale" en début de jeu
+SCORE_NO_SHADOW     = 25    # +25% if no pieces'shadowing
+SCORE_SPEED_GAME    = 5     # 5% * {piece's height} => quick play <=> more points
+SCORE_DIRTY_LINES   = 1     # 1% per starting dirty-line
 
-# Classe tetrisParameters
+# tetrisParameters
+#   game's parameters
 #
 class tetrisParameters:
     startLevel_ = 1
-    dirtyLines_ = 7
+    dirtyLines_ = 0
     shadow_ = False
-    gui_ = True
+    pygameAvailable_ = False
+    cursesAvailable_ = False
+    useGUI_ = True
+    user_ = None
 
-    # Constructeur par recopie
+    # Constructor
+    #
     def __init__(self, other = None):
         if None != other:
-            # Vérification des paramètres
-            if other.startLevel_ <= 0 or other.startLevel_ > 15 or other.dirtyLines_ < 0 or other.dirtyLines_ >= PLAYFIELD_HEIGHT:
-                raise IndexError
-
-            # Copie des valeurs
+            # Check input parameters
             self.startLevel_ = other.startLevel_ 
             self.dirtyLines_ = other.dirtyLines_
             self.shadow_ = other.shadow_
-            self.gui_ = other.gui_
+            self.pygameAvailable_ = other.pygameAvailable_
+            self.cursesAvailable_ = other.cursesAvailable_
+            self.useGUI_ = other.useGUI_
+            self.user_ = other.user_
 
-# Classe board
-#   Gestion de l'espace de jeu (sans affichage !)
+# board
+#   Handle the gameplay and the game (without display !)
 #
 class board(object):
-    # Données membres
+    # Members
     #
     tetraminos_ = []    # Listes des pièces (avec leurs états)
 
@@ -86,7 +91,7 @@ class board(object):
         # Si aucun gestionnaire d'evt => on en crée un bidon
         self.eventHandler_ = handler if not None == handler else eventHandler()
 
-        # Construction de la liste des tetriminos à partir de leurs modèles respectifs
+        # Construction de la liste des tetraminos à partir de leurs modèles respectifs
         for shape in shapes:
             self.tetraminos_.append(piece(template = shape))
 
@@ -94,33 +99,30 @@ class board(object):
     #   lines : nombre de lignes "sales" à ajouter au bas de l'écran
     def setParameters(self, params = None):
         
-        # Initialisation des données membres
         self.parameters_ = tetrisParameters(params)
         self.score_ = 0
         self.lines_ = 0
         self.level_ = self.parameters_.startLevel_
         self.nextIndex_ = -1
 
-        # Remise en place des tertraminos
+        # Initialization of tetraminos
         for sPiece in self.tetraminos_:
             sPiece.rotateBack()
         
-        # Remplissage de la matrice
-        #
         self.playField_  = []
         
-        # Nombre de lignes "sales"
+        # Add dirty lines ...
+        #
         maxLines = PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1
         if self.parameters_.dirtyLines_ > maxLines:
             self.parameters_.dirtyLines_ = maxLines
         elif self.parameters_.dirtyLines_ < 0:
             self.parameters_.dirtyLines_ = 0
 
-        # Les lignes "sales" ...
         for _ in range(self.parameters_.dirtyLines_):
             self._addDirtyLine()
         
-        # ... le reste de la matrice est vide 
+        # other lines are empty 
         for _ in range(self.parameters_.dirtyLines_, PLAYFIELD_HEIGHT):
             self.playField_.append([0] * PLAYFIELD_WIDTH)
 
