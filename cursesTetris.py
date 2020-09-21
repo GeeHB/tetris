@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 #
 
 import curses, sys, time, os, termios, fcntl
@@ -141,103 +141,6 @@ class cursesTetris(tetrisGame):
             fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
         return c
 
-    # Affichage d'un message de texte
-    #   le paramètre texte pointe sur une liste de lignes
-    #
-    #   idéalement on utiliserait les "windows" de curses, mais l'effacement le fonctionne pas
-    def drawText(self, text, title="", highLight=-1):
-        # Pas de texte ou trop?
-        length = len(text)
-        if 0 == length or length >= (board.PLAYFIELD_HEIGHT - 2):
-            return
-        
-        # Ligne la plus large
-        # on en profite pour sauter une ligne sur deux
-        width = 0
-        body = []
-        for line in text:
-            if len(line)>width:
-                width = len(line)
-            body.append(" ") # une ligne vide
-            body.append(line)   # une ligne de texte
-        body.append(" ") # On termine par une ligne vide
-        
-        if -1 != highLight:
-            highLight=2*(highLight+1) -1 # Il y 2 fois plus de lignes
-        
-        # Titre
-        wTitle = 4 + (len(title) if title!="" else 0)
-        if wTitle > width :
-            width = wTitle
-
-        # Trop large
-        if  width >= (curses.COLS - 2):
-            width = curses.COLS - 2
-        
-        # Haut du cadre
-        left = 1 + int((curses.COLS - 2 - width)/2)
-        left = 5 if left > 5 else left
-        top = 1 + int((curses.LINES - 2 - len(body))/2)
-        string = '\u2552'
-        if wTitle :
-            offsetL = 1 + int((width - wTitle) /2)
-            offsetR = width - wTitle - offsetL + 2
-            string+='\u2550' * offsetL + ' ' + title + ' ' + '\u2550' * offsetR
-        else :
-            # pas de titre ...
-            string+='\u2550' * width  
-        string+= '\u2555'
-        self.term_.addstr(top, left, string, curses.color_pair(0))
-        top+=1
-
-        # Affichage des lignes de texte
-        index = 0
-        for line in body:
-            string = '\u2502'
-            if len(line) <= width:
-                # Le texte
-                string+=line
-                # Les espaces complémentaires
-                string+=' '*(width - len(line))
-            else:
-                # on coupe la chaine
-                string+=line[:width]
-            string += '\u2502'
-            
-            if index == highLight :
-                # Ligne sélectionnée
-                self.term_.addstr(top, left, string[0], curses.color_pair(0))
-                self.term_.addstr(top, left +1 , string[1:len(string)-1], curses.color_pair(HILIGHT_COLOR))
-                self.term_.addstr(top, left + width + 1, string[len(string)-1], curses.color_pair(0))
-            else :
-                # Ligne "normale"
-                self.term_.addstr(top, left, string, curses.color_pair(0))
-            
-            top+=1
-            index+=1
-
-        # et pour finir, bas du cadre
-        string = '\u2514' + '\u2500' * width + '\u2518'
-        self.term_.addstr(top, left, string, curses.color_pair(0))
-        self.term_.refresh()
-
-    # Effacement du texte
-    def clearText(self):
-        # On efface tout
-        self.term_.clear()
-        
-        # puis on reaffiche tout ...
-        self._drawBorders()
-        self.drawBoard()
-        self._drawNumValue(0, self.board_.score())
-        self._drawNumValue(1, self.board_.level())
-        self._drawNumValue(2, self.board_.lines())       
-        self._drawNextPiece(self.board_.nextPieceIndex())
-
-    # Affichage du tableau des meilleurs scores
-    def drawScores(self):
-        pass
-
     # Méthodes à surcharger
     #
 
@@ -254,7 +157,7 @@ class cursesTetris(tetrisGame):
         self.itemDims_[index] = len(text) # Longueur du texte
 
     # Dessin des bordures (esapde de jeu et éventuellement pièces suivantes)
-    def _drawBorders(self):
+    def _drawBackGround(self):
          # en haut
         if self.gameTop_ >= 1:
             # Le charme de faire du Python !!!

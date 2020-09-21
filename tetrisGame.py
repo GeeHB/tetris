@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 #
 
 from eventHandler import eventHandler
@@ -37,6 +37,9 @@ LAST_COLOUR_ID   = COLOUR_ID_BKGRND
 #
 class tetrisGame(eventHandler):
 
+    EVT_KEYDOWN     = None  # By default the event doesn't exist
+    EVT_QUIT        = None
+    
     # Code des touches de contrôle par défaut
     # peuvent être surchargées
     KEY_LEFT        = '4'
@@ -97,6 +100,9 @@ class tetrisGame(eventHandler):
     def clear(self):
         pass
 
+    def waitForEvent(self):
+        pass
+    
     # Lecture non bloquante du clavier
     # Retourne le caractère associé à la touche ou le caractère vide ('')
     def checkKeyboard(self):
@@ -114,15 +120,15 @@ class tetrisGame(eventHandler):
             self.currentPos_ = None
 
             # Dessin du cadre
-            self._drawBorders()
+            self._drawBackGround()
 
             # Dessin de l'espace de jeu
             self.drawBoard()
 
             # Affichage du score et du niveau
-            self._drawNumValue(0, self.board_.score())
-            self._drawNumValue(1, self.board_.level())
-            self._drawNumValue(2, self.board_.lines())
+            self.drawScore()
+            self.drawLevel()
+            self.drawLines()
 
             # C'est parti
             self.status_ = self.GAME_RUNNING
@@ -137,6 +143,16 @@ class tetrisGame(eventHandler):
         
         # Sinon on ne fait rien
         return False
+
+    # Helpers
+    def drawScore(self):
+        self._drawNumValue(0, self.board_.score())
+
+    def drawLevel(self):
+        self._drawNumValue(1, self.board_.level())
+
+    def drawLines(self):
+        self._drawNumValue(2, self.board_.lines())
 
     # Affichage de tout l'espace de jeu
     def drawBoard(self):
@@ -157,24 +173,9 @@ class tetrisGame(eventHandler):
         
         self._updateDisplay()
 
-
-    # Affichage d'un message de texte
-    #   le paramètre texte pointe sur une liste de lignes
-    def drawText(self, text, title="", highLight=-1):
-        pass
-
-    # Effacement du texte
-    def clearText(self):
-        pass
-
-    # Affichage des scores
-    def drawScores(self):
-        pass
-
     # L'écran doit être reactualisé
     def _updateDisplay(self):
         pass
-
     
     def _drawNumValue(self, index, value):
                
@@ -187,8 +188,8 @@ class tetrisGame(eventHandler):
     def _drawText(self, index, text):
         pass
 
-    # Dessin des bordures (esapde de jeu et éventuellement pièces suivantes)
-    def _drawBorders(self):
+    # Dessin des bordures (espace de jeu et éventuellement pièces suivantes)
+    def _drawBackGround(self):
         pass
 
     # Changement de repère (et de coordonnées)
@@ -241,30 +242,38 @@ class tetrisGame(eventHandler):
         # Je ne dois plus l'effacer
         self.currentPos_ = None
 
-    # Le score vient de changer
-    def scoreChanged(self, newScore):
-        self._drawNumValue(0, newScore)
+    # Increase the score
+    def incScore(self, inc):
+        super().incScore(inc)
+        self.board_.setScore(self.board_.score() + inc)
+        self.drawScore()
         self._updateDisplay()
-
-    # Changement de niveau
+        
+    # Change game level
     def levelChanged(self, newLevel):
-        self._drawNumValue(1, newLevel)
+        super().levelChanged(newLevel)
+        self.board_.setScore(newLevel)
+        self.drawLevel()
         self._updateDisplay()
 
     # Toutes les lignes complêtes ont été retirées
-    def allLinesCompletedRemoved(self, rowCount, totalRows):
+    def allLinesCompletedRemoved(self, rowCount, totalLines):
+        super().allLinesCompletedRemoved(rowCount, totalLines)
+        self.board_.setLines(totalLines)
         # Réaffichage de l'espace de jeu
         self.drawBoard()
-        self._drawNumValue(2, totalRows)
+        self.drawLines()
         self._updateDisplay()
 
     # L'index de la pièce suivante vient d'être modifié
     def nextPieceIndexChanged(self, nextPieceIndex):
+        super().nextPieceIndexChanged(nextPieceIndex)
         self._drawNextPiece(nextPieceIndex)
         self._updateDisplay()
 
     # La partie est terminée
     def gameFinished(self):
+        super().gameFinished()
         # dont acte !
         self.status_ = self.GAME_STOPPED
     
@@ -297,11 +306,11 @@ class tetrisGame(eventHandler):
 
     # Affichage de la pièce suivante
     def _drawNextPiece(self, pieceIndex):
-        # On efface l'ancienne piece
+        # Erase the previous piece 
         self._eraseBlocks(0, 0, 4, 4, COLOUR_ID_BOARD, False)
         
         # puis la nouvelle
-        if -1 != pieceIndex : 
+        if -1 != pieceIndex :     
             # Affichage de la nouvelle pièce
             datas, colourIndex = self.board_.nextPieceDatas()
             self._drawSinglePiece(datas, 0, 0, colourIndex, False)

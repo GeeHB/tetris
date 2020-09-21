@@ -11,15 +11,18 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 #
 
 # Classe eventHandler
 #   Gestion des évènements en provenance de l'espace de jeu et ayant une influence sur le rendu graphique
 #
 class eventHandler(object):
+
+    # Members
+    #
 
     # Chaînage
     nextHandler_ = None
@@ -29,7 +32,7 @@ class eventHandler(object):
     def nextHandler(self):
         return self.nextHandler_
 
-    # Méthodes à surcharger
+    # Overloadable methods
     #
 
     # Un pièce vient de bouger (elle doit donc être effacée à son ancienne position et affichée à la nouvelle)
@@ -43,12 +46,13 @@ class eventHandler(object):
             self.nextHandler_.pieceReachedLowerPos()
 
     # Le score vient de changer
-    def scoreChanged(self, newScore):
+    def incScore(self, inc):
         if None != self.nextHandler_:
-            self.nextHandler_.scoreChanged(newScore)
+            self.nextHandler_.incScore(inc)
 
     # Changement de niveau
     def levelChanged(self, newLevel):
+        self.level_ = newLevel
         if None != self.nextHandler_:
             self.nextHandler_.levelChanged(newLevel)
 
@@ -58,9 +62,9 @@ class eventHandler(object):
             self.nextHandler_.lineCompleted(rowIndex)
 
     # Toutes les lignes complêtes ont été retirées
-    def allLinesCompletedRemoved(self, rowCount, totalRows):
+    def allLinesCompletedRemoved(self, rowCount, totalLines):
         if None != self.nextHandler_:
-            self.nextHandler_.allLinesCompletedRemoved(rowCount, totalRows)
+            self.nextHandler_.allLinesCompletedRemoved(rowCount)
 
     # L'index  de la pièce suivante vient d'être modifié
     def nextPieceIndexChanged(self, nextPieceIndex):

@@ -9,18 +9,18 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 #
 
 import pygame
+import math
 from tetrisGame import *
 
 # Constantes de l'application
 #
 BOX_WIDTH       = 25    # Dimensions d'un carré
-BOX_HEIGHT      = BOX_WIDTH
 
 # Palette de couleurs
 #
@@ -29,8 +29,9 @@ COLOUR_WHITE        = (255, 255, 255)
 
 # Police et taille du texte
 #
-FONT_NAME   = 'helvetica'
-FONT_SIZE   = 25
+FONT_NAME       = 'helvetica'
+FONT_SIZE       = 20
+MAX_FONT_SIZE   = 25
 
 # Une couleur (avec sa version ombrée et sa version sur-exposée)
 #
@@ -46,6 +47,10 @@ class tetrisColour(object):
 #
 class pygameTetris(tetrisGame):
 
+    # PYGame events types
+    EVT_KEYDOWN         = pygame.KEYDOWN
+    EVT_QUIT            = pygame.QUIT
+    
     # Code des touches de contrôle par défaut
     #
     KEY_LEFT        = pygame.K_LEFT
@@ -55,16 +60,24 @@ class pygameTetris(tetrisGame):
     KEY_DOWN        = pygame.K_DOWN
     KEY_FALL        = pygame.K_SPACE
     KEY_START       = pygame.K_RETURN
-    #KEY_QUIT        = pygame.K_ESCAPE
-    KEY_QUIT        = pygame.K_q
+    KEY_QUIT        = pygame.K_ESCAPE
+    #KEY_QUIT        = pygame.K_q
     KEY_STOP        = KEY_QUIT
     KEY_SHADOW_MODE = pygame.K_o
     KEY_NORMAL_MODE = pygame.K_n
     KEY_SCORES      = pygame.K_h
 
+    """
+    EVT_KEYDOWN     = pygame.KEYDOWN
+    EVT_QUIT        = pygame.QUIT
+    """
+
     # Données membres
     win_            = None          # "Fenêtre" d'affichage
     winHeight_, winWidth_ = 0,0     # Dimensions de la fenêtre
+    boxWidth_       = BOX_WIDTH
+    fontSize_       = FONT_SIZE
+    
     colours_        = []            # Table des couleurs
 
     itemDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
@@ -93,13 +106,13 @@ class pygameTetris(tetrisGame):
         self.colours_[COLOUR_ID_BOARD] = tetrisColour((32,32,32))
 
         # Calcul des dimensions
-        self.winWidth_    = 2 * BOX_WIDTH * board.PLAYFIELD_WIDTH
-        self.winHeight_   = (2 + BOX_HEIGHT) * board.PLAYFIELD_HEIGHT
+        self.winWidth_    = 2 * self.boxWidth_ * board.PLAYFIELD_WIDTH
+        self.winHeight_   = (2 + self.boxWidth_) * board.PLAYFIELD_HEIGHT
         
-        self.gameWidth_ = board.PLAYFIELD_HEIGHT * BOX_WIDTH
-        self.gameHeight_ = board.PLAYFIELD_HEIGHT * BOX_HEIGHT
-        self.gameLeft_ = 2 * BOX_WIDTH
-        self.gameTop_ = self.winHeight_ - self.gameHeight_   - 1 # Aligné sur le bas
+        self.gameWidth_ = board.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameHeight_ = board.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameLeft_ = 2 * self.boxWidth_
+        self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
 
     # Méthodes surchargées de eventHandler
     #
@@ -119,10 +132,9 @@ class pygameTetris(tetrisGame):
         rets = pygame.init()
 
         if 0 != rets[1] :
-            # Des erreurs !
-            return "L'initialisation de pygame a retourné " + str(rets[1]) + " erreur(s)"
+            return "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
 
-        # Création de la fenêtre
+        # Main window creation
         self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.RESIZABLE)
         pygame.display.set_caption('jTetris')
         
@@ -132,8 +144,34 @@ class pygameTetris(tetrisGame):
 
     # Fin ...
     def clear(self):
-        # Fermeture de l'environnement
         pygame.display.quit()
+
+    # Wait for an event
+    #
+    def waitForEvent(self):
+        finished = False
+        while not finished:
+            event = pygame.event.wait()
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN :
+                finished = True
+            elif event.type == pygame.VIDEORESIZE:
+                # Update members
+                self._onResizeWindow(event.w, event.h)
+                
+                # Resize the surface
+                self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.RESIZABLE)
+
+                # redraw
+                self._drawBackGround()
+                self.drawBoard()
+                
+                self._drawNextPiece(self.board_.nextPieceIndex())
+                self.drawScore()
+                self.drawLevel()
+                self.drawLines()
+                
+                self._updateDisplay()
+        return event
 
     # Lecture non bloquante du clavier
     # Retourne le caractère associé à la touche ou le caractère vide ('')
@@ -146,22 +184,13 @@ class pygameTetris(tetrisGame):
                 return (ord('0') + evt.key - pygame.K_0)
             else:
                 return evt.key
+        elif evt.type == pygame.QUIT:
+            # End the game
+            self.end()
         else :
             return self.KEY_NOEVENT
      
-    # Affichage d'un message de texte
-    #   le paramètre texte pointe sur une liste de lignes
-    def drawText(self, text, title="", highLight=-1):
-        pass
-
-    # Effacement du texte
-    def clearText(self):
-        pass
-
-    # Affichage des scores
-    def drawScores(self):
-        pass
-
+    
     # Méthodes surchargées de tetrisGame
     #
 
@@ -171,11 +200,11 @@ class pygameTetris(tetrisGame):
 
     # Affichage d'un texte avec effacement de l'ancienne valeur
     def _drawText(self, index, text):
-        font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)
+        font = pygame.font.SysFont(FONT_NAME, self.fontSize_)
         label = font.render(text, 1, self.colours_[COLOUR_ID_TEXT].base_)
 
-        left = self.gameLeft_ + board.PLAYFIELD_WIDTH * BOX_WIDTH + 45
-        top = self.gameTop_ + 60 * (1 + index)
+        left = self.gameLeft_ + (1 + board.PLAYFIELD_WIDTH ) * self.boxWidth_
+        top = self.gameTop_ + self.boxWidth_ * ( 2 * index + 1)
         
         # Effacer l'ancien
         if None != self.itemDims_[index] and 2 == len(self.itemDims_[index]) :
@@ -185,35 +214,39 @@ class pygameTetris(tetrisGame):
         self.itemDims_[index] = font.size(text) # Récupération de la taille ...
         self.win_.blit(label, (left, top))
     
-    # Dessin des bordures
-    def _drawBorders(self):
-        # Dessin d'une simple bordure sur 3 côtés pour la zone de jeu
+    # Draw the background
+    #
+    def _drawBackGround(self):
+        
+        # Playfield frame
         left = self.gameLeft_ - 1
         top = self.gameTop_ - 1
-        width = board.PLAYFIELD_WIDTH * BOX_WIDTH + 2
-        height = board.PLAYFIELD_HEIGHT * BOX_HEIGHT + 2
-        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left, top +  height - 1))
-        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top +  height - 1))
-        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left + width - 1, top),(left + width - 1, top +  height - 1))
-        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
-
-        # Le fond ...
-        x,y,w,h = self._changeCoordonateSystem(left, top, True)
-        pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BOARD].base_, (x, y, w * board.PLAYFIELD_WIDTH, h * board.PLAYFIELD_HEIGHT))
+        width = board.PLAYFIELD_WIDTH * self.boxWidth_ + 2
+        right = left + width - 1
+        height = board.PLAYFIELD_HEIGHT * self.boxWidth_ + 2
+        bottom = top + height - 1
         
+        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left, bottom))
+        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, bottom),(right, bottom))
+        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (right, top),(right, bottom))
+        pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(right, top))
 
-        # Affichage du texte pour la piece suivante
-        left = self.gameLeft_ + BOX_WIDTH * board.PLAYFIELD_WIDTH + 45
-        top = self.gameTop_ + BOX_HEIGHT * (board.PLAYFIELD_HEIGHT - 5) - FONT_SIZE
-        font = pygame.font.SysFont(FONT_NAME, FONT_SIZE)
+        # background
+        #x,y,w,h = self._changeCoordonateSystem(left, top, True)
+        #pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BOARD].base_, (x, y, w * board.PLAYFIELD_WIDTH, h * board.PLAYFIELD_HEIGHT))
+        
+        # Next piece text
+        left = self.gameLeft_ + (1 + board.PLAYFIELD_WIDTH ) * self.boxWidth_
+        top = self.gameTop_ + self.boxWidth_ * 8
+        font = pygame.font.SysFont(FONT_NAME, self.fontSize_)
         label = font.render(self.itemTexts_[3], 1, self.colours_[COLOUR_ID_TEXT].base_)
-        self.win_.blit(label, (left, top - 50))
+        self.win_.blit(label, (left, top))
 
-        # Dessin de la bordure pour la pièce suivante
+        # Next piece frame
         left-=2
-        top = self.gameTop_ + BOX_HEIGHT * (board.PLAYFIELD_HEIGHT - 5) - FONT_SIZE - 2
-        width = 4 * BOX_WIDTH + 4
-        height = 4 * BOX_HEIGHT + 4
+        top = self.gameTop_ + self.boxWidth_ * 10 -2
+        width = 4 * self.boxWidth_ + 4
+        height = 4 * self.boxWidth_ + 4
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left, top +  height - 1))
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left + width - 1, top),(left + width - 1, top +  height - 1))
         pygame.draw.line(self.win_, self.colours_[COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
@@ -224,17 +257,17 @@ class pygameTetris(tetrisGame):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
             # Le carré
-            pygame.draw.rect(self.win_, paintColour.base_, (left + 1, top + 1, BOX_WIDTH - 2, BOX_HEIGHT -2))
+            pygame.draw.rect(self.win_, paintColour.base_, (left + 1, top + 1, self.boxWidth_ - 2, self.boxWidth_ -2))
 
             # l'effet ombré
-            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left, top + BOX_HEIGHT - 1))
-            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left + BOX_WIDTH - 1, top))
+            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left, top + self.boxWidth_ - 1))
+            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left + self.boxWidth_ - 1, top))
 
-            pygame.draw.line(self.win_, paintColour.dark_, (left + BOX_WIDTH - 1, top),(left + BOX_WIDTH - 1, top + BOX_HEIGHT - 1))
-            pygame.draw.line(self.win_, paintColour.dark_, (left, top + BOX_HEIGHT - 1),(left + BOX_WIDTH - 1, top + BOX_HEIGHT - 1))
+            pygame.draw.line(self.win_, paintColour.dark_, (left + self.boxWidth_ - 1, top),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
+            pygame.draw.line(self.win_, paintColour.dark_, (left, top + self.boxWidth_ - 1),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
         else:
             # Juste un carré
-            pygame.draw.rect(self.win_, paintColour.base_, (left, top, BOX_WIDTH, BOX_HEIGHT))
+            pygame.draw.rect(self.win_, paintColour.base_, (left, top, self.boxWidth_, self.boxWidth_))
 
     # Effacement
     def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
@@ -255,14 +288,40 @@ class pygameTetris(tetrisGame):
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         
         if inBoard:
-            # Dans l'espace de jeu
-            left = self.gameLeft_ + x * BOX_WIDTH
-            top = self.gameTop_ + (board.PLAYFIELD_HEIGHT - 1 - y) * BOX_HEIGHT
+            # For the game
+            left = self.gameLeft_ + x * self.boxWidth_
+            top = self.gameTop_ + (board.PLAYFIELD_HEIGHT - 1 - y) * self.boxWidth_
         else:
-            # Pièce suivante
-            left = self.gameLeft_ + BOX_WIDTH * board.PLAYFIELD_WIDTH + 45
-            top = self.gameTop_ + BOX_HEIGHT * (board.PLAYFIELD_HEIGHT - 5) - FONT_SIZE
+            # Next piece
+            left = self.gameLeft_ + (1 + board.PLAYFIELD_WIDTH ) * self.boxWidth_
+            top = self.gameTop_ + self.boxWidth_ * 10
+            #left = self.gameLeft_ + self.boxWidth_ * board.PLAYFIELD_WIDTH + 45
+            #top = self.gameTop_ + self.boxWidth_ * (board.PLAYFIELD_HEIGHT - 5) - self.fontSize_
+            
 
-        return (left, top, BOX_WIDTH, BOX_HEIGHT)
+        return (left, top, self.boxWidth_, self.boxWidth_)
+
+    # Handle window's resize
+    #
+    def _onResizeWindow(self, newWidth, newHeight):
+
+        self.winWidth_ = newWidth
+        self.winHeight_ = newHeight
+
+        # Compute new "square" size
+        self.boxWidth_ = math.floor((newHeight - 1) / (board.PLAYFIELD_HEIGHT+ 2))
+        if self.boxWidth_ < 8 :
+            self.boxWidth_ = 8
+
+        # other dims
+        self.gameWidth_ = board.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameHeight_ = board.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameLeft_ = 2 * self.boxWidth_
+        self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
+        self.fontSize_ = int(self.boxWidth_ / BOX_WIDTH * FONT_SIZE)
+        if self.fontSize_ > MAX_FONT_SIZE:
+            self.fontSize_ = MAX_FONT_SIZE
+        elif self.fontSize_ <= 8:
+            self.fontSize_ = 8
 
 # EOF

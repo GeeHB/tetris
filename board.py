@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 # 
 
 import random
@@ -68,10 +68,10 @@ class board(object):
     tetraminos_ = []    # Listes des pièces (avec leurs états)
 
     playField_  = []    # Matrice de jeu
-
-    score_, lines_, level_ = 0, 0, 1     # Score, nombre de lignes effacées et niveau
     
     parameters_ = None  # Paramètres du jeu
+
+    score_, lines_, level_ = 0, 0, 1
     
     # Informations sur le tetramino courant
     currentPiece_ = pieceStatus()   
@@ -100,10 +100,10 @@ class board(object):
     def setParameters(self, params = None):
         
         self.parameters_ = tetrisParameters(params)
-        self.score_ = 0
-        self.lines_ = 0
-        self.level_ = self.parameters_.startLevel_
-        self.nextIndex_ = -1
+        self.setScore(0)
+        self.setLines(0)
+        self.setLevel(self.parameters_.startLevel_)
+        self.setNextPieceIndex(-1)
 
         # Initialization of tetraminos
         for sPiece in self.tetraminos_:
@@ -112,7 +112,6 @@ class board(object):
         self.playField_  = []
         
         # Add dirty lines ...
-        #
         maxLines = PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1
         if self.parameters_.dirtyLines_ > maxLines:
             self.parameters_.dirtyLines_ = maxLines
@@ -139,7 +138,6 @@ class board(object):
     #
     def level(self):
         return self.level_
-
     def setLevel(self, level):
         self.level_ = level
     def incLevel(self):
@@ -149,20 +147,30 @@ class board(object):
     # Score
     def score(self):
         return self.score_
+    def setScore(self, score):
+        self.score_ = score
+    def incScore(self, inc):
+        self.score_+=inc
 
     # Lignes
     def lines(self):
         return self.lines_
+    def setLines(self, value = 0):
+        self.lines_ = value
+    def incLines(self, inc):
+        self.lines_+=inc
 
     # Pièce suivante
     def nextPieceIndex(self):
         return self.nextIndex_
+    def setNextPieceIndex(self, index):
+        self.nextIndex_ = index
     
     # Retourne le tuple (datas, couleur)
     def nextPieceDatas(self):
-        if self.nextIndex_ < 0 or self.nextIndex_ >= len(self.tetraminos_): # L'index doit être correct
+        if self.nextPieceIndex() < 0 or self.nextPieceIndex() >= len(self.tetraminos_): # L'index doit être correct
             raise IndexError
-        return (self.tetraminos_[self.nextIndex_].datas(), self.tetraminos_[self.nextIndex_].colour())
+        return (self.tetraminos_[self.nextPieceIndex()].datas(), self.tetraminos_[self.nextPieceIndex()].colour())
 
     # Piece selon son index et selon son etat ...
     def pieceDatas(self, index, rotIndex):
@@ -173,9 +181,9 @@ class board(object):
     # Nouvelle pièce
     def newPiece(self):
         # Mise à jour des index de pièces
-        self.currentPiece_.index_ = self._newPieceIndex() if -1 == self.nextIndex_ else self.nextIndex_
-        self.nextIndex_ = self._newPieceIndex()
-
+        self.currentPiece_.index_ = self._newPieceIndex() if -1 == self.nextPieceIndex() else self.nextPieceIndex()
+        self.setNextPieceIndex(self._newPieceIndex())
+        
         # La pièce est en haut, pas encore visible et centrée horizontalement
         self.currentPiece_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2)
         self.currentPiece_.topPos_ = PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
@@ -184,7 +192,7 @@ class board(object):
         self.tetraminos_[self.currentPiece_.index_].rotateBack()    # Réinitialisation du compteur de rotations
         
         # On previent le gestionnaire d'affichage
-        self.eventHandler_.nextPieceIndexChanged(self.nextIndex_)
+        self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
 
         # Si je ne peux pas descendre alors la partie est terminée
         if False == self._down(True):
@@ -429,14 +437,10 @@ class board(object):
                 mult+=SCORE_NO_SHADOW
             
             # Mise à jour du score
-            self.score_+=int(delta*mult/100)
+            self.eventHandler_.incScore(int(delta*mult/100))
 
         if 0 != completedCount:
-            self.lines_+=completedCount # On met à jour le nombre de lignes complétées
-            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines_)
-
-            # Le score aussi a changé
-            self.eventHandler_.scoreChanged(self.score_)
+            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines() + completedCount)            
 
         # Nouvelle pièce
         self.newPiece()

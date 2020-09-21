@@ -10,9 +10,9 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.4.10
+#   Version     :   0.5.2
 #
-#   Date        :   15 aout 2020
+#   Date        :   2020/09/21
 #
 
 import platform, sys
@@ -171,7 +171,7 @@ class tetris(object):
 
     # Starting the game
     def start(self):
-        self.gameData_.setParameters(self.params_)        
+        self.gameData_.setParameters(self.params_)
         self._newGame()
 
     # Game ending
@@ -191,6 +191,10 @@ class tetris(object):
         # On part !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
+        
+        # Quit the game ?
+        if self.displayMgr_.waitForEvent().type == tetrisGame.EVT_QUIT:
+            exit(1) 
 
         # Gestion du jeu
         while self.displayMgr_.isRunning():
@@ -210,12 +214,10 @@ class tetris(object):
             # Gestion de l'accelération
             seqCount += 1
             if 0 == (seqCount % MOVES_UPDATE_LEVEL):
-                # Un niveau de plus
-                level = self.gameData_.incLevel()
-                self.displayMgr_.levelChanged(level)
+                self.displayMgr_.levelChanged(self.gameData_.incLevel())
 
                 # Accelération
-                seqDuration = self._updateSpeed(seqDuration, level, 1)
+                seqDuration = self._updateSpeed(seqDuration, self.displayMgr_.level(), 1)
 
         # the game is over
 
@@ -366,6 +368,7 @@ if __name__ == '__main__':
     #
     myTetris = tetris(params) 
     if myTetris.parseCmdLine() and myTetris.isReady():    
+
         # Démarrage du jeu
         myTetris.start()
 
