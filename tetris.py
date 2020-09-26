@@ -4,7 +4,7 @@
 #
 #   File     :   tetris.py
 #
-#   Auteur      :   JHB
+#   Authors     :   JHB
 #
 #   Description :   The "tetris" game 
 #
@@ -15,36 +15,17 @@
 #   Date        :   2020/09/21
 #
 
-import platform, sys
+import platform, sys, math
+
+import sharedConsts
 from cmdLineParser import cmdLineParser
 from colorizer import colorizer, backColor, textColor, textAttribute    # for text coloration in console mode
 from tetrisGame import tetrisGame
-from board import PLAYFIELD_HEIGHT, tetrisParameters
+from board import tetrisParameters
+from scores import scores
 
 # Public consts
 #
-
-PYTHON_MIN_MAJOR = 3
-PYTHON_MIN_MINOR = 7
-
-MAX_LEVEL_ACCELERATION = 12     # No more acceleration when this level is reached
-ACCELERATION_STEP = 0.18        # Growing speed % per level
-INITIAL_SPEED = 1200            # Level 1 speed (larger is slower)
-MOVES_UPDATE_LEVEL = 250        # Change level criterium (# of pieces going down one step)
-
-SCORES_FILE = 'scores.high'     # Scores' file
-
-# Command line options
-#
-
-CMD_OPTION_CHAR = "-"
-
-CMD_OPTION_START_LEVEL = "level"
-CMD_OPTION_SHADOW = "shadow"
-CMD_OPTION_DIRTY_LINES = "lines"
-CMD_OPTION_USER = "me"
-
-CMD_OPTION_CONSOLE = "c"         # Console mode
 
 # tetris object
 #   Handles game and scores 
@@ -68,17 +49,18 @@ class tetris(object):
     #   return True if no error where found
     #
     def parseCmdLine(self):
-        parameters = cmdLineParser(CMD_OPTION_CHAR)
+        parameters = cmdLineParser(sharedConsts.CMD_OPTION_CHAR)
 
         if 0 == parameters.size():
             # No parameters use default and start game !
+            self.params_.useGUI_ = False
             return True
         else:
             # Console display mode ?
-            self.params_.useGUI_ = (parameters.findAndRemoveOption(CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
+            self.params_.useGUI_ = (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
 
             # Start level
-            index =  parameters.findAndRemoveOption(CMD_OPTION_START_LEVEL)
+            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_START_LEVEL)
             if not parameters.NO_INDEX == index:
                 # Num. value expected
                 try :
@@ -94,14 +76,14 @@ class tetris(object):
                     return False
                 
             # # of dirty lines
-            index =  parameters.findAndRemoveOption(CMD_OPTION_DIRTY_LINES)
+            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_DIRTY_LINES)
             if not parameters.NO_INDEX == index:
                 # num. value expected
                 try :
                     rets = parameters.parameterOrValue(index + 1)
                     if rets[1] == False : 
                         self.params_.dirtyLines_ = int(rets[0])
-                        if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= PLAYFIELD_HEIGHT:
+                        if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= sharedConsts.PLAYFIELD_HEIGHT:
                             self._usage()
                             exit(1)
                 except IndexError:
@@ -110,7 +92,7 @@ class tetris(object):
                     return False
 
              # username (for score)
-            index =  parameters.findAndRemoveOption(CMD_OPTION_USER)
+            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_USER)
             if not parameters.NO_INDEX == index:
                 # username expected
                 try :
@@ -123,7 +105,7 @@ class tetris(object):
                     return False
             
             # Display pieces'shadow ?
-            self.params_.shadow_ = not (parameters.findAndRemoveOption(CMD_OPTION_SHADOW) == parameters.NO_INDEX)
+            self.params_.shadow_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_SHADOW) == parameters.NO_INDEX)
 
         # There should be no options left
         if parameters.options() > 0:
@@ -182,9 +164,9 @@ class tetris(object):
     # Lancement d'une partie
     def _newGame(self):
 
-         # "Vitesse" initiale
+        # initial speed
         seqCount = 0
-        seqDuration = self._updateSpeed(INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
+        seqDuration = self._updateSpeed(sharedConsts.INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
         ts, now = 0, 0
         uWait = 5 / 1000.0   # en ms.
 
@@ -192,9 +174,17 @@ class tetris(object):
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
         
-        # Quit the game ?
-        if self.displayMgr_.waitForEvent().type == tetrisGame.EVT_QUIT:
-            exit(1) 
+        # Escape the game ?
+        cont = True
+        while cont :
+            evt = self.displayMgr_.waitForEvent()
+            if evt[0] == self.displayMgr_.EVT_QUIT or (evt[0] == self.displayMgr_.EVT_KEYDOWN and evt[1] == self.displayMgr_.KEY_QUIT):
+                exit(1) 
+
+            if evt[1] == self.displayMgr_.KEY_START:
+                cont = False
+
+        self.displayMgr_.drawNextPiece()
 
         # Gestion du jeu
         while self.displayMgr_.isRunning():
@@ -213,82 +203,30 @@ class tetris(object):
 
             # Gestion de l'accelération
             seqCount += 1
-            if 0 == (seqCount % MOVES_UPDATE_LEVEL):
-                self.displayMgr_.levelChanged(self.gameData_.incLevel())
-
-                # Accelération
-                seqDuration = self._updateSpeed(seqDuration, self.displayMgr_.level(), 1)
+            if 0 == (seqCount % sharedConsts.MOVES_UPDATE_LEVEL):
+                # Real level (based on pieces movements)
+                rLevel = math.floor(seqCount / sharedConsts.MOVES_UPDATE_LEVEL) + 1
+                
+                # Change level (if necessary) & accelerate
+                if rLevel >= self.gameData_.level():
+                    self.displayMgr_.levelChanged(self.gameData_.incLevel())
+                    seqDuration = self._updateSpeed(seqDuration, self.gameData_.level(), 1)
 
         # the game is over
+        # wait for gamer to exit
+        cont = True
+        while cont:
+            evt = self.displayMgr_.waitForEvent()
+            if evt[0] == self.displayMgr_.EVT_QUIT or (evt[0] == self.displayMgr_.EVT_KEYDOWN and (evt[1] == self.displayMgr_.KEY_QUIT or evt[1] == self.displayMgr_.KEY_START)):
+                cont = False
 
-        # On affiche les meilleurs scores
-        #self._hallOfFame(self.gameData_.score())
+        # Score handling
+        bestScores = scores(self.params_.user_)
+        myScore = self.gameData_.score()
+        self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
 
-    # Méthodes privées
-    #
-
-    # Lecture des meilleurs scores
-    def _loadScores(self):
-        scores = [] # Par défaut il n'y a pas de scores
-
-        # Le fichier doit exister
-        try:
-            file = open(SCORES_FILE)
-            for line in file :
-                if len(line) > 0:
-                    value = int(line)
-                    if not value in scores: # Pas déja présent ?
-                        scores.append(value)
-            file.close()
-
-        except FileNotFoundError:
-           # Le fichier n'existe pas !
-           pass
-
-        # Retourne le tableau ordonné des scores
-        return scores
-
-    # Ajout d'un score
-    def _newScore(self, currentScore):
-        tops = self._loadScores()
-        append = False
-        
-        # Le score est-il dans le tableau ?
-        cScores = len(tops)
-        if cScores >= 10 : 
-            tops.sort(reverse = True)
-            if tops[9] < currentScore:
-                # On l'ajoute si la valeur n'est pas déja présente
-                append = True
-        else:
-            # Ajout dans tous les cas
-            append = True
-
-        if True == append and not currentScore in tops :
-            tops.append(currentScore)
-            tops.sort(reverse = True)
-
-        # On retourne le tableau ordonné
-        return tops 
-
-    # Sauvegarde du tableau des scores
-    def _saveScores(self, scores):
-        try:
-            file = open(SCORES_FILE, "w")
-            max = 10 if len(scores)>10 else len(scores)
-            for i in range(max) :
-                # Une ligne de plus à écrire
-                line = str(scores[i])+"\n"
-                file.write(line)
-            file.close()
-        except:
-            pass
-    
-    # Affichage des scores
-    def _hallOfFame(self, currentScore):
-        tops = self._newScore(currentScore)
-        scoreIndex = -1
-        
+    # Private methods
+    #   
     
     # Analyse du clavier pendant la phase de jeu
     def _handleGameKeys(self):
@@ -309,12 +247,12 @@ class tetris(object):
 
     # Mise à jour de la vitesse (ie. délai max. d'attente entre 2 descentes auto.)
     def _updateSpeed(self, currentDuration, level, incLevel = 1):
-        if level >= MAX_LEVEL_ACCELERATION :
+        if level >= sharedConsts.MAX_LEVEL_ACCELERATION :
             return currentDuration
         
         # duration = currentDuration * acc ^ incLevel
         duration = currentDuration
-        acc = (1.0 - ACCELERATION_STEP)
+        acc = (1.0 - sharedConsts.ACCELERATION_STEP)
         for _ in range(incLevel):
             duration*=acc
         return duration
@@ -323,25 +261,23 @@ class tetris(object):
     #
     def _usage(self):
         print(self.txtColours_.colored("\tetris.py", formatAttr=[textAttribute.GRAS]))
-        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.FONCE]), ": Start the game at {numLevel}")
-        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_SHADOW, formatAttr=[textAttribute.FONCE]), ": Display shadow ot the piece at the bottom of the playfiled")
-        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.FONCE]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
-        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.FONCE]), ": Set the name of the current player")
-        print("\t", self.txtColours_.colored(CMD_OPTION_CHAR + CMD_OPTION_CONSOLE, formatAttr=[textAttribute.FONCE]), ": Console display mode (if nCurses is available)")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.FONCE]), ": Start the game at {numLevel}")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[textAttribute.FONCE]), ": Display shadow ot the piece at the bottom of the playfiled")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.FONCE]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.FONCE]), ": Set the name of the current player")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.FONCE]), ": Console display mode (if nCurses is available)")
 
 #
 # Boucle principale du jeu
 #
 
 if __name__ == '__main__':
-    # Vérification de la version minimale de python
     ver = sys.version_info
-    if ver.major < PYTHON_MIN_MAJOR or (ver.major == PYTHON_MIN_MAJOR and ver.minor < PYTHON_MIN_MINOR):
-        out = str(PYTHON_MIN_MAJOR) + "." + str(PYTHON_MIN_MINOR)
-        print("Python doit être au minimum en version", out)
+    if ver.major < sharedConsts.PYTHON_MIN_MAJOR or (ver.major == sharedConsts.PYTHON_MIN_MAJOR and ver.minor < sharedConsts.PYTHON_MIN_MINOR):
+        out = str(sharedConsts.PYTHON_MIN_MAJOR) + "." + str(sharedConsts.PYTHON_MIN_MINOR)
+        print("Expected minimum version for Python ", out)
         exit(1) 
 
-    # Maintenant que les causes d'erreur(s) sont écartées ...
     import time
     from board import board, tetrisParameters
 
@@ -356,22 +292,17 @@ if __name__ == '__main__':
         params.pygameAvailable_ = False
 
     # At least can we use nCurses ?
-    if False == params.pygameAvailable_:
-        try:
-            from cursesTetris import cursesTetris
-            params.cursesAvailable_ = True
-        except ModuleNotFoundError:
-            params.cursesAvailable_ = False
+    try:
+        from cursesTetris import cursesTetris
+        params.cursesAvailable_ = True
+    except ModuleNotFoundError:
+        params.cursesAvailable_ = False
     
     #
     # the game ...
     #
     myTetris = tetris(params) 
     if myTetris.parseCmdLine() and myTetris.isReady():    
-
-        # Démarrage du jeu
         myTetris.start()
-
-        # Fin & libérations
         myTetris.end()
 #EOF 

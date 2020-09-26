@@ -2,7 +2,7 @@
 #
 #   File     :   cursesTetris.py
 #
-#   Auteur      :   JHB
+#   Authors     :   JHB
 #
 #   Description :   Gestion de l'interface du tetris en mode console avec la librairie ncurses
 #                   
@@ -15,7 +15,8 @@
 #
 
 import curses, sys, time, os, termios, fcntl
-from tetrisGame import *
+import tetrisGame
+import sharedConsts
 
 # Quelques constantes
 #
@@ -23,8 +24,8 @@ from tetrisGame import *
 # Dimensions & positions
 BORDER_WIDTH    = 2
 GAP_WIDTH       = 2       # Espacement de la bordure
-SHAPE_WIDTH     = PIECE_WIDTH * 2
-SHAPE_HEIGHT    = PIECE_HEIGHT
+SHAPE_WIDTH     = tetrisGame.PIECE_WIDTH * 2
+SHAPE_HEIGHT    = tetrisGame.PIECE_HEIGHT
 
 BORDER_COLOR    = 0         # Couleur par défaut du term.
 
@@ -32,12 +33,12 @@ BORDER_COLOR    = 0         # Couleur par défaut du term.
 SHADOW_CHAR     = '\u2591'  # Caractère utilisé (en unicode)
 
 # Mise en surbrillance
-HILIGHT_COLOR   = 9
+COLOUR_HILIGHT   = 9
 
 # Classe cursesTetris
 #   Gestion des évènements ayant une influence sur le rendu graphique
 #
-class cursesTetris(tetrisGame):
+class cursesTetris(tetrisGame.tetrisGame):
 
     term_ = None      # Ecran curses
     
@@ -57,7 +58,7 @@ class cursesTetris(tetrisGame):
         # Dimensions de la zone de texte pour les scores, les lignes et le niveau
         self.itemDims_  = [0] * 3
 
-    # Méthodes surchargées de gameRendering
+    # Méthodes surchargées de tetrisGame
     #
 
     # Vérifications
@@ -66,14 +67,14 @@ class cursesTetris(tetrisGame):
 
         errorMessage = ""
 
-        if tetrisGame.GAME_INIT == self.status_:
+        if tetrisGame.tetrisGame.GAME_INIT == self.status_:
             # Déja fait
             return ""
 
         # Vérification et gestion des couleurs pour le terminal
         #
         if False == curses.has_colors():
-            errorMessage = "Le terminal doit accepter les couleurs"
+            errorMessage = "Terminal dosen't accept colors"
             return errorMessage
         
         # Initialisation des couleurs
@@ -83,38 +84,49 @@ class cursesTetris(tetrisGame):
             curses.init_pair(i, i, i) # La ieme couleur : text = i, bk = i
         
         # L'ombre est en blanc sur fond noir
-        curses.init_pair(COLOUR_ID_SHADOW, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(sharedConsts.COLOUR_ID_SHADOW, curses.COLOR_WHITE, curses.COLOR_BLACK)
 
         # La couleur de surbrilance est le rouge
-        curses.init_pair(HILIGHT_COLOR, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(COLOUR_HILIGHT, curses.COLOR_RED, curses.COLOR_BLACK)
     
         # Dimensions
         #
-        self.gameWidth_ = board.PLAYFIELD_WIDTH * 2
-        self.gameHeight_ = board.PLAYFIELD_HEIGHT
+        self.gameWidth_ = sharedConsts.PLAYFIELD_WIDTH * 2
+        self.gameHeight_ = sharedConsts.PLAYFIELD_HEIGHT
         self.gameLeft_ = 2       # (curses.COLS - gameWidth_) / 2;
         self.gameTop_ = curses.LINES - self.gameHeight_
         #self.canDrawNextPiece_ = curses.COLS > (self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
 
         if curses.LINES < self.gameHeight_:
             # Pas assez haut
-            errorMessage = "Le terminal doit avoir au moins " + str(self.gameHeight_) + " caractères de haut"
+            errorMessage = "Minimal height for the terminal : " + str(self.gameHeight_) + " chars"
             return errorMessage
         
         if curses.COLS < self.gameWidth_ + 4:
             # Pas assez large
-            errorMessage = "Le terminal doit avoir au moins " + str(self.gameWidth_ + 4) + " caractères de large"
+            errorMessage = "Minmal width for the terminal : " + str(self.gameWidth_ + 4) + " chars"
             return errorMessage
                 
         # Oui => tout est ok pour les affichages
-        self.status_ = tetrisGame.GAME_INIT
+        self.status_ = tetrisGame.tetrisGame.GAME_INIT
         return ""
 
     
-    # Fin ...
+    # Finish ...
+    #
     def clear(self):
         # On remet le terminal dans l'état d'origine
         curses.endwin()
+
+    # Wait for an event (a keyboard event on curses)
+    #
+    def waitForEvent(self):
+        wait = True
+        while wait:
+            c = self.checkKeyboard()
+            if len(c) :
+                wait = False
+        return (cursesTetris.EVT_KEYDOWN, c)
 
     # Lecture non bloquante du clavier
     # Retourne le caractère associé à la touche ou le caractère vide ('')
@@ -150,7 +162,7 @@ class cursesTetris(tetrisGame):
 
     # Affichage d'une valeur numérique avec effacement de l'ancienne valeur
     def _drawNumValue(self, index, value):
-        boxTop = self.gameTop_ + PIECE_HEIGHT + 5 + 3 * index
+        boxTop = self.gameTop_ + tetrisGame.PIECE_HEIGHT + 5 + 3 * index
         boxLeft = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
         text = self.itemTexts_[index] + ": " +  str(value) + ' ' * self.itemDims_[index] # Affichage et effacement
         self.term_.addstr(boxTop, boxLeft, text, curses.color_pair(0))
@@ -189,7 +201,7 @@ class cursesTetris(tetrisGame):
         
         if inBoard:
             left = self.gameLeft_ + 2 * x
-            top = self.gameTop_ + board.PLAYFIELD_HEIGHT - 1 - y
+            top = self.gameTop_ + sharedConsts.PLAYFIELD_HEIGHT - 1 - y
         else:
             left = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
             top = self.gameTop_ + 2
@@ -202,7 +214,7 @@ class cursesTetris(tetrisGame):
 
     # Effacement
     def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
-        x,y,w,h = self._changeCoordonateSystem(0,0, False)
+        x,y,w,_ = self._changeCoordonateSystem(0,0, False)
         for row in range(height):
             self.term_.addstr(y + row, x, ' ' * w * width, curses.color_pair(colourID))
 # EOF

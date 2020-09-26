@@ -1,5 +1,23 @@
+v0.5.3
+    * 21/09/2020
+    ? Linux
+        ? PYGame
+        ? console mode
+    + End of sources translation
+    + Scores handling
+    + Bug fixes
+        + Press "Enter" to start game
+        - Error while displaying and computing Level 
+        - Escaping the game
+        - Game finished : wait for key pressed (Esc ou Quit) to close the window
+        - Regression : score and # lines errors
+
+known issues:
+    ? bug in scores when no name is given : all the scores are saved 
+
 v0.5.2
     * 21/09/2020
+    * Fonctionnal
     + beginning of translation process
     + Add command line options
         - remove "basic" text-based ui
@@ -16,5 +34,4 @@ v0.4.10
 
 v0.4.8
     Date : 05/05/2020
-    Fixed : initialisation
-    
+    Fixed : PYGame initialization error(s)

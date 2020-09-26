@@ -2,7 +2,7 @@
 #
 #   File     :   board.py
 #
-#   Auteur      :   JHB
+#   Authors     :   JHB
 #
 #   Description :   Espace de jeu
 #                   Modélisation de la matrice avec l'ensemble des pavés colorés
@@ -15,24 +15,11 @@
 # 
 
 import random
-from piece import *
-from shapes import shapes
+
+import sharedConsts
+import piece
+import shapes
 from eventHandler import eventHandler
-
-#
-#   Public consts
-#
-
-# Playfield's dimensions
-#
-PLAYFIELD_WIDTH = 10
-PLAYFIELD_HEIGHT = 20
-
-# Score valorisation (in %)
-#
-SCORE_NO_SHADOW     = 25    # +25% if no pieces'shadowing
-SCORE_SPEED_GAME    = 5     # 5% * {piece's height} => quick play <=> more points
-SCORE_DIRTY_LINES   = 1     # 1% per starting dirty-line
 
 # tetrisParameters
 #   game's parameters
@@ -74,7 +61,7 @@ class board(object):
     score_, lines_, level_ = 0, 0, 1
     
     # Informations sur le tetramino courant
-    currentPiece_ = pieceStatus()   
+    currentPiece_ = piece.pieceStatus()   
     nextIndex_ = -1      # Index de la pièce suivante
 
     eventHandler_ = None  # Gestionnaire d'évènements
@@ -92,8 +79,8 @@ class board(object):
         self.eventHandler_ = handler if not None == handler else eventHandler()
 
         # Construction de la liste des tetraminos à partir de leurs modèles respectifs
-        for shape in shapes:
-            self.tetraminos_.append(piece(template = shape))
+        for shape in shapes.shapes_:
+            self.tetraminos_.append(piece.piece(template = shape))
 
     # (re)initialisation de l'espace de jeu
     #   lines : nombre de lignes "sales" à ajouter au bas de l'écran
@@ -112,7 +99,7 @@ class board(object):
         self.playField_  = []
         
         # Add dirty lines ...
-        maxLines = PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1
+        maxLines = sharedConsts.PLAYFIELD_HEIGHT - piece.PIECE_HEIGHT - 1
         if self.parameters_.dirtyLines_ > maxLines:
             self.parameters_.dirtyLines_ = maxLines
         elif self.parameters_.dirtyLines_ < 0:
@@ -122,8 +109,8 @@ class board(object):
             self._addDirtyLine()
         
         # other lines are empty 
-        for _ in range(self.parameters_.dirtyLines_, PLAYFIELD_HEIGHT):
-            self.playField_.append([0] * PLAYFIELD_WIDTH)
+        for _ in range(self.parameters_.dirtyLines_, sharedConsts.PLAYFIELD_HEIGHT):
+            self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
 
     # Accès aux paramètres
     def parameters(self):
@@ -185,8 +172,8 @@ class board(object):
         self.setNextPieceIndex(self._newPieceIndex())
         
         # La pièce est en haut, pas encore visible et centrée horizontalement
-        self.currentPiece_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2)
-        self.currentPiece_.topPos_ = PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
+        self.currentPiece_.leftPos_ = int((sharedConsts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
+        self.currentPiece_.topPos_ = sharedConsts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
         self.currentPiece_.minHeight_ = -1  # Pas d'ombre
         self.currentPiece_.rotationIndex_ = 0
         self.tetraminos_[self.currentPiece_.index_].rotateBack()    # Réinitialisation du compteur de rotations
@@ -304,8 +291,8 @@ class board(object):
 
         # On analyse tous les points en partant du bas
         # ... pour optimiser un peu les traitements
-        for y in range(PIECE_HEIGHT-1, -1, -1):
-            for x in range(PIECE_WIDTH):
+        for y in range(piece.PIECE_HEIGHT-1, -1, -1):
+            for x in range(piece.PIECE_WIDTH):
                 if not 0 == datas[y][x]:
                     # Il y a un cube à afficher ...
                     # Quelle serait sa position reèlle ?
@@ -313,11 +300,11 @@ class board(object):
                     realY = topPos - y  # L'origine du playground est en bas de l'écran
 
                     # En dehors de la zone de jeu ?
-                    if realX < 0 or realY < 0 or realX >= PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
+                    if realX < 0 or realY < 0 or realX >= sharedConsts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
                         return False
                     
                     # Y a t'il déja qque chose à cette place ?
-                    if realY < PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
+                    if realY < sharedConsts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
                         return False
 
         # De toute évidence oui !
@@ -352,28 +339,28 @@ class board(object):
 
         # Copie des carrés non vides les uns après les autres dans l'espace de jeu
         #
-        maxY = 0 if PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - PLAYFIELD_HEIGHT + 1
-        for y in range(maxY, PIECE_HEIGHT):
-            for x in range(PIECE_WIDTH):
-                if not 0 == datas[y][x] and (vertPos - y) < PLAYFIELD_HEIGHT:
+        maxY = 0 if sharedConsts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - sharedConsts.PLAYFIELD_HEIGHT + 1
+        for y in range(maxY, piece.PIECE_HEIGHT):
+            for x in range(piece.PIECE_WIDTH):
+                if not 0 == datas[y][x] and (vertPos - y) < sharedConsts.PLAYFIELD_HEIGHT:
                     self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
 
     # Effacement d'une ligne (pleine)
     def _clearLine(self, index):
-        if index < 0 or index >= PLAYFIELD_HEIGHT:
+        if index < 0 or index >= sharedConsts.PLAYFIELD_HEIGHT:
             return
         
         # Suppression de la ligne
         self.playField_.pop(index)
 
         # Ajout d'une ligne vide
-        self.playField_.append([0] * PLAYFIELD_WIDTH)
+        self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
 
     # Ajout d'une ligne aléatoire en bas de l'écran
     def _addDirtyLine(self):
-        cubes = random.randint(1,2 ** PLAYFIELD_WIDTH - 1)
+        cubes = random.randint(1,2 ** sharedConsts.PLAYFIELD_WIDTH - 1)
         line = []
-        for index in range(PLAYFIELD_WIDTH):
+        for index in range(sharedConsts.PLAYFIELD_WIDTH):
             # Le bit est-il mis ?
             sBit = 2 ** index
             if cubes & sBit > 0:
@@ -399,11 +386,11 @@ class board(object):
         # Une ligne est vide lorsque le produit des valeurs = 0
         completedLines = []
         maxY = self.currentPiece_.topPos_ + 1
-        if maxY > PLAYFIELD_HEIGHT:
-            maxY = PLAYFIELD_HEIGHT
-        for line in range(self.currentPiece_.topPos_ - PIECE_HEIGHT + 1, maxY):
+        if maxY > sharedConsts.PLAYFIELD_HEIGHT:
+            maxY = sharedConsts.PLAYFIELD_HEIGHT
+        for line in range(self.currentPiece_.topPos_ - piece.PIECE_HEIGHT + 1, maxY):
             currentLineValue = 1 # On reinitialise le compteur
-            for col in range(PLAYFIELD_WIDTH):
+            for col in range(sharedConsts.PLAYFIELD_WIDTH):
                 currentLineValue *= self.playField_[line][col]  # Un seul emplacement vide et la ligne n'est pas pleine !
 
             # La ligne courante est effectivement pleine
@@ -432,9 +419,9 @@ class board(object):
             
             # On valorise le fait qu'il n'y ait pas d'ombre, la vitesse du jeu ainsi que le nombre de ligne de handicap
             #
-            mult = 100 + SCORE_SPEED_GAME * downRowcount + SCORE_DIRTY_LINES * self.parameters_.dirtyLines_
+            mult = 100 + sharedConsts.SCORE_SPEED_GAME * downRowcount + sharedConsts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_
             if False == self.parameters_.shadow_:
-                mult+=SCORE_NO_SHADOW
+                mult+=sharedConsts.SCORE_NO_SHADOW
             
             # Mise à jour du score
             self.eventHandler_.incScore(int(delta*mult/100))

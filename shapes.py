@@ -2,28 +2,28 @@
 #
 #   File     :   shapes.py
 #
-#                   Défintions des 7 tetraminos possibles
+#                   Definition of the 7 tetraminos
 #
-#                   La valeur numérique correspond à l'indice de la couleur
+#                   The num. value is the colour ID. Colours'IDS are based on nCurses index
+
+#                   A piece is given with all its postions after rotation in trignometric direction
+#                   Each "rotation", to be precise, is a combination of a rotation and a translation
+#                   
+#                   Based on Nintendo for pieces and rotation. 
 #
-#                   Tous les états (après rotation dans le sens trigo.) sont fournis
+#   Authors     :   JHB
 #
-#                   Chaque rotation est, pour être précis, la combinaison d'un rotation et d'une translation. 
-#                   Le référentiel utilisé est celui de Nintendo pour la forme et nCurses pour l'indice des couleurs
-#
-#   Auteur      :   JHB
-#
-#   Description :   Définition des tetraminos
+#   Description :   tetraminos definitions
 #
 #   Version     :   0.5.2
 #
 #   Date        :   2020/09/21
 #
 
-# Les "pièces"
+# Different pieces and their rotations
 #
 
-# Vert
+# Green
 S = [['.2..',
       '.22.',
       '..2.',
@@ -33,7 +33,7 @@ S = [['.2..',
       '22..',
       '...']]
 
-# Rouge
+# Red
 Z = [['..1.',
       '.11.',
       '.1..',
@@ -44,7 +44,6 @@ Z = [['..1.',
        '....']]
 
 # Cyan
-# Seulement 2 rotations
 I = [['..6.',
       '..6.',
       '..6.',
@@ -55,14 +54,13 @@ I = [['..6.',
       '....']
       ]
 
-# Jaune
-# La rotation ne change rien
+# Yellow
 O = [[ '....',
       '.33.',
       '.33.',
       '....']]
 
-# Gris (pour curse) ou orange
+# Grey (for curse) or orange
 L = [['77..',
       '.7..',
       '.7..',
@@ -80,7 +78,7 @@ L = [['77..',
       '....',
       '....']]
 
-# Bleu
+# Blue
 J = [['.4..',
       '.4..',
       '44..',
@@ -117,7 +115,7 @@ T = [['.5..',
        '....',
        '....']]
 
-# Variable globale contenant les 7 tetraminos possibles
-shapes = [S, Z, I, O, J, L, T]
+# List of all the pieces
+shapes_ = [S, Z, I, O, J, L, T]
 
 # EOF

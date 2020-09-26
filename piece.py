@@ -2,7 +2,7 @@
 #
 #   File     :   piece.py
 #
-#   Auteur      :   JHB
+#   Authors     :   JHB
 #
 #   Description :   Définition des objets piece et pieceStatus pour la modélistation d'un tetramino
 #

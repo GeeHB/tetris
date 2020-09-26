@@ -2,7 +2,7 @@
 #
 #   File     :   eventHandler.py
 #
-#   Auteur      :   JHB
+#   Authors     :   JHB
 #
 #   Description :   Gestion / prise en compte des évènements
 #                   Cette classe permet au gestionnaire de jeu d'appeler des méthodes du gestionnaire de rendu
