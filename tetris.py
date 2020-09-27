@@ -10,7 +10,7 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.2
+#   Version     :   0.5.3-2
 #
 #   Date        :   2020/09/21
 #
@@ -220,10 +220,14 @@ class tetris(object):
             if evt[0] == self.displayMgr_.EVT_QUIT or (evt[0] == self.displayMgr_.EVT_KEYDOWN and (evt[1] == self.displayMgr_.KEY_QUIT or evt[1] == self.displayMgr_.KEY_START)):
                 cont = False
 
+        # Close display
+        self.displayMgr_.clear()
+
         # Score handling
         bestScores = scores(self.params_.user_)
         myScore = self.gameData_.score()
-        self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
+        if False != myScore:
+            self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
 
     # Private methods
     #   

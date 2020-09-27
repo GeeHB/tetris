@@ -6,7 +6,7 @@
 #
 #   Description :   Définition des objets piece et pieceStatus pour la modélistation d'un tetramino
 #
-#   Version     :   0.5.2
+#   Version     :   0.5.3-2
 #
 #   Date        :   2020/09/21
 #

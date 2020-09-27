@@ -10,7 +10,7 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.2
+#   Version     :   0.5.3-2
 #
 #   Date        :   2020/09/21
 #

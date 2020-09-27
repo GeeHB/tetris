@@ -9,7 +9,7 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.2
+#   Version     :   0.5.3-2
 #
 #   Date        :   2020/09/21
 #
@@ -79,19 +79,19 @@ class tetrisGame(eventHandler):
         else:
             print("\n Best scores :\n")
         
-        currentPos = bestScores[0]
-        currentPos[0] += 1
-
+        currentPos, _ = bestScores[0]
+        currentPos += 1
+        
         for index in range(len(bestScores)-1):
             score = bestScores[index+1]
-            line = ">>>" if index == currentPos[0] else " "
+            line = ">>>" if index == currentPos else " "
             line+= "\t" + str(index + 1) + " -" +  ("  " if index<9 else " ")
             line+=str(score[0])
             line+="\t"
             if len(score[1]):
                 line+="- "
                 line+=score[1]
-            if index == currentPos[0]:
+            if index == currentPos:
                 line+="<<<"
             print(line)
         

@@ -5,14 +5,16 @@ v0.5.3
         ? console mode
     + End of sources translation
     + Scores handling
+    + Press "Enter" to start game
     + Bug fixes
-        + Press "Enter" to start game
         - Error while displaying and computing Level 
-        - Escaping the game
+        - Escaping the game while playingÒ
         - Game finished : wait for key pressed (Esc ou Quit) to close the window
         - Regression : score and # lines errors
+        - Regression : keyboard handling bugs with curses
 
 known issues:
+    - PYGAME : no window resizing on Linux (tested on Fedora 32)
     ? bug in scores when no name is given : all the scores are saved 
 
 v0.5.2
