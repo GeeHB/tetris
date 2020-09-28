@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 #
 
 import pygame
@@ -279,11 +279,13 @@ class pygameTetris(tetrisGame.tetrisGame):
         
         pass
 
-    # Changement de repère (et de coordonnées)
-    #   (x,y) sont les coordonnées à translater
-    #   inBoard : Dans l'espace de jeu (True) ou dans la zone "pièce suivante"
-    #   retourne le tuple (x,y, dx, dy) dans le nouveau système ou dx, dy 
-    #   sont les incréments (ie la largeur reèlle des blocs à l'écran) 
+    # Change the origin and the coordinate system
+    #   (x,y) are to be translated
+    #   inBoard : int he board (True) or in the "next piece" area
+    #
+    #   returns a tuple (x,y, dx, dy) in the new coordonate system
+    #       dx, dy  are the width and height of the block in the screen
+    #
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         
         if inBoard:

@@ -10,9 +10,9 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 #
 
 import sharedConsts
@@ -85,7 +85,7 @@ class scores(object):
                     tops.append(score)
 
                     if score[0] == newScore:                    
-                        tops[0] = (len(tops) - 1, None)      # keep its index
+                        tops[0] = (len(tops) - 2, None)      # keep its index
 
                 # Next ...
                 index += 1
@@ -101,7 +101,7 @@ class scores(object):
 
                 # Current score ?
                 if score[0] == newScore:                    
-                    tops[0] = (len(tops) - 1, None)      # keep its index
+                    tops[0] = (len(tops) - 2, None)      # keep its index
         
         # Update on disk
         self._save()

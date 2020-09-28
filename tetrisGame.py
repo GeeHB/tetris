@@ -9,15 +9,16 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 #
 
 import sharedConsts
 from eventHandler import eventHandler
 import board
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
+from colorizer import colorizer, backColor, textColor, textAttribute
 
 # Classe tetrisGame
 #
@@ -74,13 +75,14 @@ class tetrisGame(eventHandler):
         if None == bestScores:
             return
 
+        txtColours = colorizer(True)
+
         if me and len(me):
-            print("\n Best scores of ", me, " :\n")
+            print("\n Best scores of ", txtColours.colored(me, formatAttr=[textAttribute.BOLD]), " :\n")
         else:
             print("\n Best scores :\n")
         
         currentPos, _ = bestScores[0]
-        currentPos += 1
         
         for index in range(len(bestScores)-1):
             score = bestScores[index+1]
@@ -93,12 +95,13 @@ class tetrisGame(eventHandler):
                 line+=score[1]
             if index == currentPos:
                 line+="<<<"
-            print(line)
+                print(txtColours.colored(line, textColor.RED))
+            else:
+                print(line)
         
         # and finally the current score
-        print("\nYour score : ", currentScore)
+        print("\nYour score : ", txtColours.colored(str(currentScore), formatAttr=[textAttribute.BOLD]))
 
-    # Jeu en cours ?
     def isRunning(self):
         return self.GAME_RUNNING == self.status_
 
@@ -113,48 +116,42 @@ class tetrisGame(eventHandler):
     def waitForEvent(self):
         pass
     
-    # Lecture non bloquante du clavier
-    # Retourne le caractère associé à la touche ou le caractère vide ('')
+    # Non-blocking access to the keyboard
+    #   return a char
     def checkKeyboard(self):
         return ''
 
-    # L'espace de jeu
+    # Set a "pointer" to the game'board
+    #
     def setBoard(self, currentBoard):
         self.board_ = currentBoard
 
-    # C'est parti !
+    # Let's go
+    #
     def start(self):
-        # L'objet doit au minimum avoir été initialisé
+        # Check the object state
         if self.GAME_INIT == self.status_ or self.GAME_STOPPED == self.status_:
-            # Initialisations ...
+            # Initializations ...
             self.currentPos_ = None
 
-            # Dessin du cadre
+            # Drawings
             self._drawBackGround()
-
-            # Dessin de l'espace de jeu
             self.drawBoard()
-
-            # Affichage du score et du niveau
             self.drawScore()
             self.drawLevel()
             self.drawLines()
 
-            # C'est parti
+            # Let's go
             self.status_ = self.GAME_RUNNING
             self.board_.start()
             
-            # Dessin de la pièce suivante
-            #self._drawNextPiece(self.board_.nextPieceIndex())
-
-            # Ok
             self._updateDisplay()
             return True
-        
-        # Sinon on ne fait rien
+
         return False
 
     # Helpers
+    #
     def drawScore(self):
         self._drawNumValue(0, self.board_.score())
 
@@ -201,96 +198,104 @@ class tetrisGame(eventHandler):
     def _drawBackGround(self):
         pass
 
-    # Changement de repère (et de coordonnées)
-    #   (x,y) sont les coordonnées à translater
-    #   inBoard : Dans l'espace de jeu (True) ou dans la zone "pièce suivante"
-    #   retourne le tuple (x,y, dx, dy) dans le nouveau système ou dx, dy 
-    #   sont les incréments (ie la largeur et la hauteur reèlles des blocs à l'écran) 
+    # Change the origin and the coordinate system
+    #   (x,y) are to be translated
+    #   inBoard : int he board (True) or in the "next piece" area
+    #
+    #   returns a tuple (x,y, dx, dy) in the new coordonate system
+    #       dx, dy  are the width and height of the block in the screen
+    # 
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         return (x,y,1,1)
 
-    # Affichage d'un bloc coloré aux coordonnées données (dans la zone donnée)
+    # Draw a single colored block
+    #
     def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
         pass
 
-    # Effacement
+    # Erase a tetramino
+    #
     def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
         pass
 
-    # Méthodes surchargées de eventHandler
+    # eventHandler overloads
     #
 
-    # Un pièce vient de bouger (elle doit donc être effacée à son ancienne position et affichée à la nouvelle)
+    # The position of  tetraminos has changed
+    #   The piece must be erased from its previous pos and redrawwn at the new position
+    #
     def piecePosChanged(self, newState):
-        # Y at'il eu une changement de position et/ou de rotation ?
+        # Any changes (or rotation) ?
         if self.currentPos_ == None  or self.currentPos_ != newState: 
-            # On peut effacer la pièce et son ombre
-            #
+            # Erase the tetramino (and maybe it's shadow)
             if None != self.currentPos_:                    
-                # Effacer = reafficher avec la couleur du fond
                 self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, sharedConsts.COLOUR_ID_BOARD)
                 if -1 != self.currentPos_.shadowTopPos_:
-                    # puis l'ombre
+                    # then the shadow
                     self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.shadowTopPos_, sharedConsts.COLOUR_ID_BOARD)
 
-            ## ... puis on l'affiche à la nouvelle position
+            # ... redraw
             if -1 != newState.shadowTopPos_:
-                # d'abord l'ombre
+                # first : the shadow
                 self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , sharedConsts.COLOUR_ID_SHADOW, shadow = True)
-            # puis la pièce (qui peut recouvrir l'ombre !!!!)
+            
+            # and then the tetramino (can recover the shadow !!!!)
             self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_ , self.board_.tetraminos_[newState.index_].colour())
 
-            # Mise à jour de l'affichage
             self._updateDisplay()
             
-            # On conserve la position de la pièce
             self.currentPos_ = pieceStatus(other = newState)
 
-    # Une pièce a atteint le plus bas niveau possible de l'espace de jeu
+    # A tetramino is at the lowest possible position
+    #
     def pieceReachedLowerPos(self):
-        # Je ne dois plus l'effacer
+        # Don't erase this piece !!!
         self.currentPos_ = None
 
     # Increase the score
+    #
     def incScore(self, inc):
         super().incScore(inc)
         self.board_.incScore(inc)
         self.drawScore()
         self._updateDisplay()
         
-    # Change game level
+    # The game level just changed
+    #
     def levelChanged(self, newLevel):
         super().levelChanged(newLevel)
         self.board_.setLevel(newLevel)
         self.drawLevel()
         self._updateDisplay()
 
-    # Toutes les lignes complêtes ont été retirées
+    # ...
+    # 
     def allLinesCompletedRemoved(self, rowCount, totalLines):
         super().allLinesCompletedRemoved(rowCount, totalLines)
         self.board_.setLines(totalLines)
-        # Réaffichage de l'espace de jeu
+        
         self.drawBoard()
         self.drawLines()
         self._updateDisplay()
 
-    # L'index de la pièce suivante vient d'être modifié
+    # New index for the "next piece"
+    #
     def nextPieceIndexChanged(self, nextPieceIndex):
         super().nextPieceIndexChanged(nextPieceIndex)
         self._drawNextPiece(nextPieceIndex)
         self._updateDisplay()
 
-    # La partie est terminée
+    # The game is over
+    #
     def gameFinished(self):
         super().gameFinished()
-        # dont acte !
         self.status_ = self.GAME_STOPPED
     
-    #   Méthodes à usage interne
+    #   "internal" methods
     #
     
-    # Dessin de tous les "carrés" non vide d'une pièce donné avec la couleur fournie
-    #   le paramètre inBoard indique si les coordonnées correspondent à l'espace de jeu
+    # Draw a tetramino using the given colour
+    #   inBoard : True => draw in the board, False => draw "next" piece
     #
     def _drawSinglePiece(self, datas, cornerX, cornerY, colourID, inBoard = True, shadow = False):
         
@@ -313,6 +318,7 @@ class tetrisGame(eventHandler):
             y+=h
 
     # Display the next piece
+    #
     def _drawNextPiece(self, pieceIndex):
         # Erase the previous piece 
         self._eraseBlocks(0, 0, 4, 4, sharedConsts.COLOUR_ID_BOARD, False)
@@ -323,6 +329,7 @@ class tetrisGame(eventHandler):
             self._drawSinglePiece(datas, 0, 0, colourIndex, False)
 
     # Format integer
+    #
     def _formatNumber(self, number):
         current = str(number)
         text = ''

@@ -9,9 +9,9 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 # 
 
 import random
