@@ -10,9 +10,9 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 #
 
 import platform, sys, math
@@ -53,7 +53,6 @@ class tetris(object):
 
         if 0 == parameters.size():
             # No parameters use default and start game !
-            self.params_.useGUI_ = False
             return True
         else:
             # Console display mode ?
@@ -264,12 +263,12 @@ class tetris(object):
     # Show usage
     #
     def _usage(self):
-        print(self.txtColours_.colored("\tetris.py", formatAttr=[textAttribute.GRAS]))
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.FONCE]), ": Start the game at {numLevel}")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[textAttribute.FONCE]), ": Display shadow ot the piece at the bottom of the playfiled")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.FONCE]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.FONCE]), ": Set the name of the current player")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.FONCE]), ": Console display mode (if nCurses is available)")
+        print(self.txtColours_.colored("\tetris.py", formatAttr=[textAttribute.BOLD]))
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.DARK]), ": Start the game at {numLevel}")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[textAttribute.DARK]), ": Display shadow ot the piece at the bottom of the playfiled")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.DARK]), ": Set the name of the current player")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.DARK]), ": Console display mode (if nCurses is available)")
 
 #
 # Boucle principale du jeu

@@ -15,9 +15,9 @@
 #
 #   Description :   tetraminos definitions
 #
-#   Version     :   0.5.3-2
+#   Version     :   0.5.3-3
 #
-#   Date        :   2020/09/21
+#   Date        :   2020/09/28
 #
 
 # Different pieces and their rotations

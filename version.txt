@@ -1,8 +1,8 @@
 v0.5.3
     * 21/09/2020
-    ? Linux
-        ? PYGame
-        ? console mode
+    + Linux
+        ? PYGame => no resize ???
+        + console mode => OK
     + End of sources translation
     + Scores handling
     + Press "Enter" to start game
@@ -15,7 +15,6 @@ v0.5.3
 
 known issues:
     - PYGAME : no window resizing on Linux (tested on Fedora 32)
-    ? bug in scores when no name is given : all the scores are saved 
 
 v0.5.2
     * 21/09/2020
