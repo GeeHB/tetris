@@ -6,9 +6,9 @@
 #
 #   Description :   shared consts for Tetris Game
 
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-5
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 # 
 
 #
@@ -34,10 +34,10 @@ SCORES_FILE_SEP = ","
 SCORES_MAX_COUNT    = 10        # Max. scores per user
 
 # Score valorisation (in %)
-SCORE_NO_SHADOW     = 15        # +15% if no pieces'shadowing
+SCORE_NO_SHADOW     = 10        # +10% if no pieces'shadowing
 SCORE_SPEED_GAME    = 2         # 2% * {piece's height} => quick play <=> more points
 SCORE_DIRTY_LINES   = 0.1       # 0.1% per starting dirty-line
-
+SCORE_LEVEL_VALUATION = 15      # 15% more for each level
 
 #
 # Timer & game's Levels

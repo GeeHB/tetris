@@ -4,27 +4,26 @@
 #
 #   Authors     :   JHB
 #
-#   Description :   Gestion / prise en compte des évènements
-#                   Cette classe permet au gestionnaire de jeu d'appeler des méthodes du gestionnaire de rendu
+#   Description :   Handle the notifications to update display
 #                   
-#                   Cette classe est abstraite
+#                   This is an abstract class
 #
-#   Remarque    :   Nécessite Python 3.xx
+#   Remarque    :   Python 3.xx
 #
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-5
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
-# Classe eventHandler
-#   Gestion des évènements en provenance de l'espace de jeu et ayant une influence sur le rendu graphique
+# eventHandler object
+#   Handle the notifications to update display
 #
 class eventHandler(object):
 
     # Members
     #
 
-    # Chaînage
+    # Other handler ?
     nextHandler_ = None
 
     def setNextHandler(self, next = None):

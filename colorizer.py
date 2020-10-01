@@ -78,7 +78,7 @@ class colorizer:
         if True == colored and False == packageTermColor:
             self.colored_ = False
             #print(self.checkBoxLine(False, "termcolor package (python-termcolor) is not installed"))
-            print("Error - termcolor package (python-termcolor) is not installed")
+            print("Warning - termcolor package (python-termcolor) is not installed")
                         
     # Formatage d'une ligne de texte
     def colored(self, text, txtColor = None, bkColor = None, formatAttr = None):

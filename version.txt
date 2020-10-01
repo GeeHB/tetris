@@ -1,14 +1,13 @@
 v0.5.3
-    * 21/09/2020
+    * 01/10/2020
     + Linux
-        ? PYGame => no resize ???
         + console mode => OK
-    + End of sources translation
+    + End of sources translation - I hope so :)
     + Scores handling
     + Press "Enter" to start game
     + Bug fixes
         - Error while displaying and computing Level 
-        - Escaping the game while playingÒ
+        - Escaping the game while playing
         - Game finished : wait for key pressed (Esc ou Quit) to close the window
         - Regression : score and # lines errors
         - Regression : keyboard handling bugs with curses

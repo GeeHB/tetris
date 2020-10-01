@@ -10,16 +10,16 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-5
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
 import platform, sys, math
 
 import sharedConsts
 from cmdLineParser import cmdLineParser
-from colorizer import colorizer, backColor, textColor, textAttribute    # for text coloration in console mode
+from colorizer import colorizer, backColor, textColor, textAttribute
 from tetrisGame import tetrisGame
 from board import tetrisParameters
 from scores import scores
@@ -115,6 +115,7 @@ class tetris(object):
         return True
         
     # Can we start the game ?
+    #
     def isReady(self):
 
         # Display mode
@@ -124,7 +125,7 @@ class tetris(object):
                 self.displayMgr_ = pygameTetris()
             else:
                 # GUI wanted but no pygame => try curses
-                print("Error - pygame not installed try with curses")
+                print("Error - pygame not installed. Try with curses")
                 params.useGUI_ = False
 
         if False == params.useGUI_:
@@ -135,7 +136,7 @@ class tetris(object):
                 
         # No display ?
         if not self.displayMgr_:
-            print("Error - no display handler. Ending game")
+            print("Error - no display handler. Ending the game")
             return False
 
         # Check display manager
@@ -151,6 +152,7 @@ class tetris(object):
         return True
 
     # Starting the game
+    #
     def start(self):
         self.gameData_.setParameters(self.params_)
         self._newGame()
@@ -160,20 +162,21 @@ class tetris(object):
         if self.displayMgr_:
             self.displayMgr_.end()
 
-    # Lancement d'une partie
+    # A new game
+    #
     def _newGame(self):
 
-        # initial speed
+        # Initial speed
         seqCount = 0
         seqDuration = self._updateSpeed(sharedConsts.INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
         ts, now = 0, 0
         uWait = 5 / 1000.0   # en ms.
 
-        # On part !
+        # start !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
         
-        # Escape the game ?
+        # Cancel the game ?
         cont = True
         while cont :
             evt = self.displayMgr_.waitForEvent()
@@ -185,22 +188,22 @@ class tetris(object):
 
         self.displayMgr_.drawNextPiece()
 
-        # Gestion du jeu
+        # Game main loop
         while self.displayMgr_.isRunning():
             diff = 0
             ts = now
 
-            # Pendant l'intervalle de descente, on peut bouger la pièce
+            # During this short period, the piece can be moved or rotated
             while self.displayMgr_.isRunning() and diff < seqDuration :
                 self._handleGameKeys()
                 time.sleep(uWait) # usleep(5000)
-                now = time.monotonic_ns() # Fonctionne aussi sous macOS à partir de Python 3.7
+                now = time.monotonic_ns()
                 diff = now - ts
 
-            # Descente automatique ...
+            # One line down ...
             self.gameData_.down()
 
-            # Gestion de l'accelération
+            # Accelerate ?
             seqCount += 1
             if 0 == (seqCount % sharedConsts.MOVES_UPDATE_LEVEL):
                 # Real level (based on pieces movements)
@@ -222,21 +225,23 @@ class tetris(object):
         # Close display
         self.displayMgr_.clear()
 
-        # Score handling
-        bestScores = scores(self.params_.user_)
-        myScore = self.gameData_.score()
-        if False != myScore:
-            self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
+        if not self.displayMgr_.isCancelled():
+            # Score handling
+            bestScores = scores(self.params_.user_)
+            myScore = self.gameData_.score()
+            if False != myScore:
+                self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
 
+    #
     # Private methods
     #   
     
-    # Analyse du clavier pendant la phase de jeu
+    # Hadle keyboard inputs
+    #
     def _handleGameKeys(self):
         inputChar = self.displayMgr_.checkKeyboard()
-        if self.displayMgr_.KEY_STOP == inputChar:
-            # Fin de partie
-            self.displayMgr_.end()
+        if self.displayMgr_.KEY_STOP == inputChar:  # "Escape"/cancel the game
+            self.displayMgr_.cancel()
         elif self.displayMgr_.KEY_RIGHT == inputChar:
             self.gameData_.right()
         elif self.displayMgr_.KEY_LEFT == inputChar:
@@ -248,7 +253,7 @@ class tetris(object):
         elif self.displayMgr_.KEY_FALL == inputChar:
             self.gameData_.fall()
 
-    # Mise à jour de la vitesse (ie. délai max. d'attente entre 2 descentes auto.)
+    # Change the game'speed
     def _updateSpeed(self, currentDuration, level, incLevel = 1):
         if level >= sharedConsts.MAX_LEVEL_ACCELERATION :
             return currentDuration
@@ -271,14 +276,14 @@ class tetris(object):
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.DARK]), ": Console display mode (if nCurses is available)")
 
 #
-# Boucle principale du jeu
+# Entry point
 #
 
 if __name__ == '__main__':
     ver = sys.version_info
     if ver.major < sharedConsts.PYTHON_MIN_MAJOR or (ver.major == sharedConsts.PYTHON_MIN_MAJOR and ver.minor < sharedConsts.PYTHON_MIN_MINOR):
         out = str(sharedConsts.PYTHON_MIN_MAJOR) + "." + str(sharedConsts.PYTHON_MIN_MINOR)
-        print("Expected minimum version for Python ", out)
+        print("Error - Expected minimum version for Python ", out)
         exit(1) 
 
     import time

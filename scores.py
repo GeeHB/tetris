@@ -10,9 +10,9 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-5
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
 import sharedConsts

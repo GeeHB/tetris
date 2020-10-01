@@ -4,14 +4,14 @@
 #
 #   Authors     :   JHB
 #
-#   Description :   Espace de jeu
-#                   Modélisation de la matrice avec l'ensemble des pavés colorés
+#   Description :   board class - gameplay
+#                   The matrix with all the colored bloceked (ie dirty lines and / or posed tetraminos)
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-5
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 # 
 
 import random
@@ -52,47 +52,46 @@ class tetrisParameters:
 class board(object):
     # Members
     #
-    tetraminos_ = []    # Listes des pièces (avec leurs états)
+    tetraminos_ = []    # Tetraminos (all diff. rotation states)
 
-    playField_  = []    # Matrice de jeu
+    playField_  = []
     
-    parameters_ = None  # Paramètres du jeu
+    parameters_ = None
 
     score_, lines_, level_ = 0, 0, 1
     
-    # Informations sur le tetramino courant
     currentPiece_ = piece.pieceStatus()   
-    nextIndex_ = -1      # Index de la pièce suivante
+    nextIndex_ = -1                     # next piece index
 
-    eventHandler_ = None  # Gestionnaire d'évènements
+    eventHandler_ = None  # Events handler
 
-    # Méthodes
+    # Methods
     #
 
-    # Constructeur
+    # Construction
     def __init__(self, handler = None):
         
-        # Initialisation du générateur pseudo-aléatoire
         random.seed()
 
-        # Si aucun gestionnaire d'evt => on en crée un bidon
+        # Events handler
         self.eventHandler_ = handler if not None == handler else eventHandler()
 
-        # Construction de la liste des tetraminos à partir de leurs modèles respectifs
+        # Build the tetraminos'list
         for shape in shapes.shapes_:
             self.tetraminos_.append(piece.piece(template = shape))
 
-    # (re)initialisation de l'espace de jeu
-    #   lines : nombre de lignes "sales" à ajouter au bas de l'écran
-    def setParameters(self, params = None):
-        
+    # Game's paraeters
+    def parameters(self):
+        return self.parameters_ 
+
+    def setParameters(self, params = None):   
         self.parameters_ = tetrisParameters(params)
         self.setScore(0)
         self.setLines(0)
         self.setLevel(self.parameters_.startLevel_)
         self.setNextPieceIndex(-1)
 
-        # Initialization of tetraminos
+        # Initialization of tetraminos (no rotation)
         for sPiece in self.tetraminos_:
             sPiece.rotateBack()
         
@@ -112,16 +111,12 @@ class board(object):
         for _ in range(self.parameters_.dirtyLines_, sharedConsts.PLAYFIELD_HEIGHT):
             self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
 
-    # Accès aux paramètres
-    def parameters(self):
-        return self.parameters_ 
-
-    # C'est parti
+    # Let's play
+    #
     def start(self):
-        # La première pièce
-        self.newPiece()
+        self.newPiece() # the first piece
 
-    # Niveau du jeu
+    # Game level
     #
     def level(self):
         return self.level_
@@ -132,212 +127,220 @@ class board(object):
         return self.level_
 
     # Score
+    #
     def score(self):
         return self.score_
     def setScore(self, score):
         self.score_ = score
-    def incScore(self, inc):
+    def incScore(self, inc):    # +=
         self.score_+=inc
 
-    # Lignes
+    # Lines (done)
+    #
     def lines(self):
         return self.lines_
     def setLines(self, value = 0):
         self.lines_ = value
-    def incLines(self, inc):
+    def incLines(self, inc):    # +=
         self.lines_+=inc
 
-    # Pièce suivante
+    # Next piece
+    #
     def nextPieceIndex(self):
         return self.nextIndex_
     def setNextPieceIndex(self, index):
         self.nextIndex_ = index
     
-    # Retourne le tuple (datas, couleur)
+    # About a piece ...
+    #  returns the tuple (blocks'datas, block colour)
     def nextPieceDatas(self):
         if self.nextPieceIndex() < 0 or self.nextPieceIndex() >= len(self.tetraminos_): # L'index doit être correct
             raise IndexError
         return (self.tetraminos_[self.nextPieceIndex()].datas(), self.tetraminos_[self.nextPieceIndex()].colour())
 
-    # Piece selon son index et selon son etat ...
+    # Datas of a piece
+    #
     def pieceDatas(self, index, rotIndex):
         if index < 0 or index >= len(self.tetraminos_) or rotIndex < 0 or rotIndex >= self.tetraminos_[index].maxRotations(): # L'index doit être correct
             raise IndexError
         return self.tetraminos_[index][rotIndex]
 
-    # Nouvelle pièce
+    # New pièce
+    #
     def newPiece(self):
-        # Mise à jour des index de pièces
+        # New indexes
         self.currentPiece_.index_ = self._newPieceIndex() if -1 == self.nextPieceIndex() else self.nextPieceIndex()
         self.setNextPieceIndex(self._newPieceIndex())
         
-        # La pièce est en haut, pas encore visible et centrée horizontalement
+        # The piece is a the top of the game play, centered horizontally
         self.currentPiece_.leftPos_ = int((sharedConsts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
         self.currentPiece_.topPos_ = sharedConsts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
-        self.currentPiece_.minHeight_ = -1  # Pas d'ombre
-        self.currentPiece_.rotationIndex_ = 0
-        self.tetraminos_[self.currentPiece_.index_].rotateBack()    # Réinitialisation du compteur de rotations
-        
-        # On previent le gestionnaire d'affichage
+        self.currentPiece_.minHeight_ = -1          # no shadow
+        self.currentPiece_.rotationIndex_ = 0       # no rotation
+        self.tetraminos_[self.currentPiece_.index_].rotateBack()    
+
+        # Notify the display manager
         self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
 
-        # Si je ne peux pas descendre alors la partie est terminée
+        # Can I go on line down ?
         if False == self._down(True):
+            # No => the game is over
             self.eventHandler_.gameFinished()
 
-    # Rotations
+    # Rotation(s)
     #
 
-    # Sens trigonométrique
+    # anti-clockwise
     def rotateLeft(self):
         
-        # On fait tourner la pièce
+        # Rotate
         rotIndex = self.tetraminos_[self.currentPiece_.index_].rotateLeft()
 
         # Possible ?
         if True == self._canMove():
-            # On conserve l'indice de rotation
             self.currentPiece_.rotationIndex_ = rotIndex
             
-            # La pièce peut tourner
+            # Apply rotation 
             self.piecePosChanged()
             return True
 
-        # Non => on annule la rotation
+        # No => cancel rotation
         self.tetraminos_[self.currentPiece_.index_].rotateRight()
         return False
 
-    # Déplacement de la pièce
+    #
+    # Piece movements
     #
 
-    # Vers la gauche
+    # Move left
+    #
     def left(self):
         
-        # Test de la position
+        # Test position
         if True == self._canMove(leftPos = self.currentPiece_.leftPos_ - 1):
-            # Oui => on conserve la position et on pose la pièce
+            # Correct
             self.currentPiece_.leftPos_ -= 1
             
-            # La pièce peut tourner
+            # apply chgmnt
             self.piecePosChanged()
             return True
         
         # Impossible
         return False
 
-    # Vers la droite
+    # Move right
+    #
     def right(self):
         
-        # Test de la position
+        # Test position
         if True == self._canMove(leftPos = self.currentPiece_.leftPos_ + 1):
-            # Oui => on conserve la position et on pose la pièce
+            # Correct
             self.currentPiece_.leftPos_ += 1
+            
+            # apply chgmnt
             self.piecePosChanged()
             return True
         
         # Impossible
         return False
 
-    # Un cran vers le bas
+    # One line down
     def down(self):
        return self._down()
 
     def _down(self, newPiece = False):
         
-        # Test de la position
+        # Test position
         if True == self._canMove(topPos = self.currentPiece_.topPos_ - 1):
-            # Oui => on conserve la position et on pose la pièce
+            # correct
             self.currentPiece_.topPos_ -= 1
             self.piecePosChanged()
             return True
         
-        # La pièce est déja en bas
-        if False == newPiece:
-            self._reachLowerPos()   # La pièce est en mouvement
+        if not newPiece:
+            self._reachLowerPos()
     
         return False
 
-    # Le plus bas possible
+    # Go down (as many lines as possible)
+    #
     def fall(self):
         
-        # Jusqu'ou puis je descendre ?
         bottom = self._minTopPosition()
         delta = self.currentPiece_.topPos_ - bottom
         self.currentPiece_.topPos_ = bottom
 
-        # Je suis maintenant en bas ...
-        self.piecePosChanged() # La pièce doit être affichée en bas
+        # updates ...
+        self.piecePosChanged()
         self._reachLowerPos(delta)
     
-    # Méthodes privées
+    # "private" methods
     #
 
-    # Index d'une nouvelle pièce
+    # Get a new index for the next piece
+    #
     def _newPieceIndex(self):
         return random.randint(0, len(self.tetraminos_) - 1)
 
-    # La piece peut-elle être positionnée aux coordonnées données ?
+    # Can the current piece be at the given position ?
     #
     def _canMove(self, leftPos = None, topPos = None):
 
-        # Si les coordonnées ne sont pas renseignées on utilise la position actuelle
+        # No coordinates => use current pos.
         if None == leftPos:
             leftPos = self.currentPiece_.leftPos_
         if None == topPos:
             topPos = self.currentPiece_.topPos_
 
-        # Récupération des données de la pièce
+        # Piece's datas
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
-        # On analyse tous les points en partant du bas
-        # ... pour optimiser un peu les traitements
+        # Test all the contained blocks starting from bottom
+        # ... to optimize a little ...
         for y in range(piece.PIECE_HEIGHT-1, -1, -1):
             for x in range(piece.PIECE_WIDTH):
                 if not 0 == datas[y][x]:
-                    # Il y a un cube à afficher ...
-                    # Quelle serait sa position reèlle ?
+                    # "real" position of the block 
                     realX = x + leftPos
-                    realY = topPos - y  # L'origine du playground est en bas de l'écran
+                    realY = topPos - y 
 
-                    # En dehors de la zone de jeu ?
+                    # out of the gameplay's limits ?
                     if realX < 0 or realY < 0 or realX >= sharedConsts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
                         return False
                     
-                    # Y a t'il déja qque chose à cette place ?
+                    # Is there a block at this place ?
                     if realY < sharedConsts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
                         return False
 
-        # De toute évidence oui !
+        # Yes => the position is valid
         return True
 
-    # Jusqu'à quelle position la pièce peut-elle descendre ?
-    # Utile pour accèlerer la descente et pour calculer la position de l'ombre sous la pièce
+    # Get a piece min. pos. index (vertical value)
+    #
     def _minTopPosition(self):
         currentTop = self.currentPiece_.topPos_
 
-        # On essaye de descendre
+        # Try to move one line down
         while self._canMove(self.currentPiece_.leftPos_, currentTop):
-            currentTop -= 1     # On descend
+            currentTop -= 1
 
-        # On retourne la dernière position valide
+        # current pos. is invalid => go up one line
         return currentTop+1
 
-    # Dépôt du tetramino à l'emplacement courant
+    # Put the tetramino a the current position
+    #
     def _putPiece(self, colour = None):
         if None == colour:
-            # Ajout de la pièce dans son état "normal"
             vertPos = self.currentPiece_.topPos_
 
-            # ... et à sa couleur
             realColour = self.tetraminos_[self.currentPiece_.index_].colourIndex_
         else:
             vertPos = self.currentPiece_.shadowTopPos_
             realColour = colour
 
-         # Récupération des données de la pièce
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
-        # Copie des carrés non vides les uns après les autres dans l'espace de jeu
+        # Copuy all the colored blocks in the gameplay
         #
         maxY = 0 if sharedConsts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - sharedConsts.PLAYFIELD_HEIGHT + 1
         for y in range(maxY, piece.PIECE_HEIGHT):
@@ -345,97 +348,99 @@ class board(object):
                 if not 0 == datas[y][x] and (vertPos - y) < sharedConsts.PLAYFIELD_HEIGHT:
                     self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
 
-    # Effacement d'une ligne (pleine)
+    # Clear and remove a line (completed)
+    #
     def _clearLine(self, index):
         if index < 0 or index >= sharedConsts.PLAYFIELD_HEIGHT:
             return
         
-        # Suppression de la ligne
+        # Remove the line from the screen
         self.playField_.pop(index)
 
-        # Ajout d'une ligne vide
+        # Add a ne empty line 
         self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
 
-    # Ajout d'une ligne aléatoire en bas de l'écran
+    # Add a randomly generated dirty line at the bottom of the gameplay
+    #
     def _addDirtyLine(self):
         cubes = random.randint(1,2 ** sharedConsts.PLAYFIELD_WIDTH - 1)
         line = []
-        for index in range(sharedConsts.PLAYFIELD_WIDTH):
-            # Le bit est-il mis ?
-            sBit = 2 ** index
+        sBit = 1 # 2 ^ 0
+        for _ in range(sharedConsts.PLAYFIELD_WIDTH):
+            # bit is set ?
             if cubes & sBit > 0:
-                # Oui => ajout d'un carré coloré
+                # yes => add a colored block
                 line.append(random.randint(1,7))
             else:
-                # non => ajout d'un espace
+                # no => empty space
                 line.append(0)
+
+            # next bit value
+            sBit *= 2
         
-        # Ajout de la ligne
+        # Add the line
         self.playField_.append(line)
     
-    # La pièce a atteint le niveau le plus bas possible
+    # The piece is at the lowest possible level
+    #
     def _reachLowerPos(self, downRowcount = 0):
         
-        # On l'ajoute à l'espace de jeu
+        # put it
         self._putPiece()
         
+        # Notify
         self.eventHandler_.pieceReachedLowerPos()
         
-        # A t'on complété des lignes ?
-        # On regarde les 4 lignes concernées
-        # Une ligne est vide lorsque le produit des valeurs = 0
+        # Are line(s) completed ?
+        # Check the 4 possible lines
         completedLines = []
         maxY = self.currentPiece_.topPos_ + 1
         if maxY > sharedConsts.PLAYFIELD_HEIGHT:
             maxY = sharedConsts.PLAYFIELD_HEIGHT
         for line in range(self.currentPiece_.topPos_ - piece.PIECE_HEIGHT + 1, maxY):
-            currentLineValue = 1 # On reinitialise le compteur
+            currentLineValue = 1
             for col in range(sharedConsts.PLAYFIELD_WIDTH):
-                currentLineValue *= self.playField_[line][col]  # Un seul emplacement vide et la ligne n'est pas pleine !
+                currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
 
-            # La ligne courante est effectivement pleine
+            # The line is complete
             if not 0 == currentLineValue:
-                # Une ligne de plus (on conserve l'ordre des lignes)
                 completedLines.insert(0,line)
                 self.eventHandler_.lineCompleted(line)
 
-        # Effacement des lignes
         for lineIndex in completedLines:
             self._clearLine(lineIndex)
 
-        # Mise à jour du score
+        # Update the score
         completedCount = len(completedLines)
         if completedCount >= 1:
             delta = 0
             if 1 == completedCount:
-                delta += 100 * self.level_
+                delta += 100
             elif 2 == completedCount:
-                delta += 300 * self.level_
+                delta += 300
             elif 3 == completedCount:
-                delta += 500 * self.level_  # * 400 ?
+                delta += 500
             else:
-                # Donc 4 !
-                delta += 800 * self.level_    # * 800 ?
+                # 4 !
+                delta += 800    # * 800 ?
             
-            # On valorise le fait qu'il n'y ait pas d'ombre, la vitesse du jeu ainsi que le nombre de ligne de handicap
-            #
-            mult = 100 + sharedConsts.SCORE_SPEED_GAME * downRowcount + sharedConsts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_
+            mult = 100 + sharedConsts.SCORE_SPEED_GAME * downRowcount + sharedConsts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_ + sharedConsts.SCORE_LEVEL_VALUATION * self.lines_
             if False == self.parameters_.shadow_:
                 mult+=sharedConsts.SCORE_NO_SHADOW
             
-            # Mise à jour du score
             self.eventHandler_.incScore(int(delta*mult/100))
 
         if 0 != completedCount:
             self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines() + completedCount)            
 
-        # Nouvelle pièce
+        # Get a new piece
         self.newPiece()
 
-    # La position (ou la rotation) de la pièce passée en param. a changée
+    # The piece has moved or rotated
+    #
     def piecePosChanged(self):
 
-        # Calcul de l'ombre ?
+        # Compute the pos ot the shadow ?
         if True == self.parameters_.shadow_:
             self.currentPiece_.shadowTopPos_ = self._minTopPosition()
 
