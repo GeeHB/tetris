@@ -4,14 +4,13 @@
 #
 #   Authors     :   JHB
 #
-#   Description :   Tetris'outputs - bastrct class 
+#   Description :   Tetris'outputs - abstract class 
 #                   
+#   Remarque    :   min Python 3.xx
 #
-#   Remarque    :   Nécessite Python 3.xx
+#   Version     :   0.5.3-4
 #
-#   Version     :   0.5.3-3
-#
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
 import sharedConsts
@@ -20,7 +19,7 @@ import board
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
 from colorizer import colorizer, backColor, textColor, textAttribute
 
-# Classe tetrisGame
+# tetrisGame - abstract class
 #
 class tetrisGame(eventHandler):
 
@@ -44,15 +43,16 @@ class tetrisGame(eventHandler):
     KEY_NOEVENT     = ''
 
     # Game status
-    GAME_CREATED = 0
-    GAME_INIT    = 1
-    GAME_RUNNING = 2
-    GAME_STOPPED = 3
+    STATUS_CREATED = 0
+    STATUS_INIT    = 1
+    STATUS_RUNNING = 2
+    STATUS_STOPPED = 4
+    STATUS_CANCELED = 8
     
     # Members
-    board_  = None          # Espace de jeu
-    status_ = GAME_CREATED  # Par défaut l'objet est "juste" crée
-    currentPos_ = None      # Ou se trouve la pièce actuelle (pour pouvoir l'effacer ...)
+    board_  = None
+    status_ = STATUS_CREATED  # Just created
+    currentPos_ = None
 
     itemTexts_     = ["Score", "Level", "Lines", "Next piece"]
 
@@ -62,7 +62,7 @@ class tetrisGame(eventHandler):
 
     # Construction
     def __init__(self):
-        self.status_ = self.GAME_CREATED
+        self.status_ = self.STATUS_CREATED
         self.itemDims_  = [None] * 3
 
     # Destruction
@@ -103,11 +103,26 @@ class tetrisGame(eventHandler):
         print("\nYour score : ", txtColours.colored(str(currentScore), formatAttr=[textAttribute.BOLD]))
 
     def isRunning(self):
-        return self.GAME_RUNNING == self.status_
+        return self.STATUS_RUNNING == self.status_
+
+    # Cancel the game
+    #
+    def cancel(self):
+        # Already escaped ?
+        if not self.isCancelled():
+            self.status_ |= self.STATUS_CANCELED
+        # stop the game
+        self.end(True)
+    # Escaped/canceled par the user ?
+    def isCancelled(self):
+        return ((self.status_ & self.STATUS_CANCELED) == self.STATUS_CANCELED)
 
     # Force the end of the game
-    def end(self):
-        self.status_ = self.GAME_STOPPED
+    def end(self, force = False):
+        if force:
+            self.status_ |= self.STATUS_CANCELED
+        else:
+            self.status_ = self.STATUS_STOPPED
 
     # Finish ...
     def clear(self):
@@ -130,7 +145,7 @@ class tetrisGame(eventHandler):
     #
     def start(self):
         # Check the object state
-        if self.GAME_INIT == self.status_ or self.GAME_STOPPED == self.status_:
+        if self.STATUS_INIT == self.status_ or self.STATUS_STOPPED == self.status_:
             # Initializations ...
             self.currentPos_ = None
 
@@ -142,7 +157,7 @@ class tetrisGame(eventHandler):
             self.drawLines()
 
             # Let's go
-            self.status_ = self.GAME_RUNNING
+            self.status_ = self.STATUS_RUNNING
             self.board_.start()
             
             self._updateDisplay()
@@ -154,28 +169,24 @@ class tetrisGame(eventHandler):
     #
     def drawScore(self):
         self._drawNumValue(0, self.board_.score())
-
     def drawLevel(self):
         self._drawNumValue(1, self.board_.level())
-
     def drawLines(self):
         self._drawNumValue(2, self.board_.lines())
-
     def drawNextPiece(self):
         self._drawNextPiece(self.board_.nextPieceIndex())
 
-    # Affichage de tout l'espace de jeu
+    # Draw all
+    #
     def drawBoard(self):
-        if None == self.board_:
-            # Pas de données !!!
+        if None == self.board_: # Anything to draw ?
             return
 
-        # Changement de repère
         leftFirst, top, w, h = self._changeCoordonateSystem(0,0,True)
 
-        # Affichage de tous les blocs (colorés ou pas)
+        # Draw all the blocks (colored or not)
         for y in range(sharedConsts.PLAYFIELD_HEIGHT):
-            left = leftFirst    # A chaque nouvelle ligne on replace le "curseur"
+            left = leftFirst
             for x in range(sharedConsts.PLAYFIELD_WIDTH):        
                 self._drawBlock(left, top, self.board_.playField_[y][x], True)
                 left+=w
@@ -190,11 +201,11 @@ class tetrisGame(eventHandler):
         text = self.itemTexts_[index] + " : " + self._formatNumber(value)
         self._drawText(index, text)
     
-    # Affichage d'un texte avec effacement de l'ancienne valeur
+    # Draw a line of text (and erase the prrevious value)
     def _drawText(self, index, text):
         pass
 
-    # Dessin des bordures (espace de jeu et éventuellement pièces suivantes)
+    # Draw borders
     def _drawBackGround(self):
         pass
 
@@ -289,7 +300,7 @@ class tetrisGame(eventHandler):
     #
     def gameFinished(self):
         super().gameFinished()
-        self.status_ = self.GAME_STOPPED
+        self.status_ = self.STATUS_STOPPED
     
     #   "internal" methods
     #

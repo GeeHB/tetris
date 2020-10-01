@@ -4,14 +4,13 @@
 #
 #   Authors     :   JHB
 #
-#   Description :   Gestion de l'interface du tetris en mode graphique avec la bibliothèque pygame
+#   Description :   pygameTetris object - Drawings using PYGame library
 #                   
+#   Remarque    :   Python 3.xx
 #
-#   Remarque    :   Nécessite Python 3.xx
+#   Version     :   0.5.3-4
 #
-#   Version     :   0.5.3-3
-#
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
 import pygame
@@ -19,22 +18,22 @@ import math
 import sharedConsts
 import tetrisGame
 
-# Constantes de l'application
+# Public consts
 #
-BOX_WIDTH       = 25    # Dimensions d'un carré
+BOX_WIDTH       = 25    # Default dimensions of a small square
 
-# Palette de couleurs
+# A few colours
 #
 COLOUR_BLACK        = (0, 0, 0)
 COLOUR_WHITE        = (255, 255, 255)
 
-# Police et taille du texte
+# Font for the text (and default size)
 #
 FONT_NAME       = 'helvetica'
 FONT_SIZE       = 20
 MAX_FONT_SIZE   = 25
 
-# Une couleur (avec sa version ombrée et sa version sur-exposée)
+# A colour
 #
 class tetrisColour(object):
     base_, light_, dark_ = None, None, None
@@ -44,15 +43,15 @@ class tetrisColour(object):
         self.light_ = light
         self.dark_ = dark
 
-# Classe pygameTetris
+# pygameTetris object - drawing of tertraminos using PYGame library
 #
 class pygameTetris(tetrisGame.tetrisGame):
 
     # PYGame events types
-    EVT_KEYDOWN         = pygame.KEYDOWN
-    EVT_QUIT            = pygame.QUIT
+    EVT_KEYDOWN     = pygame.KEYDOWN
+    EVT_QUIT        = pygame.QUIT
     
-    # Code des touches de contrôle par défaut
+    # Key codes
     #
     KEY_LEFT        = pygame.K_LEFT
     KEY_RIGHT       = pygame.K_RIGHT
@@ -68,36 +67,29 @@ class pygameTetris(tetrisGame.tetrisGame):
     KEY_NORMAL_MODE = pygame.K_n
     KEY_SCORES      = pygame.K_h
 
-    """
-    EVT_KEYDOWN     = pygame.KEYDOWN
-    EVT_QUIT        = pygame.QUIT
-    """
-
-    # Données membres
-    win_            = None          # "Fenêtre" d'affichage
-    winHeight_, winWidth_ = 0,0     # Dimensions de la fenêtre
+    # Members
+    win_            = None              # "Window"
+    winHeight_, winWidth_ = 0,0         # dimensions
     boxWidth_       = BOX_WIDTH
     fontSize_       = FONT_SIZE
     
-    colours_        = []            # Table des couleurs
+    colours_        = []                # Table of colours
 
-    itemDims_      = [None, None, None]      # Dimensions de la zone de texte pour les scores, les lignes et le niveau
+    itemDims_      = [None, None, None] # Texts dims. (scores, lines and level)
     
-    # Méthodes
-    #
-
     # Construction
+    #
     def __init__(self):
         
-        # Table des couleurs
+        # Table of colours
         #
-        self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + sharedConsts.LAST_COLOUR_ID)     # Par défaut tout est noir
+        self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + sharedConsts.LAST_COLOUR_ID)
         
-        self.colours_[1] = tetrisColour((255, 0, 0), (255, 128, 128), (128,0,0))        # Rouge
-        self.colours_[2] = tetrisColour((0, 255, 0), (255, 128, 128), (0,128,0))        # Vert
-        self.colours_[3] = tetrisColour((255, 255, 0), (255, 255, 128), (128,128,0))    # Jaune
-        self.colours_[4] = tetrisColour((0, 0, 255), (128, 128, 255), (0,128,0))        # Bleu
-        self.colours_[5] = tetrisColour((255, 0, 255), (255, 128, 255), (128,0,128))    # Violet
+        self.colours_[1] = tetrisColour((255, 0, 0), (255, 128, 128), (128,0,0))        # Red
+        self.colours_[2] = tetrisColour((0, 255, 0), (255, 128, 128), (0,128,0))        # Green
+        self.colours_[3] = tetrisColour((255, 255, 0), (255, 255, 128), (128,128,0))    # Yellow
+        self.colours_[4] = tetrisColour((0, 0, 255), (128, 128, 255), (0,128,0))        # Blue
+        self.colours_[5] = tetrisColour((255, 0, 255), (255, 128, 255), (128,0,128))    # Purple
         self.colours_[6] = tetrisColour((0, 255, 255), (128, 255, 255), (0,128,128))    # Cyan
         self.colours_[7] = tetrisColour((255, 128, 0), (255, 192, 128), (128,64,0))     # Orange
 
@@ -106,7 +98,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.colours_[sharedConsts.COLOUR_ID_BORDER] = tetrisColour((192,192,192))
         self.colours_[sharedConsts.COLOUR_ID_BOARD] = tetrisColour((32,32,32))
 
-        # Calcul des dimensions
+        # Compute dimensions
         self.winWidth_    = 2 * self.boxWidth_ * sharedConsts.PLAYFIELD_WIDTH
         self.winHeight_   = (2 + self.boxWidth_) * sharedConsts.PLAYFIELD_HEIGHT
         
@@ -115,21 +107,23 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.gameLeft_ = 2 * self.boxWidth_
         self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
 
-    # Méthodes surchargées de eventHandler
+    # overloards from eventHandler
     #
 
-    # Une ligne est complête (mais encore dans l'espace de jeu)
+    # A line has just been completed (but is still visible)
+    #
     def lineCompleted(self, rowIndex):
         pass
 
-    # Méthodes surchargées de gameRendering
+    # overloads from gameRendering
     #
 
-    # Vérifications
-    #   Retourne un booléen qui indique si l'objet peut être initialisé
+    # Verifications
+    #   Return True (init done) or False (errors)
+    #
     def checkEnvironment(self):
         
-        # Vérification de PYGame (retourne le tupe (#ok, #errors))
+        # PYGame intialization (returns the tuple (#ok, #errors))
         rets = pygame.init()
 
         if 0 != rets[1] :
@@ -140,10 +134,10 @@ class pygameTetris(tetrisGame.tetrisGame):
         pygame.display.set_caption('jTetris')
         
         # Ok
-        self.status_ = tetrisGame.tetrisGame.GAME_INIT
+        self.status_ = tetrisGame.tetrisGame.STATUS_INIT
         return ""
 
-    # Fin ...
+    # End ...
     def clear(self):
         pygame.display.quit()
 
@@ -172,13 +166,12 @@ class pygameTetris(tetrisGame.tetrisGame):
                 self._updateDisplay()
         return (event.type, event.key)
 
-    # Lecture non bloquante du clavier
-    # Retourne le caractère associé à la touche ou le caractère vide ('')
+    # Read the keyboard (non-blocking)
+    #   returns the char or ''
     def checkKeyboard(self):
-        # Evènement en haut de la pile
         evt = pygame.event.poll()
         if evt.type == pygame.KEYDOWN:
-            # Un chiffre
+            # A digit
             if evt.key >= pygame.K_0 and evt.key <= pygame.K_9:
                 return (ord('0') + evt.key - pygame.K_0)
             else:
@@ -190,14 +183,14 @@ class pygameTetris(tetrisGame.tetrisGame):
             return self.KEY_NOEVENT
      
     
-    # Méthodes surchargées de tetrisGame
+    # overloads of tetrisGame methods
     #
 
-    # L'écran doit être reactualisé
     def _updateDisplay(self):
         pygame.display.update()
 
-    # Affichage d'un texte avec effacement de l'ancienne valeur
+    # Draw the text and erase previous if exists
+    #
     def _drawText(self, index, text):
         font = pygame.font.SysFont(FONT_NAME, self.fontSize_)
         label = font.render(text, 1, self.colours_[sharedConsts.COLOUR_ID_TEXT].base_)
@@ -205,12 +198,12 @@ class pygameTetris(tetrisGame.tetrisGame):
         left = self.gameLeft_ + (1 + sharedConsts.PLAYFIELD_WIDTH ) * self.boxWidth_
         top = self.gameTop_ + self.boxWidth_ * ( 2 * index + 1)
         
-        # Effacer l'ancien
+        # Erase 
         if None != self.itemDims_[index] and 2 == len(self.itemDims_[index]) :
             pygame.draw.rect(self.win_, self.colours_[sharedConsts.COLOUR_ID_BKGRND].base_, (left, top, self.itemDims_[index][0], self.itemDims_[index][1]))
     
-        # Affichage
-        self.itemDims_[index] = font.size(text) # Récupération de la taille ...
+        # Draw the text
+        self.itemDims_[index] = font.size(text) # Get the size
         self.win_.blit(label, (left, top))
     
     # Draw the background
@@ -251,30 +244,29 @@ class pygameTetris(tetrisGame.tetrisGame):
         pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
         pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top + height - 1))
 
-    # Affichage d'un bloc coloré aux coordonnées données
+    # Draw a coloured block
+    #
     def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
-            # Le carré
+            # the single square
             pygame.draw.rect(self.win_, paintColour.base_, (left + 1, top + 1, self.boxWidth_ - 2, self.boxWidth_ -2))
 
-            # l'effet ombré
+            # 3D effect
             pygame.draw.line(self.win_, paintColour.light_, (left, top),(left, top + self.boxWidth_ - 1))
             pygame.draw.line(self.win_, paintColour.light_, (left, top),(left + self.boxWidth_ - 1, top))
 
             pygame.draw.line(self.win_, paintColour.dark_, (left + self.boxWidth_ - 1, top),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
             pygame.draw.line(self.win_, paintColour.dark_, (left, top + self.boxWidth_ - 1),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
         else:
-            # Juste un carré
+            # Just a squere
             pygame.draw.rect(self.win_, paintColour.base_, (left, top, self.boxWidth_, self.boxWidth_))
 
-    # Effacement
+    # Erase a block
+    #
     def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
         
-        # Changement de repère
         x,y,w,h = self._changeCoordonateSystem(left, top, inBoard)
-
-        # Dessin du rectangle
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
         
         pass

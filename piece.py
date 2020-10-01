@@ -4,50 +4,48 @@
 #
 #   Authors     :   JHB
 #
-#   Description :   Définition des objets piece et pieceStatus pour la modélistation d'un tetramino
+#   Description :   piece & pieceStatus objects : a tetraminos and all the informations for its drawing
 #
-#   Version     :   0.5.3-3
+#   Version     :   0.5.3-4
 #
-#   Date        :   2020/09/28
+#   Date        :   2020/10/01
 #
 
-# Quelques "constantes"
+# Dimensions a the tetramino's matrix
 #
-PIECE_WIDTH = 4     # Dimensions du tetramino (en "carrés")
-PIECE_HEIGHT = 4
+PIECE_WIDTH     = 4
+PIECE_HEIGHT    = 4
 
-# Définition de la classe piece
+# piece obect - a tetramino and all it's rotation states
 #
 class piece(object):
 
-    # Données membres
+    # Members
     #
     points_ = []        # Matrice définissant la piece et ses différentes états (rotations)
-    rotate_ = 0         # Nombre de rotations effectuées (ie. indice de la pièce dans le tableau) 
-    maxRotate_ = 0      # Nombre de rotations max.
-    vertOffset_ = -1    # Décalage (ie. nombre de ligne vide) par rapport à la verticale basse
-    colourIndex_ = 0    # Indice de la couleur (0 = invisible)
+    rotate_ = 0         # rotation index (ie. index of the piece to draw)
+    maxRotate_ = 0      # max; rotation allowed for the piece ( = 360°)
+    vertOffset_ = -1    # Initial vert. offset (ie. count of empty lines starting from bottom)
+    colourIndex_ = 0    # Colour ID (0 = invisible)
 
-    # Méthodes
+    # Construction
     #
-
-    # Constructeur
     def __init__(self, other = None, template = None):
         if not other == None:
-            # Constructeur par recopie
+            # Recopy
             self.rotate_ = other.rotate_
             self.maxRotate_ = other.maxRotate_
             self.vertOffset_ = other.vertOffset_
             
-            # Copie de la pièce dans tous ses états
+            # Copy all the rotation states
             for state in other.points_:
                 self.points_.append(self._copy(state))
         elif not template == None:
-            # Création à partir d'un modèle
+            # From a template
             self.points_ = []
             self.rotate_ = 0
             
-            # Transformation et intégration de tous les états de la pièce
+            # Copy all the states
             ordO = ord('0')
             for shape in template:
                 points = self._new()
@@ -62,66 +60,74 @@ class piece(object):
                                     points[j][i] = self.colourIndex_
                                 i += 1
                         j +=  1
-                    self.points_.append(points) # Nouvel état
+                    self.points_.append(points) # It's a new state
 
-            # Le nombre max. de rotation correspond au nombre reèl d'état(s)
+            # #max rotation = # states !!!
             self.maxRotate_ = len(self.points_)
 
-            # Calcul du décalage vertical
+            # compute vertical offset
             self.vertOffset_ = 3
             while self.points_[0][self.vertOffset_] == [0,0,0,0] and self.vertOffset_ >= 0:
-                self.vertOffset_-=1 # On remonte
+                self.vertOffset_-=1 # One line up
         else:
-            # Par défaut la pièce est "vide"
+            # By default the piece is empty
             self.points_ = self._new()
 
-    # Indice de la couleur de la pièce
+    # Colour index
+    #
     def colour(self):
         return self.colourIndex_
     
-    # Données dans l'état actuel (index = rotate_)
+    # Piece's datas in the curent rotation state (index = rotate_)
+    #
     def datas(self):
         if self.rotate_ < 0 or self.rotate_ >= self.maxRotate_:
             raise IndexError
         return self.points_[self.rotate_]
 
-    # Décalage vertical de la pièce par rapport une l'horizontale (valable pour l'index 0)
-    # ie. index de la dernière ligne non-vide
+    # Vertical offset (for rotationIndex = 0)
+    #   ie. last non-empty line index
     def verticalOffset(self):
         return self.vertOffset_
 
-    # Retour à la position initiale
+    # Back to initial position
+    #
     def rotateBack(self):
         self.rotate_ = 0
 
-    # nombre maximal de rotations
+    # Max. rotation index for the piece
+    #   (some pieces doen't rotate at all)
+    #
     def maxRotations(self):
         return self.maxRotate_
 
-    # Rotation dans le sens trigonométrique
+    # Trigonometric rotation
+    #
     def rotateLeft(self):
         self.rotate_ += 1
         
-        # Un tour complet ?
+        # 360° ?
         if self.rotate_ >= self.maxRotate_:
             self.rotate_ = 0
         
         return self.rotate_
 
-    # Rotation dans le sens des aiguilles d'une montre
+    # Clockwise rotation
+    #
     def rotateRight(self):
         if 0 == self.maxRotate_:
             self.rotate_ = 0
         else:
             self.rotate_ -= 1
             
-            # Un tour complet ?
+            # 360° ?
             if self.rotate_ < 0:
                 self.rotate_ = self.maxRotate_ - 1
 
         return self.rotate_
 
-    # Création d'un piece vierge
+    # New empty piece
+    #
     def _new(self):
         datas =  [[0] * PIECE_WIDTH for _ in range(PIECE_HEIGHT)]
         return datas
@@ -133,35 +139,31 @@ class piece(object):
             dest.append(line)
         return dest
 
-    #
-    #   Surcharges
+    #   Overloads
     #
 
-    # Accès / self.[key]
+    # Acces / self[index]
     #
-    #   retourne la pièce dans l'état de rotation demandé
+    #   return the piece in the "key" rotation index
     #
     def __getitem__(self, key):
-        # key est un entier !
         if not type(key) == int:
             raise TypeError
-        # key est dans le "bon" intervalle !
         if 0 == self.maxRotate_ or key < 0 or key >= self.maxRotate_:
             raise IndexError
 
-        # On retourne la pièce dans l'état "key"
+        # done
         return self.points_[key]
 
-# Classe pieceStatus
-#   Information sur la position et l'état d'une pièce
-#   Suffisant, et nécessaire, pour afficher ou effacer une pièce à l'écran
+#  pieceStatus object
+#   All the informations concerning a tatramino : index, rotation, position ...
 #
 class pieceStatus(object):
-    index_ = -1              # Pièce non affichée (vient d'apparaitre)
+    index_ = -1              # By default not drawn
     leftPos_ = 0
     topPos_  = 0
     rotationIndex_ = 0
-    shadowTopPos_ = -1      # Ordonnée de l'ombre (-1 = pas d'ombre)
+    shadowTopPos_ = -1      # yPos of shadow (-1 = no shadow)
 
     # Construction
     def __init__(self, index = -1, x = 0, y = 0, rotation = 0, other = None):
@@ -178,7 +180,7 @@ class pieceStatus(object):
             self.rotationIndex_ = rotation
             self.shadowTopPos_ = -1
 
-    # Les status sont-ils équivalents ?
+    # deep equal
     def __eq__(self, other):
         return True if not other == None and self.index_ == other.index_ and self.leftPos_ == other.leftPos_ and self.topPos_ == other.topPos_ and self.rotationIndex_ == other.rotationIndex_ else False
 # EOF
