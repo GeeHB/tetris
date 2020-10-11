@@ -75,7 +75,7 @@ class tetrisGame(eventHandler):
         if None == bestScores:
             return
 
-        txtColours = colorizer(True)
+        txtColours = colorizer(True, False)
 
         if me and len(me):
             print("\n Best scores of ", txtColours.colored(me, formatAttr=[textAttribute.BOLD]), " :\n")
@@ -88,7 +88,7 @@ class tetrisGame(eventHandler):
             score = bestScores[index+1]
             line = ">>>" if index == currentPos else " "
             line+= "\t" + str(index + 1) + " -" +  ("  " if index<9 else " ")
-            line+=str(score[0])
+            line+=str(self._formatNumber(score[0]))
             line+="\t"
             if len(score[1]):
                 line+="- "
@@ -100,7 +100,7 @@ class tetrisGame(eventHandler):
                 print(line)
         
         # and finally the current score
-        print("\nYour score : ", txtColours.colored(str(currentScore), formatAttr=[textAttribute.BOLD]))
+        print("\nYour score : ", txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[textAttribute.BOLD]))
 
     def isRunning(self):
         return self.STATUS_RUNNING == self.status_
