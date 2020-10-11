@@ -72,13 +72,14 @@ class colorizer:
     colored_ = False       # Doit-on coloriser ?
     
     # Construction
-    def __init__(self, colored = True):
+    def __init__(self, colored = True, message = True):
         self.colored_ = colored
 
         if True == colored and False == packageTermColor:
             self.colored_ = False
             #print(self.checkBoxLine(False, "termcolor package (python-termcolor) is not installed"))
-            print("Warning - termcolor package (python-termcolor) is not installed")
+            if message:
+                print("Warning - termcolor package (python-termcolor) is not installed")
                         
     # Formatage d'une ligne de texte
     def colored(self, text, txtColor = None, bkColor = None, formatAttr = None):
