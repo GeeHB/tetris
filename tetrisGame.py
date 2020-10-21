@@ -8,7 +8,7 @@
 #                   
 #   Remarque    :   min Python 3.xx
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #
@@ -82,7 +82,7 @@ class tetrisGame(eventHandler):
         else:
             print("\n Best scores :\n")
         
-        currentPos, _ = bestScores[0]
+        currentPos = -1 if currentScore == None else bestScores[0][0]
         
         for index in range(len(bestScores)-1):
             score = bestScores[index+1]
@@ -94,13 +94,14 @@ class tetrisGame(eventHandler):
                 line+="- "
                 line+=score[1]
             if index == currentPos:
-                line+="<<<"
+                line+=" <<<"
                 print(txtColours.colored(line, textColor.RED))
             else:
                 print(line)
         
         # and finally the current score
-        print("\nYour score : ", txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[textAttribute.BOLD]))
+        if None != currentScore:
+            print("\nYour score : ", txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[textAttribute.BOLD]))
 
     def isRunning(self):
         return self.STATUS_RUNNING == self.status_

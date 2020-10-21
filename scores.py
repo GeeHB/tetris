@@ -10,7 +10,7 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #
@@ -37,9 +37,7 @@ class scores(object):
     #   return the list of topScores for the current User (or top 10 for all if no user is specified)
     #
     def add(self, newScore):
-        if newScore <= 0 :
-            return False
-
+        
         # Load the scores
         self._load()
         
@@ -47,11 +45,7 @@ class scores(object):
         tops = [(-1, None)]
 
         # Add to the list (must be unique)
-        if newScore not in self.scores_:
-            """
-            self.scores_.append((newScore, self.user_))
-            self.scores_.sort(reverse = True)
-            """
+        if newScore != None and newScore not in self.scores_:
             parse = True
             index = 0
             while parse:

@@ -15,7 +15,7 @@
 #
 #   Description :   tetraminos definitions
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #

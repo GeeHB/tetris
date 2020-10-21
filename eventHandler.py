@@ -10,7 +10,7 @@
 #
 #   Remarque    :   Python 3.xx
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #

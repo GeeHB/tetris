@@ -8,7 +8,7 @@
 #
 #   Remarque    :   Python 3.xx
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #
@@ -104,6 +104,11 @@ class cursesTetris(tetrisGame.tetrisGame):
         self.status_ = tetrisGame.tetrisGame.STATUS_INIT
         return ""   # no message
 
+    # Display "hall of fame"
+    #   Basic display on console
+    def showScores(self, me, currentScore, bestScores):
+        self.clear()
+        super().showScores(me, currentScore, bestScores)
     
     # Finish ...
     #

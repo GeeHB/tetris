@@ -8,7 +8,7 @@
 #                   
 #   Remarque    :   Python 3.xx
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 #
@@ -268,10 +268,9 @@ class pygameTetris(tetrisGame.tetrisGame):
         
         x,y,w,h = self._changeCoordonateSystem(left, top, inBoard)
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
-        
-        pass
 
     # Change the origin and the coordinate system
+    #
     #   (x,y) are to be translated
     #   inBoard : int he board (True) or in the "next piece" area
     #
