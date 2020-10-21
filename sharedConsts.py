@@ -6,7 +6,7 @@
 #
 #   Description :   shared consts for Tetris Game
 
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 # 
@@ -69,6 +69,7 @@ CMD_OPTION_START_LEVEL = "level"
 CMD_OPTION_SHADOW = "shadow"
 CMD_OPTION_DIRTY_LINES = "lines"
 CMD_OPTION_USER = "me"
+CMD_OPTION_TOP = "top"
 
 CMD_OPTION_CONSOLE = "c"         # Console mode
 

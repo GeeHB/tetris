@@ -1,10 +1,16 @@
+v0.6.1
+    * 21/10/2020
+    + minor bug fixes
+    + add "-top" command line option to show high (top) scores
+
+
 v0.5.3
     * 01/10/2020
     + Linux
         + console mode => OK
     + End of sources translation - I hope so :)
     + Scores handling
-    + Press "Enter" to start game
+    + Press "Enter" to start & quit game
     + Bug fixes
         - Error while displaying and computing Level 
         - Escaping the game while playing

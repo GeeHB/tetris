@@ -9,7 +9,7 @@
 #
 #   Remarque    :   Nécessite Python 3.xx
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
 #   Date        :   2020/10/01
 # 
@@ -31,6 +31,7 @@ class tetrisParameters:
     pygameAvailable_ = False
     cursesAvailable_ = False
     useGUI_ = True
+    showScores_ = False
     user_ = None
 
     # Constructor
@@ -44,6 +45,7 @@ class tetrisParameters:
             self.pygameAvailable_ = other.pygameAvailable_
             self.cursesAvailable_ = other.cursesAvailable_
             self.useGUI_ = other.useGUI_
+            self.showScores_ = other.showScores_
             self.user_ = other.user_
 
 # board

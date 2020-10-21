@@ -10,9 +10,9 @@
 #
 #   Remarque    :   Need Python 3.xx or higher
 #
-#   Version     :   0.5.3-5
+#   Version     :   0.6.1
 #
-#   Date        :   2020/10/01
+#   Date        :   2020/10/21
 #
 
 import platform, sys, math
@@ -55,40 +55,49 @@ class tetris(object):
             # No parameters use default and start game !
             return True
         else:
-            # Console display mode ?
-            self.params_.useGUI_ = (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
+            # Display high-scores
+            self.params_.showScores_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_TOP) == parameters.NO_INDEX)
 
-            # Start level
-            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_START_LEVEL)
-            if not parameters.NO_INDEX == index:
-                # Num. value expected
-                try :
-                    rets = parameters.parameterOrValue(index + 1)
-                    if rets[1] == False : 
-                        self.params_.startLevel_ = int(rets[0])
-                        if self.params_.startLevel_ <= 0 or self.params_.startLevel_ > 15:
-                            self._usage()
-                            return False
-                except IndexError:
-                    # no value ...
-                    self._usage()
-                    return False
+            if self.params_.showScores_:
+                self.params_.useGUI_ = False
+            else:
+                # Console display mode ?
+                self.params_.useGUI_ = (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
                 
-            # # of dirty lines
-            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_DIRTY_LINES)
-            if not parameters.NO_INDEX == index:
-                # num. value expected
-                try :
-                    rets = parameters.parameterOrValue(index + 1)
-                    if rets[1] == False : 
-                        self.params_.dirtyLines_ = int(rets[0])
-                        if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= sharedConsts.PLAYFIELD_HEIGHT:
-                            self._usage()
-                            exit(1)
-                except IndexError:
-                    # no value ...
-                    self._usage()
-                    return False
+                # Start level
+                index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_START_LEVEL)
+                if not parameters.NO_INDEX == index:
+                    # Num. value expected
+                    try :
+                        rets = parameters.parameterOrValue(index + 1)
+                        if rets[1] == False : 
+                            self.params_.startLevel_ = int(rets[0])
+                            if self.params_.startLevel_ <= 0 or self.params_.startLevel_ > 15:
+                                self._usage()
+                                return False
+                    except IndexError:
+                        # no value ...
+                        self._usage()
+                        return False
+                    
+                # # of dirty lines
+                index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_DIRTY_LINES)
+                if not parameters.NO_INDEX == index:
+                    # num. value expected
+                    try :
+                        rets = parameters.parameterOrValue(index + 1)
+                        if rets[1] == False : 
+                            self.params_.dirtyLines_ = int(rets[0])
+                            if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= sharedConsts.PLAYFIELD_HEIGHT:
+                                self._usage()
+                                exit(1)
+                    except IndexError:
+                        # no value ...
+                        self._usage()
+                        return False
+                
+                # Display pieces'shadow ?
+                self.params_.shadow_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_SHADOW) == parameters.NO_INDEX)
 
              # username (for score)
             index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_USER)
@@ -102,9 +111,6 @@ class tetris(object):
                     # no value ...
                     self._usage()
                     return False
-            
-            # Display pieces'shadow ?
-            self.params_.shadow_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_SHADOW) == parameters.NO_INDEX)
 
         # There should be no options left
         if parameters.options() > 0:
@@ -140,10 +146,11 @@ class tetris(object):
             return False
 
         # Check display manager
-        error = self.displayMgr_.checkEnvironment()
-        if len(error) > 0:
-            print("Display init. error. Message : ", error)
-            return False
+        if False == self.params_.showScores_:
+            error = self.displayMgr_.checkEnvironment()
+            if len(error) > 0:
+                print("Display init. error. Message : ", error)
+                return False
 
         self.gameData_ = board(self.displayMgr_)
         self.displayMgr_.setBoard(self.gameData_)
@@ -274,6 +281,7 @@ class tetris(object):
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.DARK]), ": Set the name of the current player")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.DARK]), ": Console display mode (if nCurses is available)")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[textAttribute.DARK]), ": show high-scores")
 
 #
 # Entry point
@@ -310,7 +318,14 @@ if __name__ == '__main__':
     # the game ...
     #
     myTetris = tetris(params) 
-    if myTetris.parseCmdLine() and myTetris.isReady():    
-        myTetris.start()
-        myTetris.end()
+    if myTetris.parseCmdLine():
+        # Just show scores ?
+        if myTetris.params_.showScores_ :
+            myGame = tetrisGame()
+            bestScores = scores(myTetris.params_.user_)
+            myGame.showScores(myTetris.params_.user_, None, bestScores.add(None))
+        else:
+            if myTetris.isReady():    
+                myTetris.start()
+                myTetris.end()
 #EOF 
