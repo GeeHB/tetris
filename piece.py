@@ -6,9 +6,9 @@
 #
 #   Description :   piece & pieceStatus objects : a tetraminos and all the informations for its drawing
 #
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
-#   Date        :   2020/10/01
+#   Date        :   2021/01/06
 #
 
 # Dimensions a the tetramino's matrix

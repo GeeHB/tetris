@@ -1,8 +1,7 @@
-v0.6.1
-    * 21/10/2020
+v0.6.2
+    * 06/01/2021
     + minor bug fixes
     + add "-top" command line option to show high (top) scores
-
 
 v0.5.3
     * 01/10/2020

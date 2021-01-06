@@ -8,11 +8,11 @@
 #                   
 #                   This is an abstract class
 #
-#   Remarque    :   Python 3.xx
+#   Comment    :   Python 3.xx
 #
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
-#   Date        :   2020/10/01
+#   Date        :   2021/01/06
 #
 
 # eventHandler object
