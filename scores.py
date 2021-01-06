@@ -8,11 +8,11 @@
 #
 #   Description :   Handle scoring
 #
-#   Remarque    :   Need Python 3.xx or higher
+#   Comment    :   Need Python 3.xx or higher
 #
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
-#   Date        :   2020/10/01
+#   Date        :   2021/01/06
 #
 
 import sharedConsts

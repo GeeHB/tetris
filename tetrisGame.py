@@ -6,11 +6,11 @@
 #
 #   Description :   Tetris'outputs - abstract class 
 #                   
-#   Remarque    :   min Python 3.xx
+#   Comment    :   min Python 3.xx
 #
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
-#   Date        :   2020/10/01
+#   Date        :   2021/01/06
 #
 
 import sharedConsts
@@ -78,7 +78,7 @@ class tetrisGame(eventHandler):
         txtColours = colorizer(True, False)
 
         if me and len(me):
-            print("\n Best scores of ", txtColours.colored(me, formatAttr=[textAttribute.BOLD]), " :\n")
+            print("\n Best scores for", txtColours.colored(me, formatAttr=[textAttribute.BOLD]), " :\n")
         else:
             print("\n Best scores :\n")
         

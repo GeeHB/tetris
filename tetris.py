@@ -8,9 +8,9 @@
 #
 #   Description :   The "tetris" game 
 #
-#   Remarque    :   Need Python 3.xx or higher
+#   Comment    :   Need Python 3.xx or higher
 #
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
 #   Date        :   2020/10/21
 #
@@ -275,13 +275,13 @@ class tetris(object):
     # Show usage
     #
     def _usage(self):
-        print(self.txtColours_.colored("\tetris.py", formatAttr=[textAttribute.BOLD]))
+        print(self.txtColours_.colored("\ttetris.py", formatAttr=[textAttribute.BOLD]))
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.DARK]), ": Start the game at {numLevel}")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[textAttribute.DARK]), ": Display shadow ot the piece at the bottom of the playfiled")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.DARK]), ": Set the name of the current player")
         print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.DARK]), ": Console display mode (if nCurses is available)")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[textAttribute.DARK]), ": show high-scores")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[textAttribute.DARK]), ": Show high-scores")
 
 #
 # Entry point

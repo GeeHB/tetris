@@ -10,7 +10,7 @@
 #                     - textColor : Liste des couleurs de texte
 #                     - backColor : Liste des couleurs de fond
 #
-#   Remarque    :  le module termcolor doit être installé
+#   Comment    :  le module termcolor doit être installé
 #
 #   Version     :   0.1.26
 #

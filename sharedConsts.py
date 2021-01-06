@@ -6,9 +6,9 @@
 #
 #   Description :   shared consts for Tetris Game
 
-#   Version     :   0.6.1
+#   Version     :   0.6.2
 #
-#   Date        :   2020/10/01
+#   Date        :   2021/01/06
 # 
 
 #

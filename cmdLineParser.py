@@ -7,7 +7,7 @@
 #   Description :   Définition des objets :
 #                     - cmdLineParser : Gestion de la ligne de commandes
 #
-#   Remarque    :  
+#   Comment    :  
 #
 #   Version     :   0.1.25-2
 #
