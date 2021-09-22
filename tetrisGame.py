@@ -8,16 +8,16 @@
 #                   
 #   Comment    :   min Python 3.xx
 #
-#   Version     :   0.6.2
+#   Version     :   0.7.1
 #
-#   Date        :   2021/01/06
+#   Date        :   2021/09/22
 #
 
 import sharedConsts
 from eventHandler import eventHandler
 import board
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
-from colorizer import colorizer, backColor, textColor, textAttribute
+from sharedTools.common import colorizer as color
 
 # tetrisGame - abstract class
 #
@@ -75,10 +75,10 @@ class tetrisGame(eventHandler):
         if None == bestScores:
             return
 
-        txtColours = colorizer(True, False)
+        txtColours = color.colorizer(True, False)
 
         if me and len(me):
-            print("\n Best scores for", txtColours.colored(me, formatAttr=[textAttribute.BOLD]), " :\n")
+            print("\n Best scores for", txtColours.colored(me, formatAttr=[color.textAttribute.BOLD]), " :\n")
         else:
             print("\n Best scores :\n")
         
@@ -95,13 +95,13 @@ class tetrisGame(eventHandler):
                 line+=score[1]
             if index == currentPos:
                 line+=" <<<"
-                print(txtColours.colored(line, textColor.RED))
+                print(txtColours.colored(line, color.textColor.RED))
             else:
                 print(line)
         
         # and finally the current score
         if None != currentScore:
-            print("\nYour score : ", txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[textAttribute.BOLD]))
+            print("\nYour score : ", txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[color.textAttribute.BOLD]))
 
     def isRunning(self):
         return self.STATUS_RUNNING == self.status_
