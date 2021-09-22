@@ -1,5 +1,5 @@
-#!/bin/python3
-
+#!/usr/bin/python3
+#
 # coding=UTF-8
 #
 #   File     :   tetris.py
@@ -10,16 +10,15 @@
 #
 #   Comment    :   Need Python 3.xx or higher
 #
-#   Version     :   0.6.2
+#   Version     :   0.7.1
 #
 #   Date        :   2020/10/21
 #
 
-import platform, sys, math
-
+import sys, math
 import sharedConsts
-from cmdLineParser import cmdLineParser
-from colorizer import colorizer, backColor, textColor, textAttribute
+from sharedTools.common import cmdLineParser as parser
+from sharedTools.common import colorizer as color
 from tetrisGame import tetrisGame
 from board import tetrisParameters
 from scores import scores
@@ -35,7 +34,7 @@ class tetris(object):
     #
     gameData_       = None        # Game's datas
     displayMgr_     = None        # Display manager
-    txtColours_     = colorizer(True)
+    txtColours_     = color.colorizer(True)
 
     params_ = tetrisParameters()
 
@@ -49,7 +48,7 @@ class tetris(object):
     #   return True if no error where found
     #
     def parseCmdLine(self):
-        parameters = cmdLineParser(sharedConsts.CMD_OPTION_CHAR)
+        parameters = parser.cmdLineParser(sharedConsts.CMD_OPTION_CHAR)
 
         if 0 == parameters.size():
             # No parameters use default and start game !
@@ -275,13 +274,13 @@ class tetris(object):
     # Show usage
     #
     def _usage(self):
-        print(self.txtColours_.colored("\ttetris.py", formatAttr=[textAttribute.BOLD]))
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[textAttribute.DARK]), ": Start the game at {numLevel}")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[textAttribute.DARK]), ": Display shadow ot the piece at the bottom of the playfiled")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[textAttribute.DARK]), ": Set the name of the current player")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[textAttribute.DARK]), ": Console display mode (if nCurses is available)")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[textAttribute.DARK]), ": Show high-scores")
+        print(self.txtColours_.colored("\ttetris.py", formatAttr=[color.textAttribute.BOLD]))
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[color.textAttribute.DARK]), ": Start the game at {numLevel}")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[color.textAttribute.DARK]), ": Display shadow ot the piece at the bottom of the playfiled")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[color.textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[color.textAttribute.DARK]), ": Set the name of the current player")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[color.textAttribute.DARK]), ": Console display mode (if nCurses is available)")
+        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[color.textAttribute.DARK]), ": Show high-scores")
 
 #
 # Entry point

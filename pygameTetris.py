@@ -8,9 +8,9 @@
 #                   
 #   Comment    :   Python 3.xx
 #
-#   Version     :   0.6.2
+#   Version     :   0.7.1
 #
-#   Date        :   2021/01/06
+#   Date        :   2021/09/22
 #
 
 import pygame
