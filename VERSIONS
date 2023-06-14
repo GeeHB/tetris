@@ -1,6 +1,6 @@
 Version 0.7.1
     * 22 sept. 2021
-    + use of module sharedTools.common for cmdLineParser et colorizer versions
+    + use of module sharedTools.common for cmdLineParser and colorizer versions
 
 v0.6.2
     * 06/01/2021

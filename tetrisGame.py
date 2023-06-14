@@ -28,14 +28,14 @@ class tetrisGame(eventHandler):
     
     # Default keys
     # can (must) be overloaded
-    KEY_LEFT        = '4'
-    KEY_RIGHT       = '6'
-    KEY_ROTATE_LEFT = '5'
-    KEY_ROTATE_RIGHT= '0'
-    KEY_DOWN        = '2'
+    KEY_LEFT        = 'q'
+    KEY_RIGHT       = 'd'
+    KEY_ROTATE_LEFT = 's'
+    KEY_ROTATE_RIGHT= 'z'
+    KEY_DOWN        = 'x'
     KEY_FALL        = ' '
     KEY_START       = chr(13)   # "enter"
-    KEY_QUIT        = 'q'
+    KEY_QUIT        = '&'
     KEY_STOP        = KEY_QUIT
     KEY_SHADOW_MODE = 'o'
     KEY_NORMAL_MODE = 'n'
