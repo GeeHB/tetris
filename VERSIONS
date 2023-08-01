@@ -1,3 +1,9 @@
+Version 0.8.0
+    * aug. 2023
+    * Added
+        * Animation when line(s) completed
+        * use argparse as command line parser
+
 Version 0.7.1
     * 22 sept. 2021
     + use of module sharedTools.common for cmdLineParser and colorizer versions

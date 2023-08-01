@@ -107,12 +107,21 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.gameLeft_ = 2 * self.boxWidth_
         self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
 
-    # overloards from eventHandler
+    # overloads from eventHandler
     #
 
     # A line has just been completed (but is still visible)
     #
     def lineCompleted(self, rowIndex):
+        
+        # Create a "memory" surface
+
+        # Draw the line
+
+        # Animate the surface (scroll down)
+
+        # Free the surface
+        
         pass
 
     # overloads from gameRendering
@@ -272,7 +281,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     # Change the origin and the coordinate system
     #
     #   (x,y) are to be translated
-    #   inBoard : int he board (True) or in the "next piece" area
+    #   inBoard : in the board (True) or in the "next piece" area
     #
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen

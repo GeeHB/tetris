@@ -17,8 +17,8 @@
 
 import sys, math
 import sharedConsts
-from sharedTools.common import cmdLineParser as parser
-from sharedTools.common import colorizer as color
+from sharedTools import cmdLineParser as parser
+from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
 from board import tetrisParameters
 from scores import scores
