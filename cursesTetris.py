@@ -8,10 +8,6 @@
 #
 #   Comment    :   Python 3.xx
 #
-#   Version     :   0.7.1
-#
-#   Date        :   2021/09/22
-#
 
 import curses, sys, os, termios, fcntl
 import tetrisGame

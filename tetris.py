@@ -10,14 +10,9 @@
 #
 #   Comment    :   Need Python 3.xx or higher
 #
-#   Version     :   0.7.1
-#
-#   Date        :   2020/10/21
-#
 
-import sys, math
+import sys, math,argparse
 import sharedConsts
-from sharedTools import cmdLineParser as parser
 from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
 from board import tetrisParameters
@@ -48,74 +43,53 @@ class tetris(object):
     #   return True if no error where found
     #
     def parseCmdLine(self):
-        parameters = parser.cmdLineParser(sharedConsts.CMD_OPTION_CHAR)
+        
+        parser = argparse.ArgumentParser(epilog = self.version())
+ 
+        # Define parameters
+        #
+         
+        # High scores
+        parser.add_argument(sharedConsts.ARG_TOP_S, sharedConsts.ARG_TOP, action='store_true', help = sharedConsts.COMMENT_TOP, required = False)
+        
+        # Console display mode ?
+        parser.add_argument(sharedConsts.ARG_CONSOLE_S, sharedConsts.ARG_CONSOLE, action='store_true', help = sharedConsts.COMMENT_CONSOLE, required = False)
 
-        if 0 == parameters.size():
-            # No parameters use default and start game !
-            return True
-        else:
-            # Display high-scores
-            self.params_.showScores_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_TOP) == parameters.NO_INDEX)
+        # Console display mode ?
+        parser.add_argument(sharedConsts.ARG_SHADOW_S, sharedConsts.ARG_SHADOW, action='store_true', help = sharedConsts.COMMENT_SHADOW, required = False)
 
-            if self.params_.showScores_:
-                self.params_.useGUI_ = False
-            else:
-                # Console display mode ?
-                self.params_.useGUI_ = (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_CONSOLE) == parameters.NO_INDEX)
-                
-                # Start level
-                index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_START_LEVEL)
-                if not parameters.NO_INDEX == index:
-                    # Num. value expected
-                    try :
-                        rets = parameters.parameterOrValue(index + 1)
-                        if rets[1] == False : 
-                            self.params_.startLevel_ = int(rets[0])
-                            if self.params_.startLevel_ <= 0 or self.params_.startLevel_ > 15:
-                                self._usage()
-                                return False
-                    except IndexError:
-                        # no value ...
-                        self._usage()
-                        return False
-                    
-                # # of dirty lines
-                index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_DIRTY_LINES)
-                if not parameters.NO_INDEX == index:
-                    # num. value expected
-                    try :
-                        rets = parameters.parameterOrValue(index + 1)
-                        if rets[1] == False : 
-                            self.params_.dirtyLines_ = int(rets[0])
-                            if self.params_.dirtyLines_ < 0 or self.params_.dirtyLines_ >= sharedConsts.PLAYFIELD_HEIGHT:
-                                self._usage()
-                                exit(1)
-                    except IndexError:
-                        # no value ...
-                        self._usage()
-                        return False
-                
-                # Display pieces'shadow ?
-                self.params_.shadow_ = not (parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_SHADOW) == parameters.NO_INDEX)
+        # Start level
+        parser.add_argument(sharedConsts.ARG_STARTLEVEL_S, sharedConsts.ARG_STARTLEVEL, help = sharedConsts.COMMENT_STARTLEVEL, required = False, nargs=1, default = [sharedConsts.DEF_LEVEL], type=int, choices=range(sharedConsts.MIN_LEVEL, sharedConsts.MAX_LEVEL))
+        
+        # dirty lines
+        parser.add_argument(sharedConsts.ARG_DIRTY_S, sharedConsts.ARG_DIRTY, help = sharedConsts.COMMENT_DIRTY, required = False, nargs=1, default = [0], type=int, choices=range(0, sharedConsts.PLAYFIELD_HEIGHT - 1))
+        
+        # User name
+        parser.add_argument(sharedConsts.ARG_USER_S, sharedConsts.ARG_USER, help = sharedConsts.COMMENT_USER, required = False, nargs=1)
 
-             # username (for score)
-            index =  parameters.findAndRemoveOption(sharedConsts.CMD_OPTION_USER)
-            if not parameters.NO_INDEX == index:
-                # username expected
-                try :
-                    rets = parameters.parameterOrValue(index + 1)
-                    if rets[1] == False : 
-                        self.params_.user_ = rets[0]
-                except IndexError:
-                    # no value ...
-                    self._usage()
-                    return False
+        # Parse the command line
+        #
+        args = parser.parse_args()
 
-        # There should be no options left
-        if parameters.options() > 0:
-            self._usage()
-            return False
+        # Display high-scores
+        self.params_.showScores_ = args.top
+        
+        # Console mode (forced if displaying scores)
+        self.useGUI_ = False if self.params_.showScores_ else (False == args.console)
 
+        # Display high-scores
+        self.params_.shadow_ = args.shadow
+
+        # Starting level
+        self.params_.startLevel_ = args.level[0]
+
+        # Dirty lines
+        self.params_.dirtyLines_ = args.dirty[0]
+
+        # User name
+        if args.user is not None:
+            self.params_.user_ = args.user[0]
+        
         # Ok
         return True
         
@@ -176,7 +150,7 @@ class tetris(object):
         seqCount = 0
         seqDuration = self._updateSpeed(sharedConsts.INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
         ts, now = 0, 0
-        uWait = 5 / 1000.0   # en ms.
+        uWait = 5 / 1000.0   # in ms.
 
         # start !
         self.gameData_.setParameters(self.params_)
@@ -238,11 +212,22 @@ class tetris(object):
             if False != myScore:
                 self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
 
+    
+    # Display app version infos
+    #
+    #   return a string
+    #
+    def version(self, verbose = True):
+        if None == self.txtColours_:
+            self.txtColours_ = color.colorizer(True)
+
+        return f"{self.txtColours_.colored(sharedConsts.APP_NAME, formatAttr=[color.textAttribute.BOLD], datePrefix=(False == verbose))} by {sharedConsts.APP_AUTHOR} - release {sharedConsts.APP_CURRENT_VERSION} - {sharedConsts.APP_RELEASE_DATE}"
+    
     #
     # Private methods
     #   
     
-    # Hadle keyboard inputs
+    # Handle keyboard inputs
     #
     def _handleGameKeys(self):
         inputChar = self.displayMgr_.checkKeyboard()
@@ -271,17 +256,6 @@ class tetris(object):
             duration*=acc
         return duration
 
-    # Show usage
-    #
-    def _usage(self):
-        print(self.txtColours_.colored("\ttetris.py", formatAttr=[color.textAttribute.BOLD]))
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_START_LEVEL + " {numLevel} ", formatAttr=[color.textAttribute.DARK]), ": Start the game at {numLevel}")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_SHADOW, formatAttr=[color.textAttribute.DARK]), ": Display shadow ot the piece at the bottom of the playfiled")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_DIRTY_LINES + " {numLines} ", formatAttr=[color.textAttribute.DARK]), ": Start the game with {numLine} 'dirty' lines at the bottom of the playfield")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_USER + " {username} ", formatAttr=[color.textAttribute.DARK]), ": Set the name of the current player")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_CONSOLE, formatAttr=[color.textAttribute.DARK]), ": Console display mode (if nCurses is available)")
-        print("\t", self.txtColours_.colored(sharedConsts.CMD_OPTION_CHAR + sharedConsts.CMD_OPTION_TOP, formatAttr=[color.textAttribute.DARK]), ": Show high-scores")
-
 #
 # Entry point
 #
@@ -289,8 +263,7 @@ class tetris(object):
 if __name__ == '__main__':
     ver = sys.version_info
     if ver.major < sharedConsts.PYTHON_MIN_MAJOR or (ver.major == sharedConsts.PYTHON_MIN_MAJOR and ver.minor < sharedConsts.PYTHON_MIN_MINOR):
-        out = str(sharedConsts.PYTHON_MIN_MAJOR) + "." + str(sharedConsts.PYTHON_MIN_MINOR)
-        print("Error - Expected minimum version for Python ", out)
+        print(f"Error - Expected minimum version for Python {str(sharedConsts.PYTHON_MIN_MAJOR)}.{str(sharedConsts.PYTHON_MIN_MINOR)}")
         exit(1) 
 
     import time

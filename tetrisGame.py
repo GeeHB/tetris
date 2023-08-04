@@ -8,16 +8,11 @@
 #                   
 #   Comment    :   min Python 3.xx
 #
-#   Version     :   0.7.1
-#
-#   Date        :   2021/09/22
-#
 
 import sharedConsts
 from eventHandler import eventHandler
-import board
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
-from sharedTools.common import colorizer as color
+from sharedTools import colorizer as color
 
 # tetrisGame - abstract class
 #

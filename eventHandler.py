@@ -10,10 +10,6 @@
 #
 #   Comment    :   Python 3.xx
 #
-#   Version     :   0.7.1
-#
-#   Date        :   2021/09/22
-#
 
 # eventHandler object
 #   Handle the notifications to update display

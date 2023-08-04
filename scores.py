@@ -10,10 +10,6 @@
 #
 #   Comment    :   Need Python 3.xx or higher
 #
-#   Version     :   0.7.1
-#
-#   Date        :   2021/09/22
-#
 
 import sharedConsts
 

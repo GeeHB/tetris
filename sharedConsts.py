@@ -6,14 +6,15 @@
 #
 #   Description :   shared consts for Tetris Game
 
-#   Version     :   0.7.1
-#
-#   Date        :   2021/09/22
-# 
-
 #
 #   Public consts
 #
+
+APP_NAME = "tetris.py"
+APP_CURRENT_VERSION = "0.8.0"
+APP_RELEASE_DATE = "07/31/2023"
+APP_AUTHOR_SHORT = "GeeHB"
+APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"
 
 # Expected version (minimal)
 PYTHON_MIN_MAJOR = 3
@@ -63,14 +64,32 @@ LAST_COLOUR_ID   = COLOUR_ID_BKGRND
 # Command line options
 #
 
-CMD_OPTION_CHAR = "-"
+ARG_STARTLEVEL_S = "-l"
+ARG_STARTLEVEL   = "--level"
+COMMENT_STARTLEVEL = "Choose starting level"
 
-CMD_OPTION_START_LEVEL = "level"
-CMD_OPTION_SHADOW = "shadow"
-CMD_OPTION_DIRTY_LINES = "lines"
-CMD_OPTION_USER = "me"
-CMD_OPTION_TOP = "top"
+MIN_LEVEL = 1
+MAX_LEVEL = 15
+DEF_LEVEL =  MIN_LEVEL
 
-CMD_OPTION_CONSOLE = "c"         # Console mode
+ARG_SHADOW_S    = "-s"
+ARG_SHADOW      = "--shadow"
+COMMENT_SHADOW  = "Display piece shadow"
+
+ARG_DIRTY_S     = "-d"
+ARG_DIRTY       = "--dirty"
+COMMENT_DIRTY   = "Start game with dirty lines"
+
+ARG_USER_S     = "-u"
+ARG_USER       = "--user"
+COMMENT_USER   = "Set user name"
+
+ARG_TOP_S       = "-t"
+ARG_TOP         = "--top"
+COMMENT_TOP     = "Show top scores"
+
+ARG_CONSOLE_S   = "-c "                # Console mode
+ARG_CONSOLE     = "--console"
+COMMENT_CONSOLE = "Force displays in console mode (using nCurses if available)"
 
 # EOF
