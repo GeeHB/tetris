@@ -404,13 +404,16 @@ class board(object):
             if not 0 == currentLineValue:
                 completedLines.insert(0,line)
                 
-        # Animate
         for lineIndex in completedLines:
+            # Animate
             self.eventHandler_.lineCompleted(lineIndex)
             
-        # Uodate datas
-        for lineIndex in completedLines:
+            # update datas
             self._clearLine(lineIndex)
+
+        # Uodate datas
+        #for lineIndex in completedLines:
+            
 
         # Update the score
         completedCount = len(completedLines)
