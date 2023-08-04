@@ -12,7 +12,7 @@
 
 import random
 
-import sharedConsts
+import consts
 import piece
 import shapes
 from eventHandler import eventHandler
@@ -96,7 +96,7 @@ class board(object):
         self.playField_  = []
         
         # Add dirty lines ...
-        maxLines = sharedConsts.PLAYFIELD_HEIGHT - piece.PIECE_HEIGHT - 1
+        maxLines = consts.PLAYFIELD_HEIGHT - piece.PIECE_HEIGHT - 1
         if self.parameters_.dirtyLines_ > maxLines:
             self.parameters_.dirtyLines_ = maxLines
         elif self.parameters_.dirtyLines_ < 0:
@@ -106,8 +106,8 @@ class board(object):
             self._addDirtyLine()
         
         # other lines are empty 
-        for _ in range(self.parameters_.dirtyLines_, sharedConsts.PLAYFIELD_HEIGHT):
-            self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
+        for _ in range(self.parameters_.dirtyLines_, consts.PLAYFIELD_HEIGHT):
+            self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
     # Let's play
     #
@@ -171,8 +171,8 @@ class board(object):
         self.setNextPieceIndex(self._newPieceIndex())
         
         # The piece is a the top of the game play, centered horizontally
-        self.currentPiece_.leftPos_ = int((sharedConsts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
-        self.currentPiece_.topPos_ = sharedConsts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
+        self.currentPiece_.leftPos_ = int((consts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
+        self.currentPiece_.topPos_ = consts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
         self.currentPiece_.minHeight_ = -1          # no shadow
         self.currentPiece_.rotationIndex_ = 0       # no rotation
         self.tetraminos_[self.currentPiece_.index_].rotateBack()    
@@ -303,11 +303,11 @@ class board(object):
                     realY = topPos - y 
 
                     # out of the gameplay's limits ?
-                    if realX < 0 or realY < 0 or realX >= sharedConsts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
+                    if realX < 0 or realY < 0 or realX >= consts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
                         return False
                     
                     # Is there a block at this place ?
-                    if realY < sharedConsts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
+                    if realY < consts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
                         return False
 
         # Yes => the position is valid
@@ -340,31 +340,31 @@ class board(object):
 
         # Copuy all the colored blocks in the gameplay
         #
-        maxY = 0 if sharedConsts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - sharedConsts.PLAYFIELD_HEIGHT + 1
+        maxY = 0 if consts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - consts.PLAYFIELD_HEIGHT + 1
         for y in range(maxY, piece.PIECE_HEIGHT):
             for x in range(piece.PIECE_WIDTH):
-                if not 0 == datas[y][x] and (vertPos - y) < sharedConsts.PLAYFIELD_HEIGHT:
+                if not 0 == datas[y][x] and (vertPos - y) < consts.PLAYFIELD_HEIGHT:
                     self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
 
     # Clear and remove a line (completed)
     #
     def _clearLine(self, index):
-        if index < 0 or index >= sharedConsts.PLAYFIELD_HEIGHT:
+        if index < 0 or index >= consts.PLAYFIELD_HEIGHT:
             return
         
         # Remove the line from the screen
         self.playField_.pop(index)
 
         # Add a ne empty line 
-        self.playField_.append([0] * sharedConsts.PLAYFIELD_WIDTH)
+        self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
     # Add a randomly generated dirty line at the bottom of the gameplay
     #
     def _addDirtyLine(self):
-        cubes = random.randint(1,2 ** sharedConsts.PLAYFIELD_WIDTH - 1)
+        cubes = random.randint(1,2 ** consts.PLAYFIELD_WIDTH - 1)
         line = []
         sBit = 1 # 2 ^ 0
-        for _ in range(sharedConsts.PLAYFIELD_WIDTH):
+        for _ in range(consts.PLAYFIELD_WIDTH):
             # bit is set ?
             if cubes & sBit > 0:
                 # yes => add a colored block
@@ -393,11 +393,11 @@ class board(object):
         # Check the 4 possible lines
         completedLines = []
         maxY = self.currentPiece_.topPos_ + 1
-        if maxY > sharedConsts.PLAYFIELD_HEIGHT:
-            maxY = sharedConsts.PLAYFIELD_HEIGHT
+        if maxY > consts.PLAYFIELD_HEIGHT:
+            maxY = consts.PLAYFIELD_HEIGHT
         for line in range(self.currentPiece_.topPos_ - piece.PIECE_HEIGHT + 1, maxY):
             currentLineValue = 1
-            for col in range(sharedConsts.PLAYFIELD_WIDTH):
+            for col in range(consts.PLAYFIELD_WIDTH):
                 currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
 
             # The line is complete
@@ -410,10 +410,6 @@ class board(object):
             
             # update datas
             self._clearLine(lineIndex)
-
-        # Uodate datas
-        #for lineIndex in completedLines:
-            
 
         # Update the score
         completedCount = len(completedLines)
@@ -429,9 +425,9 @@ class board(object):
                 # 4 !
                 delta += 800    # * 800 ?
             
-            mult = 100 + sharedConsts.SCORE_SPEED_GAME * downRowcount + sharedConsts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_ + sharedConsts.SCORE_LEVEL_VALUATION * self.lines_
+            mult = 100 + consts.SCORE_SPEED_GAME * downRowcount + consts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_ + consts.SCORE_LEVEL_VALUATION * self.lines_
             if False == self.parameters_.shadow_:
-                mult+=sharedConsts.SCORE_NO_SHADOW
+                mult+=consts.SCORE_NO_SHADOW
             
             self.eventHandler_.incScore(int(delta*mult/100))
 

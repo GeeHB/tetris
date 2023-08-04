@@ -1,9 +1,12 @@
-Version 0.8.0
-    * aug. 2023
+Version 0.8.1
+    * 04 aug. 2023
     * Added
         * use fast strings
         * Animation when line(s) completed
         * use argparse as command line parser
+        * PYGame : Initial window size depends on desktop size !!!
+    * Fixes
+        * PyGame Window flickering on ChromeOS
 
 Version 0.7.1
     * 22 sept. 2021

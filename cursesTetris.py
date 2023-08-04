@@ -11,7 +11,7 @@
 
 import curses, sys, os, termios, fcntl
 import tetrisGame
-import sharedConsts
+import consts
 
 # Public consts
 #
@@ -75,15 +75,15 @@ class cursesTetris(tetrisGame.tetrisGame):
             curses.init_pair(i, i, i) # colour ID = i <=>: text = i, bk = i
         
         # Shadow : white on black
-        curses.init_pair(sharedConsts.COLOUR_ID_SHADOW, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(consts.COLOUR_ID_SHADOW, curses.COLOR_WHITE, curses.COLOR_BLACK)
 
         # Hilight : red
         curses.init_pair(COLOUR_HILIGHT, curses.COLOR_RED, curses.COLOR_BLACK)
     
         # Dimensions
         #
-        self.gameWidth_ = sharedConsts.PLAYFIELD_WIDTH * 2
-        self.gameHeight_ = sharedConsts.PLAYFIELD_HEIGHT
+        self.gameWidth_ = consts.PLAYFIELD_WIDTH * 2
+        self.gameHeight_ = consts.PLAYFIELD_HEIGHT
         self.gameLeft_ = 2       # (curses.COLS - gameWidth_) / 2;
         self.gameTop_ = curses.LINES - self.gameHeight_
         #self.canDrawNextPiece_ = curses.COLS > (self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
@@ -194,7 +194,7 @@ class cursesTetris(tetrisGame.tetrisGame):
         
         if inBoard:
             left = self.gameLeft_ + 2 * x
-            top = self.gameTop_ + sharedConsts.PLAYFIELD_HEIGHT - 1 - y
+            top = self.gameTop_ + consts.PLAYFIELD_HEIGHT - 1 - y
         else:
             left = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
             top = self.gameTop_ + 2

@@ -11,7 +11,7 @@
 
 import pygame
 import math
-import sharedConsts
+import consts
 import tetrisGame
 
 # Public consts
@@ -71,7 +71,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     
     colours_        = []                # Table of colours
 
-    itemDims_      = [None, None, None] # Texts dims. (scores, lines and level)
+    itemDims_       = [None, None, None] # Texts dims. (scores, lines and level)
     
     # Construction
     #
@@ -79,7 +79,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         
         # Table of colours
         #
-        self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + sharedConsts.LAST_COLOUR_ID)
+        self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + consts.LAST_COLOUR_ID)
         
         self.colours_[1] = tetrisColour((255, 0, 0), (255, 128, 128), (128,0,0))        # Red
         self.colours_[2] = tetrisColour((0, 255, 0), (255, 128, 128), (0,128,0))        # Green
@@ -89,18 +89,18 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.colours_[6] = tetrisColour((0, 255, 255), (128, 255, 255), (0,128,128))    # Cyan
         self.colours_[7] = tetrisColour((255, 128, 0), (255, 192, 128), (128,64,0))     # Orange
 
-        self.colours_[sharedConsts.COLOUR_ID_SHADOW] = tetrisColour((48,48,48))
-        self.colours_[sharedConsts.COLOUR_ID_TEXT] = tetrisColour(COLOUR_WHITE)
-        self.colours_[sharedConsts.COLOUR_ID_BORDER] = tetrisColour((192,192,192))
-        self.colours_[sharedConsts.COLOUR_ID_BOARD] = tetrisColour((32,32,32))
-        self.colours_[sharedConsts.COLOUR_ID_ANIMATE] = tetrisColour((72, 72, 70), (92,92,95),(52,52,55))
+        self.colours_[consts.COLOUR_ID_SHADOW] = tetrisColour((48,48,48))
+        self.colours_[consts.COLOUR_ID_TEXT] = tetrisColour(COLOUR_WHITE)
+        self.colours_[consts.COLOUR_ID_BORDER] = tetrisColour((192,192,192))
+        self.colours_[consts.COLOUR_ID_BOARD] = tetrisColour((32,32,32))
+        self.colours_[consts.COLOUR_ID_ANIMATE] = tetrisColour((72, 72, 70), (92,92,95),(52,52,55))
 
         # Compute dimensions
-        self.winWidth_    = 2 * self.boxWidth_ * sharedConsts.PLAYFIELD_WIDTH
-        self.winHeight_   = (2 + self.boxWidth_) * sharedConsts.PLAYFIELD_HEIGHT
+        self.winWidth_    = 2 * self.boxWidth_ * consts.PLAYFIELD_WIDTH
+        self.winHeight_   = (2 + self.boxWidth_) * consts.PLAYFIELD_HEIGHT
         
-        self.gameWidth_ = sharedConsts.PLAYFIELD_HEIGHT * self.boxWidth_
-        self.gameHeight_ = sharedConsts.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameWidth_ = consts.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameHeight_ = consts.PLAYFIELD_HEIGHT * self.boxWidth_
         self.gameLeft_ = 2 * self.boxWidth_
         self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
 
@@ -115,7 +115,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         pos = (self.gameLeft_, self.gameTop_)
 
         # animated block dimensions (w,h)
-        dims = (sharedConsts.PLAYFIELD_WIDTH * self.boxWidth_, (sharedConsts.PLAYFIELD_HEIGHT - rowIndex - 1) * self.boxWidth_ + 1)
+        dims = (consts.PLAYFIELD_WIDTH * self.boxWidth_, (consts.PLAYFIELD_HEIGHT - rowIndex - 1) * self.boxWidth_ + 1)
 
         # To control animation speed
         clock = pygame.time.Clock()
@@ -127,12 +127,12 @@ class pygameTetris(tetrisGame.tetrisGame):
         tempPiece = pygame.Surface((self.boxWidth_, self.boxWidth_))
 
         # draw a single grey piece inside
-        self._pyDrawBlock(tempPiece, 0, 0, sharedConsts.COLOUR_ID_ANIMATE, True, False)
+        self._pyDrawBlock(tempPiece, 0, 0, consts.COLOUR_ID_ANIMATE, True, False)
 
         # replace blocks by the temp piece
         lineTop = pos[1] + dims[1] - 1
-        for blockID in range(sharedConsts.PLAYFIELD_WIDTH):
-            for offset in range(self.boxWidth_):
+        for offset in range(self.boxWidth_):
+            for blockID in range(consts.PLAYFIELD_WIDTH):
                 self.win_.blit(tempPiece, (pos[0] + blockID * self.boxWidth_, lineTop), (0, 0, offset, self.boxWidth_))
             self._updateDisplay()
             clock.tick(120)
@@ -142,7 +142,7 @@ class pygameTetris(tetrisGame.tetrisGame):
 
         # Create a "memory" surface
         tempSurface = pygame.Surface(dims)
-        tempSurface.fill(self.colours_[sharedConsts.COLOUR_ID_BOARD].base_)
+        tempSurface.fill(self.colours_[consts.COLOUR_ID_BOARD].base_)
 
         # Copy blocks above the line to delete in memory surface
         tempSurface.blit(self.win_, (0, 1), (pos[0], pos[1], dims[0], dims[1]))
@@ -172,7 +172,8 @@ class pygameTetris(tetrisGame.tetrisGame):
             return "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
 
         # Main window creation
-        self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.RESIZABLE)
+        self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.SCALED)
+        #self.win_ = pygame.display.set_mode((self.winWidth_, self.winHeight_), pygame.RESIZABLE)
         pygame.display.set_caption('jTetris')
         
         # Ok
@@ -235,14 +236,14 @@ class pygameTetris(tetrisGame.tetrisGame):
     #
     def _drawText(self, index, text):
         font = pygame.font.SysFont(FONT_NAME, self.fontSize_)
-        label = font.render(text, 1, self.colours_[sharedConsts.COLOUR_ID_TEXT].base_)
+        label = font.render(text, 1, self.colours_[consts.COLOUR_ID_TEXT].base_)
 
-        left = self.gameLeft_ + (1 + sharedConsts.PLAYFIELD_WIDTH ) * self.boxWidth_
+        left = self.gameLeft_ + (1 + consts.PLAYFIELD_WIDTH ) * self.boxWidth_
         top = self.gameTop_ + self.boxWidth_ * ( 2 * index + 1)
         
         # Erase 
         if None != self.itemDims_[index] and 2 == len(self.itemDims_[index]) :
-            pygame.draw.rect(self.win_, self.colours_[sharedConsts.COLOUR_ID_BKGRND].base_, (left, top, self.itemDims_[index][0], self.itemDims_[index][1]))
+            pygame.draw.rect(self.win_, self.colours_[consts.COLOUR_ID_BKGRND].base_, (left, top, self.itemDims_[index][0], self.itemDims_[index][1]))
     
         # Draw the text
         self.itemDims_[index] = font.size(text) # Get the size
@@ -255,25 +256,25 @@ class pygameTetris(tetrisGame.tetrisGame):
         # Playfield frame
         left = self.gameLeft_ - 1
         top = self.gameTop_ - 1
-        width = sharedConsts.PLAYFIELD_WIDTH * self.boxWidth_ + 2
+        width = consts.PLAYFIELD_WIDTH * self.boxWidth_ + 2
         right = left + width - 1
-        height = sharedConsts.PLAYFIELD_HEIGHT * self.boxWidth_ + 2
+        height = consts.PLAYFIELD_HEIGHT * self.boxWidth_ + 2
         bottom = top + height - 1
         
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(left, bottom))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, bottom),(right, bottom))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (right, top),(right, bottom))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(right, top))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(left, bottom))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, bottom),(right, bottom))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (right, top),(right, bottom))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(right, top))
 
         # background
         #x,y,w,h = self._changeCoordonateSystem(left, top, True)
         #pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BOARD].base_, (x, y, w * board.PLAYFIELD_WIDTH, h * board.PLAYFIELD_HEIGHT))
         
         # Next piece text
-        left = self.gameLeft_ + (1 + sharedConsts.PLAYFIELD_WIDTH ) * self.boxWidth_
+        left = self.gameLeft_ + (1 + consts.PLAYFIELD_WIDTH ) * self.boxWidth_
         top = self.gameTop_ + self.boxWidth_ * 8
         font = pygame.font.SysFont(FONT_NAME, self.fontSize_)
-        label = font.render(self.itemTexts_[3], 1, self.colours_[sharedConsts.COLOUR_ID_TEXT].base_)
+        label = font.render(self.itemTexts_[3], 1, self.colours_[consts.COLOUR_ID_TEXT].base_)
         self.win_.blit(label, (left, top))
 
         # Next piece frame
@@ -281,10 +282,10 @@ class pygameTetris(tetrisGame.tetrisGame):
         top = self.gameTop_ + self.boxWidth_ * 10 -2
         width = 4 * self.boxWidth_ + 4
         height = 4 * self.boxWidth_ + 4
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(left, top +  height - 1))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left + width - 1, top),(left + width - 1, top +  height - 1))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
-        pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top + height - 1))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(left, top +  height - 1))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left + width - 1, top),(left + width - 1, top +  height - 1))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
+        pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top + height - 1))
 
     
     # Draw a coloured block
@@ -334,10 +335,10 @@ class pygameTetris(tetrisGame.tetrisGame):
         if inBoard:
             # For the game
             left = self.gameLeft_ + x * self.boxWidth_
-            top = self.gameTop_ + (sharedConsts.PLAYFIELD_HEIGHT - 1 - y) * self.boxWidth_
+            top = self.gameTop_ + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.boxWidth_
         else:
             # Next piece
-            left = self.gameLeft_ + (1 + sharedConsts.PLAYFIELD_WIDTH ) * self.boxWidth_
+            left = self.gameLeft_ + (1 + consts.PLAYFIELD_WIDTH ) * self.boxWidth_
             top = self.gameTop_ + self.boxWidth_ * 10
 
         return (left, top, self.boxWidth_, self.boxWidth_)
@@ -350,13 +351,13 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.winHeight_ = newHeight
 
         # Compute new "square" size
-        self.boxWidth_ = math.floor((newHeight - 1) / (sharedConsts.PLAYFIELD_HEIGHT+ 2))
+        self.boxWidth_ = math.floor((newHeight - 1) / (consts.PLAYFIELD_HEIGHT+ 2))
         if self.boxWidth_ < 8 :
             self.boxWidth_ = 8
 
         # other dims
-        self.gameWidth_ = sharedConsts.PLAYFIELD_HEIGHT * self.boxWidth_
-        self.gameHeight_ = sharedConsts.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameWidth_ = consts.PLAYFIELD_HEIGHT * self.boxWidth_
+        self.gameHeight_ = consts.PLAYFIELD_HEIGHT * self.boxWidth_
         self.gameLeft_ = 2 * self.boxWidth_
         self.gameTop_ = self.winHeight_ - self.gameHeight_  - 1
         self.fontSize_ = int(self.boxWidth_ / BOX_WIDTH * FONT_SIZE)

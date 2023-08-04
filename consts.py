@@ -1,6 +1,6 @@
 # coding=UTF-8
 #
-#   File        :   sharedConsts.py
+#   File        :   consts.py
 #
 #   Authors     :   JHB
 #
@@ -11,7 +11,7 @@
 #
 
 APP_NAME = "tetris.py"
-APP_CURRENT_VERSION = "0.8.0"
+APP_CURRENT_VERSION = "0.8.1"
 APP_RELEASE_DATE = "07/31/2023"
 APP_AUTHOR_SHORT = "GeeHB"
 APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"

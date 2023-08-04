@@ -9,7 +9,7 @@
 #   Comment    :   min Python 3.xx
 #
 
-import sharedConsts
+import consts
 from eventHandler import eventHandler
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
 from sharedTools import colorizer as color
@@ -181,9 +181,9 @@ class tetrisGame(eventHandler):
         leftFirst, top, w, h = self._changeCoordonateSystem(0,0,True)
 
         # Draw all the blocks (colored or not)
-        for y in range(sharedConsts.PLAYFIELD_HEIGHT):
+        for y in range(consts.PLAYFIELD_HEIGHT):
             left = leftFirst
-            for x in range(sharedConsts.PLAYFIELD_WIDTH):        
+            for x in range(consts.PLAYFIELD_WIDTH):        
                 self._drawBlock(left, top, self.board_.playField_[y][x], True)
                 left+=w
             top-=h
@@ -236,15 +236,15 @@ class tetrisGame(eventHandler):
         if self.currentPos_ == None  or self.currentPos_ != newState: 
             # Erase the tetramino (and maybe it's shadow)
             if None != self.currentPos_:                    
-                self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, sharedConsts.COLOUR_ID_BOARD)
+                self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, consts.COLOUR_ID_BOARD)
                 if -1 != self.currentPos_.shadowTopPos_:
                     # then the shadow
-                    self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.shadowTopPos_, sharedConsts.COLOUR_ID_BOARD)
+                    self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.shadowTopPos_, consts.COLOUR_ID_BOARD)
 
             # ... redraw
             if -1 != newState.shadowTopPos_:
                 # first : the shadow
-                self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , sharedConsts.COLOUR_ID_SHADOW, shadow = True)
+                self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , consts.COLOUR_ID_SHADOW, shadow = True)
             
             # and then the tetramino (can recover the shadow !!!!)
             self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_ , self.board_.tetraminos_[newState.index_].colour())
@@ -308,7 +308,7 @@ class tetrisGame(eventHandler):
         
         # First visible row ID
         if True == inBoard:
-            rowFirst =  sharedConsts.PLAYFIELD_HEIGHT -1 - cornerY
+            rowFirst =  consts.PLAYFIELD_HEIGHT -1 - cornerY
             rowFirst = rowFirst* -1 if rowFirst < 0 else 0
         else:
             rowFirst = 0    # all rows are visible
@@ -319,7 +319,7 @@ class tetrisGame(eventHandler):
             x = xFirst
             for col in range(PIECE_WIDTH):
                 colour = datas[row][col]
-                if colour != sharedConsts.COLOUR_ID_BOARD:
+                if colour != consts.COLOUR_ID_BOARD:
                     self._drawBlock(x, y, colourID, inBoard, shadow)  # only non-empty squares
                 x+=w
             y+=h
@@ -328,7 +328,7 @@ class tetrisGame(eventHandler):
     #
     def _drawNextPiece(self, pieceIndex):
         # Erase the previous piece 
-        self._eraseBlocks(0, 0, 4, 4, sharedConsts.COLOUR_ID_BOARD, False)
+        self._eraseBlocks(0, 0, 4, 4, consts.COLOUR_ID_BOARD, False)
         
         # ... and the new one
         if -1 != pieceIndex :     

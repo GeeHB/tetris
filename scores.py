@@ -11,7 +11,7 @@
 #   Comment    :   Need Python 3.xx or higher
 #
 
-import sharedConsts
+import consts
 
 # scores object
 #   Handles scores 
@@ -79,12 +79,12 @@ class scores(object):
 
                 # Next ...
                 index += 1
-                if index == len(self.scores_) or len(tops) == sharedConsts.SCORES_MAX_COUNT:
+                if index == len(self.scores_) or len(tops) == consts.SCORES_MAX_COUNT:
                     parse = False                        
         else:
             # Returns the first elements of the global table
             size = len(self.scores_)
-            max =  sharedConsts.SCORES_MAX_COUNT if size > sharedConsts.SCORES_MAX_COUNT else size
+            max =  consts.SCORES_MAX_COUNT if size > consts.SCORES_MAX_COUNT else size
             for index in range(max):
                 score = self.scores_[index]
                 tops.append(score)
@@ -112,14 +112,14 @@ class scores(object):
 
         # Read & parse the file
         try:
-            file = open(sharedConsts.SCORES_FILE)
+            file = open(consts.SCORES_FILE)
             for line in file :
                 if len(line) > 0:
                     # remove EOL
                     if line[len(line) - 1] == "\n":
                         line = line[:len(line) - 1]
                     
-                    values = line.split(sharedConsts.SCORES_FILE_SEP)
+                    values = line.split(consts.SCORES_FILE_SEP)
                     if values[0].isnumeric():
                         self.scores_.append((int(values[0]), values[1] if 2 == len(values) else "" ))
             file.close()
@@ -137,7 +137,7 @@ class scores(object):
     #
     def _save(self):
         try:
-            file = open(sharedConsts.SCORES_FILE, "w")
+            file = open(consts.SCORES_FILE, "w")
             userCount = 0
             for index in range(len(self.scores_)) :
                 line = str(self.scores_[index][0])
@@ -146,10 +146,10 @@ class scores(object):
                     userCount += 1
                 
                 if len(self.scores_[index][1]):    
-                    line+=sharedConsts.SCORES_FILE_SEP
+                    line+=consts.SCORES_FILE_SEP
                     line+=self.scores_[index][1]
                 
-                if userCount <= sharedConsts.SCORES_MAX_COUNT:
+                if userCount <= consts.SCORES_MAX_COUNT:
                     line+="\n"
                     file.write(line)
             file.close()

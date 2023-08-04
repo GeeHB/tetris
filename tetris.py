@@ -12,7 +12,7 @@
 #
 
 import sys, math, argparse
-import sharedConsts
+import consts
 from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
 from board import tetrisParameters
@@ -50,22 +50,22 @@ class tetris(object):
         #
          
         # High scores
-        parser.add_argument(sharedConsts.ARG_TOP_S, sharedConsts.ARG_TOP, action='store_true', help = sharedConsts.COMMENT_TOP, required = False)
+        parser.add_argument(consts.ARG_TOP_S, consts.ARG_TOP, action='store_true', help = consts.COMMENT_TOP, required = False)
         
         # Console display mode ?
-        parser.add_argument(sharedConsts.ARG_CONSOLE_S, sharedConsts.ARG_CONSOLE, action='store_true', help = sharedConsts.COMMENT_CONSOLE, required = False)
+        parser.add_argument(consts.ARG_CONSOLE_S, consts.ARG_CONSOLE, action='store_true', help = consts.COMMENT_CONSOLE, required = False)
 
         # Console display mode ?
-        parser.add_argument(sharedConsts.ARG_SHADOW_S, sharedConsts.ARG_SHADOW, action='store_true', help = sharedConsts.COMMENT_SHADOW, required = False)
+        parser.add_argument(consts.ARG_SHADOW_S, consts.ARG_SHADOW, action='store_true', help = consts.COMMENT_SHADOW, required = False)
 
         # Start level
-        parser.add_argument(sharedConsts.ARG_STARTLEVEL_S, sharedConsts.ARG_STARTLEVEL, help = sharedConsts.COMMENT_STARTLEVEL, required = False, nargs=1, default = [sharedConsts.DEF_LEVEL], type=int, choices=range(sharedConsts.MIN_LEVEL, sharedConsts.MAX_LEVEL))
+        parser.add_argument(consts.ARG_STARTLEVEL_S, consts.ARG_STARTLEVEL, help = consts.COMMENT_STARTLEVEL, required = False, nargs=1, default = [consts.DEF_LEVEL], type=int, choices=range(consts.MIN_LEVEL, consts.MAX_LEVEL))
         
         # dirty lines
-        parser.add_argument(sharedConsts.ARG_DIRTY_S, sharedConsts.ARG_DIRTY, help = sharedConsts.COMMENT_DIRTY, required = False, nargs=1, default = [0], type=int, choices=range(0, sharedConsts.PLAYFIELD_HEIGHT - 1))
+        parser.add_argument(consts.ARG_DIRTY_S, consts.ARG_DIRTY, help = consts.COMMENT_DIRTY, required = False, nargs=1, default = [0], type=int, choices=range(0, consts.PLAYFIELD_HEIGHT - 1))
         
         # User name
-        parser.add_argument(sharedConsts.ARG_USER_S, sharedConsts.ARG_USER, help = sharedConsts.COMMENT_USER, required = False, nargs=1)
+        parser.add_argument(consts.ARG_USER_S, consts.ARG_USER, help = consts.COMMENT_USER, required = False, nargs=1)
 
         # Parse the command line
         #
@@ -148,7 +148,7 @@ class tetris(object):
 
         # Initial speed
         seqCount = 0
-        seqDuration = self._updateSpeed(sharedConsts.INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
+        seqDuration = self._updateSpeed(consts.INITIAL_SPEED * 1000000, self.params_.startLevel_, self.params_.startLevel_ - 1)
         ts, now = 0, 0
         uWait = 5 / 1000.0   # in ms.
 
@@ -185,9 +185,9 @@ class tetris(object):
 
             # Accelerate ?
             seqCount += 1
-            if 0 == (seqCount % sharedConsts.MOVES_UPDATE_LEVEL):
+            if 0 == (seqCount % consts.MOVES_UPDATE_LEVEL):
                 # Real level (based on pieces movements)
-                rLevel = math.floor(seqCount / sharedConsts.MOVES_UPDATE_LEVEL) + 1
+                rLevel = math.floor(seqCount / consts.MOVES_UPDATE_LEVEL) + 1
                 
                 # Change level (if necessary) & accelerate
                 if rLevel >= self.gameData_.level():
@@ -221,7 +221,7 @@ class tetris(object):
         if None == self.txtColours_:
             self.txtColours_ = color.colorizer(True)
 
-        return f"{self.txtColours_.colored(sharedConsts.APP_NAME, formatAttr=[color.textAttribute.BOLD], datePrefix=(False == verbose))} by {sharedConsts.APP_AUTHOR} - release {sharedConsts.APP_CURRENT_VERSION} - {sharedConsts.APP_RELEASE_DATE}"
+        return f"{self.txtColours_.colored(consts.APP_NAME, formatAttr=[color.textAttribute.BOLD], datePrefix=(False == verbose))} by {consts.APP_AUTHOR} - release {consts.APP_CURRENT_VERSION} - {consts.APP_RELEASE_DATE}"
     
     #
     # Private methods
@@ -246,12 +246,12 @@ class tetris(object):
 
     # Change the game'speed
     def _updateSpeed(self, currentDuration, level, incLevel = 1):
-        if level >= sharedConsts.MAX_LEVEL_ACCELERATION :
+        if level >= consts.MAX_LEVEL_ACCELERATION :
             return currentDuration
         
         # duration = currentDuration * acc ^ incLevel
         duration = currentDuration
-        acc = (1.0 - sharedConsts.ACCELERATION_STEP)
+        acc = (1.0 - consts.ACCELERATION_STEP)
         for _ in range(incLevel):
             duration*=acc
         return duration
@@ -262,8 +262,8 @@ class tetris(object):
 
 if "__main__" == __name__:
     ver = sys.version_info
-    if ver.major < sharedConsts.PYTHON_MIN_MAJOR or (ver.major == sharedConsts.PYTHON_MIN_MAJOR and ver.minor < sharedConsts.PYTHON_MIN_MINOR):
-        print(f"Error - Expected minimum version for Python {str(sharedConsts.PYTHON_MIN_MAJOR)}.{str(sharedConsts.PYTHON_MIN_MINOR)}")
+    if ver.major < consts.PYTHON_MIN_MAJOR or (ver.major == consts.PYTHON_MIN_MAJOR and ver.minor < consts.PYTHON_MIN_MINOR):
+        print(f"Error - Expected minimum version for Python {str(consts.PYTHON_MIN_MAJOR)}.{str(consts.PYTHON_MIN_MINOR)}")
         exit(1) 
 
     import time
