@@ -11,7 +11,7 @@
 #   Comment    :   Need Python 3.xx or higher
 #
 
-import sys, math,argparse
+import sys, math, argparse
 import sharedConsts
 from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
@@ -260,7 +260,7 @@ class tetris(object):
 # Entry point
 #
 
-if __name__ == '__main__':
+if "__main__" == __name__:
     ver = sys.version_info
     if ver.major < sharedConsts.PYTHON_MIN_MAJOR or (ver.major == sharedConsts.PYTHON_MIN_MAJOR and ver.minor < sharedConsts.PYTHON_MIN_MINOR):
         print(f"Error - Expected minimum version for Python {str(sharedConsts.PYTHON_MIN_MAJOR)}.{str(sharedConsts.PYTHON_MIN_MINOR)}")

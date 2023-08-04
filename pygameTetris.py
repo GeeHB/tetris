@@ -110,15 +110,30 @@ class pygameTetris(tetrisGame.tetrisGame):
     #
     def lineCompleted(self, rowIndex):
         
+        # Play ground coordinates (x,y)
+        pos = (self.gameLeft_, self.gameTop_)
+
+        # animated block dimensions (w,h)
+        dims = (sharedConsts.PLAYFIELD_WIDTH * self.boxWidth_, (sharedConsts.PLAYFIELD_HEIGHT - rowIndex - 1) * self.boxWidth_ + 1)
+        
         # Create a "memory" surface
+        tempSurface = pygame.Surface(dims)
+        tempSurface.fill(self.colours_[sharedConsts.COLOUR_ID_BOARD].base_)
+
+        # Copy blocks above the line to delete
+        tempSurface.blit(self.win_, (0, 1), (pos[0], pos[1], dims[0], dims[1]))
 
         # Draw the line
 
         # Animate the surface (scroll down)
+        clock = pygame.time.Clock()
+        for index in range(self.boxWidth_):
+            self.win_.blit(tempSurface, (pos[0], pos[1] + index))
+            self._updateDisplay()
+            clock.tick(60)
 
         # Free the surface
-        
-        pass
+        del tempSurface
 
     # overloads from gameRendering
     #
