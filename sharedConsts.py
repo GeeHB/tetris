@@ -29,7 +29,7 @@ PLAYFIELD_HEIGHT = 20
 # Scores
 #
 
-SCORES_FILE = 'scores.high'     # Scores' file
+SCORES_FILE = "scores.high"     # Scores' file
 SCORES_FILE_SEP = ","
 
 SCORES_MAX_COUNT    = 10        # Max. scores per user

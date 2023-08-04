@@ -122,7 +122,7 @@ class tetris(object):
         if False == self.params_.showScores_:
             error = self.displayMgr_.checkEnvironment()
             if len(error) > 0:
-                print("Display init. error. Message : ", error)
+                print(f"Display init. error. Message : {error}")
                 return False
 
         self.gameData_ = board(self.displayMgr_)

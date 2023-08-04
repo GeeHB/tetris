@@ -67,7 +67,7 @@ class cursesTetris(tetrisGame.tetrisGame):
         # Colors ?
         #
         if False == curses.has_colors():
-            errorMessage = "Terminal dosen't accept colors"
+            errorMessage = "Terminal dosen't accept colorized outputs"
             return errorMessage
         
         curses.start_color()
@@ -89,11 +89,11 @@ class cursesTetris(tetrisGame.tetrisGame):
         #self.canDrawNextPiece_ = curses.COLS > (self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
 
         if curses.LINES < self.gameHeight_:
-            errorMessage = "Minimal height for the terminal : " + str(self.gameHeight_) + " chars"
+            errorMessage = f"Minimal height for the terminal : {str(self.gameHeight_)} chars"
             return errorMessage
         
         if curses.COLS < self.gameWidth_ + 4:
-            errorMessage = "Minmal width for the terminal : " + str(self.gameWidth_ + 4) + " chars"
+            errorMessage = f"Minmal width for the terminal : {str(self.gameWidth_ + 4)} chars"
             return errorMessage
                 
         # Ok
