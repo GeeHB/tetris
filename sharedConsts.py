@@ -57,8 +57,9 @@ COLOUR_ID_SHADOW       = 8
 COLOUR_ID_TEXT         = 9
 COLOUR_ID_BORDER       = 10
 COLOUR_ID_BKGRND       = 11
+COLOUR_ID_ANIMATE      = 12     # animation When line if full
 
-LAST_COLOUR_ID   = COLOUR_ID_BKGRND
+LAST_COLOUR_ID   = COLOUR_ID_ANIMATE
 
 #
 # Command line options

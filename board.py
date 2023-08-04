@@ -403,8 +403,12 @@ class board(object):
             # The line is complete
             if not 0 == currentLineValue:
                 completedLines.insert(0,line)
-                self.eventHandler_.lineCompleted(line)
-
+                
+        # Animate
+        for lineIndex in completedLines:
+            self.eventHandler_.lineCompleted(lineIndex)
+            
+        # Uodate datas
         for lineIndex in completedLines:
             self._clearLine(lineIndex)
 

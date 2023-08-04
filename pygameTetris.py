@@ -93,6 +93,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.colours_[sharedConsts.COLOUR_ID_TEXT] = tetrisColour(COLOUR_WHITE)
         self.colours_[sharedConsts.COLOUR_ID_BORDER] = tetrisColour((192,192,192))
         self.colours_[sharedConsts.COLOUR_ID_BOARD] = tetrisColour((32,32,32))
+        self.colours_[sharedConsts.COLOUR_ID_ANIMATE] = tetrisColour((72, 72, 70), (92,92,95),(52,52,55))
 
         # Compute dimensions
         self.winWidth_    = 2 * self.boxWidth_ * sharedConsts.PLAYFIELD_WIDTH
@@ -115,24 +116,45 @@ class pygameTetris(tetrisGame.tetrisGame):
 
         # animated block dimensions (w,h)
         dims = (sharedConsts.PLAYFIELD_WIDTH * self.boxWidth_, (sharedConsts.PLAYFIELD_HEIGHT - rowIndex - 1) * self.boxWidth_ + 1)
+
+        # To control animation speed
+        clock = pygame.time.Clock()
         
+        # Draw / erase the line
+        #
+        
+        # A grey piece ...
+        tempPiece = pygame.Surface((self.boxWidth_, self.boxWidth_))
+
+        # draw a single grey piece inside
+        self._pyDrawBlock(tempPiece, 0, 0, sharedConsts.COLOUR_ID_ANIMATE, True, False)
+
+        # replace blocks by the temp piece
+        lineTop = pos[1] + dims[1] - 1
+        for blockID in range(sharedConsts.PLAYFIELD_WIDTH):
+            for offset in range(self.boxWidth_):
+                self.win_.blit(tempPiece, (pos[0] + blockID * self.boxWidth_, lineTop), (0, 0, offset, self.boxWidth_))
+            self._updateDisplay()
+            clock.tick(120)
+        
+        # Animate the surface (scroll down the memory surface into the playground)
+        #
+
         # Create a "memory" surface
         tempSurface = pygame.Surface(dims)
         tempSurface.fill(self.colours_[sharedConsts.COLOUR_ID_BOARD].base_)
 
-        # Copy blocks above the line to delete
+        # Copy blocks above the line to delete in memory surface
         tempSurface.blit(self.win_, (0, 1), (pos[0], pos[1], dims[0], dims[1]))
 
-        # Draw the line
-
-        # Animate the surface (scroll down)
-        clock = pygame.time.Clock()
+        # Animation
         for index in range(self.boxWidth_):
             self.win_.blit(tempSurface, (pos[0], pos[1] + index))
             self._updateDisplay()
-            clock.tick(60)
+            clock.tick(60)  # not to quick !!!
 
-        # Free the surface
+        # Free the surfaces
+        del tempPiece
         del tempSurface
 
     # overloads from gameRendering
@@ -264,23 +286,33 @@ class pygameTetris(tetrisGame.tetrisGame):
         pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
         pygame.draw.line(self.win_, self.colours_[sharedConsts.COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top + height - 1))
 
+    
     # Draw a coloured block
     #
+    
+    # overloaded method ...
+    #
     def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
+        self._pyDrawBlock(self.win_, left, top, colourID, inBoard, shadow)
+
+    # ... where the stuff is done !
+    #   surface : Surface where to draw
+    #
+    def _pyDrawBlock(self, surface, left, top, colourID, inBoard, shadow = False):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
             # the single square
-            pygame.draw.rect(self.win_, paintColour.base_, (left + 1, top + 1, self.boxWidth_ - 2, self.boxWidth_ -2))
+            pygame.draw.rect(surface, paintColour.base_, (left + 1, top + 1, self.boxWidth_ - 2, self.boxWidth_ -2))
 
             # 3D effect
-            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left, top + self.boxWidth_ - 1))
-            pygame.draw.line(self.win_, paintColour.light_, (left, top),(left + self.boxWidth_ - 1, top))
+            pygame.draw.line(surface, paintColour.light_, (left, top),(left, top + self.boxWidth_ - 1))
+            pygame.draw.line(surface, paintColour.light_, (left, top),(left + self.boxWidth_ - 1, top))
 
-            pygame.draw.line(self.win_, paintColour.dark_, (left + self.boxWidth_ - 1, top),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
-            pygame.draw.line(self.win_, paintColour.dark_, (left, top + self.boxWidth_ - 1),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
+            pygame.draw.line(surface, paintColour.dark_, (left + self.boxWidth_ - 1, top),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
+            pygame.draw.line(surface, paintColour.dark_, (left, top + self.boxWidth_ - 1),(left + self.boxWidth_ - 1, top + self.boxWidth_ - 1))
         else:
-            # Just a squere
-            pygame.draw.rect(self.win_, paintColour.base_, (left, top, self.boxWidth_, self.boxWidth_))
+            # Just a square
+            pygame.draw.rect(surface, paintColour.base_, (left, top, self.boxWidth_, self.boxWidth_))
 
     # Erase a block
     #
