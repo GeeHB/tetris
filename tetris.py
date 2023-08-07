@@ -155,7 +155,7 @@ class tetris(object):
         # start !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
-        
+                
         # Cancel the game ?
         cont = True
         while cont :
@@ -166,7 +166,9 @@ class tetris(object):
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
 
-        self.displayMgr_.drawNextPiece()
+        print("avant")
+        self.displayMgr_.reDraw()
+        print("après")
 
         # Game main loop
         while self.displayMgr_.isRunning():
@@ -193,7 +195,7 @@ class tetris(object):
                 if rLevel >= self.gameData_.level():
                     self.displayMgr_.levelChanged(self.gameData_.incLevel())
                     seqDuration = self._updateSpeed(seqDuration, self.gameData_.level(), 1)
-
+        
         # the game is over
         # wait for gamer to exit
         cont = True

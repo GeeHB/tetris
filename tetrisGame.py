@@ -49,12 +49,13 @@ class tetrisGame(eventHandler):
     status_ = STATUS_CREATED  # Just created
     currentPos_ = None
 
+    # Blocks of text
     itemTexts_     = ["Score", "Level", "Lines", "Next piece"]
-
-    # Dimensions & position
-    gameWidth_ , gameHeight_, gameLeft_, gameTop_ = 0, 0, 0, 0
     itemDims_ = None
 
+    # Dimensions & position
+    gamePos_ = (0, 0, 0, 0)            # (x, y, w, h)
+    
     # Construction
     def __init__(self):
         self.status_ = self.STATUS_CREATED
@@ -156,7 +157,7 @@ class tetrisGame(eventHandler):
             self.status_ = self.STATUS_RUNNING
             self.board_.start()
             
-            self._updateDisplay()
+            self.updateDisplay()
             return True
 
         return False
@@ -174,6 +175,15 @@ class tetrisGame(eventHandler):
 
     # Draw all
     #
+    def reDraw(self):
+        self._drawBackGround()
+        self.drawBoard()
+        self.drawScore()
+        self.drawLevel()
+        self.drawLines()
+        
+        self.updateDisplay()
+
     def drawBoard(self):
         if None == self.board_: # Anything to draw ?
             return
@@ -188,9 +198,9 @@ class tetrisGame(eventHandler):
                 left+=w
             top-=h
         
-        self._updateDisplay()
+        self.updateDisplay()
 
-    def _updateDisplay(self):
+    def updateDisplay(self):
         pass
     
     def _drawNumValue(self, index, value):           
@@ -249,7 +259,7 @@ class tetrisGame(eventHandler):
             # and then the tetramino (can recover the shadow !!!!)
             self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_ , self.board_.tetraminos_[newState.index_].colour())
 
-            self._updateDisplay()
+            self.updateDisplay()
             
             self.currentPos_ = pieceStatus(other = newState)
 
@@ -265,7 +275,7 @@ class tetrisGame(eventHandler):
         super().incScore(inc)
         self.board_.incScore(inc)
         self.drawScore()
-        self._updateDisplay()
+        self.updateDisplay()
         
     # The game level just changed
     #
@@ -273,7 +283,7 @@ class tetrisGame(eventHandler):
         super().levelChanged(newLevel)
         self.board_.setLevel(newLevel)
         self.drawLevel()
-        self._updateDisplay()
+        self.updateDisplay()
 
     # ...
     # 
@@ -283,14 +293,14 @@ class tetrisGame(eventHandler):
         
         self.drawBoard()
         self.drawLines()
-        self._updateDisplay()
+        self.updateDisplay()
 
     # New index for the "next piece"
     #
     def nextPieceIndexChanged(self, nextPieceIndex):
         super().nextPieceIndexChanged(nextPieceIndex)
         self._drawNextPiece(nextPieceIndex)
-        self._updateDisplay()
+        self.updateDisplay()
 
     # The game is over
     #

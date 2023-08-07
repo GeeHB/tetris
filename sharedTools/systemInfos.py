@@ -4,6 +4,8 @@
 #
 #   Author      :   GeeHB
 #
+#   Dependencies :  pygame, pyautogui
+#
 #   Description :   Informations about the current OS
 #
 import platform, subprocess
@@ -146,4 +148,21 @@ def setMainWindowPosition(position):
     
                 # Call the API
                 SetWindowPos(hwnd, 0, position[0], position[1], 0, 0, 0x0005) # No topmost, move | nosize
+
+# Get desktop size
+#
+#   Rem : Return the dimensions en pixels of the main desktop
+#
+#   return a tuple (width, height) or None if error
+#
+def getDesktopSize(desktopIndex = None):
+    try:
+        import tkinter
+    except ModuleNotFoundError:
+        # no tkinter
+        return None
+    
+    app = tkinter.Tk()
+    return (app.winfo_screenwidth(), app.winfo_screenheight())
+
 # EOF

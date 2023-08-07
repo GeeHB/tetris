@@ -35,9 +35,6 @@ class cursesTetris(tetrisGame.tetrisGame):
 
     term_ = None      # curses term.
     
-    # Dimensions & position
-    gameLeft_, gameTop_, gameWidth_ , gameHeight_ = 0, 0, 0, 0
-    
     # Construction
     def __init__(self):
 
@@ -82,18 +79,18 @@ class cursesTetris(tetrisGame.tetrisGame):
     
         # Dimensions
         #
-        self.gameWidth_ = consts.PLAYFIELD_WIDTH * 2
-        self.gameHeight_ = consts.PLAYFIELD_HEIGHT
-        self.gameLeft_ = 2       # (curses.COLS - gameWidth_) / 2;
-        self.gameTop_ = curses.LINES - self.gameHeight_
-        #self.canDrawNextPiece_ = curses.COLS > (self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
+        self.gamePos_[2]= consts.PLAYFIELD_WIDTH * 2
+        self.gamePos_[3] = consts.PLAYFIELD_HEIGHT
+        self.gamePos_[0] = 2       # (curses.COLS - gameWidth_) / 2;
+        self.gamePos_[1] = curses.LINES - self.gamePos_[3]
+        #self.canDrawNextPiece_ = curses.COLS > (self.gamePos_[2]+ BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
 
-        if curses.LINES < self.gameHeight_:
-            errorMessage = f"Minimal height for the terminal : {str(self.gameHeight_)} chars"
+        if curses.LINES < self.gamePos_[3]:
+            errorMessage = f"Minimal height for the terminal : {str(self.gamePos_[3])} chars"
             return errorMessage
         
-        if curses.COLS < self.gameWidth_ + 4:
-            errorMessage = f"Minmal width for the terminal : {str(self.gameWidth_ + 4)} chars"
+        if curses.COLS < self.gamePos_[2]+ 4:
+            errorMessage = f"Minmal width for the terminal : {str(self.gamePos_[2]+ 4)} chars"
             return errorMessage
                 
         # Ok
@@ -146,14 +143,14 @@ class cursesTetris(tetrisGame.tetrisGame):
             fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
         return c
 
-    def _updateDisplay(self):
+    def updateDisplay(self):
         self.term_.refresh()
 
     # Draw the text and erase previous if exists
     #
     def _drawNumValue(self, index, value):
-        boxTop = self.gameTop_ + tetrisGame.PIECE_HEIGHT + 5 + 3 * index
-        boxLeft = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
+        boxTop = self.gamePos_[1] + tetrisGame.PIECE_HEIGHT + 5 + 3 * index
+        boxLeft = self.gamePos_[2]+ BORDER_WIDTH * 2 + GAP_WIDTH
         text = self.itemTexts_[index] + ": " +  str(value) + ' ' * self.itemDims_[index]
         self.term_.addstr(boxTop, boxLeft, text, curses.color_pair(0))
         self.itemDims_[index] = len(text) # text length
@@ -162,22 +159,22 @@ class cursesTetris(tetrisGame.tetrisGame):
     #
     def _drawBackGround(self):
          # top
-        if self.gameTop_ >= 1:
+        if self.gamePos_[1] >= 1:
             # Le charme de faire du Python !!!
-            top = '\u250c' + '\u2500' * self.gameWidth_  + '\u2510'
-            self.term_.addstr(self.gameTop_ - 1, self.gameLeft_ - 1, top, curses.color_pair(0))
+            top = '\u250c' + '\u2500' * self.gamePos_[2] + '\u2510'
+            self.term_.addstr(self.gamePos_[1] - 1, self.gamePos_[0] - 1, top, curses.color_pair(0))
         
         # Left & right
-        if self.gameLeft_ >= 2 and curses.COLS >= self.gameWidth_ + 4:
+        if self.gamePos_[0] >= 2 and curses.COLS >= self.gamePos_[2]+ 4:
 
             self.term_.attron(curses.color_pair(BORDER_COLOR))
             
-            for y in range(self.gameHeight_):
-                self.term_.move(self.gameTop_ + y, self.gameLeft_ - 2)
+            for y in range(self.gamePos_[3]):
+                self.term_.move(self.gamePos_[1] + y, self.gamePos_[0] - 2)
                 self.term_.addch(' ')
                 self.term_.addch('\u2502')
 
-                self.term_.move(self.gameTop_ + y, self.gameLeft_ + self.gameWidth_)
+                self.term_.move(self.gamePos_[1] + y, self.gamePos_[0] + self.gameWidth_)
                 self.term_.addch('\u2502')
                 self.term_.addch(' ')
             
@@ -193,11 +190,11 @@ class cursesTetris(tetrisGame.tetrisGame):
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         
         if inBoard:
-            left = self.gameLeft_ + 2 * x
-            top = self.gameTop_ + consts.PLAYFIELD_HEIGHT - 1 - y
+            left = self.gamePos_[0] + 2 * x
+            top = self.gamePos_[1] + consts.PLAYFIELD_HEIGHT - 1 - y
         else:
-            left = self.gameWidth_ + BORDER_WIDTH * 2 + GAP_WIDTH
-            top = self.gameTop_ + 2
+            left = self.gamePos_[2]+ BORDER_WIDTH * 2 + GAP_WIDTH
+            top = self.gamePos_[1] + 2
         
         return (left,top,2,1)    # 1 "cube" = 2 chars (double the width)
 

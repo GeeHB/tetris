@@ -20,7 +20,7 @@ APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"
 PYTHON_MIN_MAJOR = 3
 PYTHON_MIN_MINOR = 7
 
-# Playfield's dimensions
+# Playfield's dimensions (in box unit)
 #
 PLAYFIELD_WIDTH = 10
 PLAYFIELD_HEIGHT = 20
