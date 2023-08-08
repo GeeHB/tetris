@@ -163,6 +163,11 @@ def getDesktopSize(desktopIndex = None):
         return None
     
     app = tkinter.Tk()
-    return (app.winfo_screenwidth(), app.winfo_screenheight())
+    size = (app.winfo_screenwidth(), app.winfo_screenheight())
+
+    # MacOS - Force garbage collection
+    del app
+    
+    return size
 
 # EOF

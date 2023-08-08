@@ -166,10 +166,8 @@ class tetris(object):
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
 
-        print("avant")
         self.displayMgr_.reDraw()
-        print("après")
-
+        
         # Game main loop
         while self.displayMgr_.isRunning():
             diff = 0

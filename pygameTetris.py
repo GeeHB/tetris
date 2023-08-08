@@ -195,7 +195,7 @@ class pygameTetris(tetrisGame.tetrisGame):
             return "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
 
         # Main window creation
-        self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else 0)
+        self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else pygame.SHOWN)
         #self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE)
         # pygame.NOFRAME
         pygame.display.set_caption('jTetris')
@@ -218,14 +218,15 @@ class pygameTetris(tetrisGame.tetrisGame):
                 event = pygame.event.wait()
                 if event.type == pygame.QUIT or event.type == pygame.KEYDOWN :
                     finished = True
-                elif self.allowResize_ and event.type == pygame.VIDEORESIZE:
-                    # Update members
-                    self._onResizeWindow(event.w, event.h)
-                    
-                    # Resize the surface
-                    self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE)
+                elif event.type == pygame.VIDEORESIZE:
+                    if self.allowResize_:
+                        # Update members
+                        self._onResizeWindow(event.w, event.h)
+                        
+                        # Resize the surface
+                        self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else 0)
 
-                    # redraw
+                    # redraw (this event is sent at window creation)
                     self._drawBackGround()
                     self.drawBoard()
                     self.drawScore()
@@ -387,8 +388,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     #
     def _onResizeWindow(self, newWidth, newHeight):
 
-        self.winDims_[0] = newWidth
-        self.winDims_[1] = newHeight
+        self.winDims_ = (newWidth, newHeight)
 
         # Compute new "square" size
         self.boxSize_ = math.floor((newHeight - 1) / (consts.PLAYFIELD_HEIGHT+ 2))
