@@ -157,7 +157,7 @@ class tetrisGame(eventHandler):
             self.status_ = self.STATUS_RUNNING
             self.board_.start()
             
-            self.updateDisplay()
+            #self.updateDisplay()       # redondant
             return True
 
         return False

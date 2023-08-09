@@ -155,7 +155,7 @@ class tetris(object):
         # start !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
-                
+        
         # Cancel the game ?
         cont = True
         while cont :

@@ -113,16 +113,17 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.winDims_ = self._setSize()
         
         # Window is to high ?
-        maxWindowHeight = int(desktop[1] * WINDOW_SCREEN_PERCENT / 100)
-        if self.winDims_[1] > maxWindowHeight:
-            # update box size
-            self.boxSize_ = int(self.boxSize_ * maxWindowHeight / self.winDims_[1])
+        if desktop is not None:
+            maxWindowHeight = int(desktop[1] * WINDOW_SCREEN_PERCENT / 100)
+            if self.winDims_[1] > maxWindowHeight:
+                # update box size
+                self.boxSize_ = int(self.boxSize_ * maxWindowHeight / self.winDims_[1])
 
-            # update fontsize
-            self.fontSize_ = int(self.fontSize_ * maxWindowHeight / self.winDims_[1])
+                # update fontsize
+                self.fontSize_ = int(self.fontSize_ * maxWindowHeight / self.winDims_[1])
 
-            # new dims
-            self.winDims = self._setSize()
+                # new dims
+                self.winDims = self._setSize()
 
         height = consts.PLAYFIELD_HEIGHT * self.boxSize_
         self.gamePos_ = (2 * self.boxSize_, self.winDims_[1] - height  - 1, consts.PLAYFIELD_HEIGHT * self.boxSize_, height)
