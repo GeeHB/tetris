@@ -52,7 +52,7 @@ class eventHandler(object):
     # The game level just changed
     #
     def levelChanged(self, newLevel):
-        self.level_ = newLevel
+        self.level = newLevel
         if None != self.nextHandler_:
             self.nextHandler_.levelChanged(newLevel)
 

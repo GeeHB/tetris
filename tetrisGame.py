@@ -147,7 +147,7 @@ class tetrisGame(eventHandler):
             self.currentPos_ = None
 
             # Drawings
-            self._drawBackGround()
+            self.drawBackGround()
             self.drawBoard()
             self.drawScore()
             self.drawLevel()
@@ -157,7 +157,7 @@ class tetrisGame(eventHandler):
             self.status_ = self.STATUS_RUNNING
             self.board_.start()
             
-            #self.updateDisplay()       # redondant
+            self.updateDisplay()       # redondant
             return True
 
         return False
@@ -165,18 +165,18 @@ class tetrisGame(eventHandler):
     # Helpers
     #
     def drawScore(self):
-        self._drawNumValue(0, self.board_.score())
+        self._drawNumValue(0, self.board_.score)
     def drawLevel(self):
-        self._drawNumValue(1, self.board_.level())
+        self._drawNumValue(1, self.board_.level)
     def drawLines(self):
-        self._drawNumValue(2, self.board_.lines())
+        self._drawNumValue(2, self.board_.lines)
     def drawNextPiece(self):
         self._drawNextPiece(self.board_.nextPieceIndex())
 
     # Draw all
     #
     def reDraw(self):
-        self._drawBackGround()
+        self.drawBackGround()
         self.drawBoard()
         self.drawScore()
         self.drawLevel()
@@ -198,7 +198,7 @@ class tetrisGame(eventHandler):
                 left+=w
             top-=h
         
-        self.updateDisplay()
+        #self.updateDisplay()
 
     def updateDisplay(self):
         pass
@@ -212,7 +212,7 @@ class tetrisGame(eventHandler):
         pass
 
     # Draw borders
-    def _drawBackGround(self):
+    def drawBackGround(self):
         pass
 
     # Change the origin and the coordinate system
@@ -281,15 +281,15 @@ class tetrisGame(eventHandler):
     #
     def levelChanged(self, newLevel):
         super().levelChanged(newLevel)
-        self.board_.setLevel(newLevel)
+        self.board_.level = newLevel
         self.drawLevel()
         self.updateDisplay()
-
+        
     # ...
     # 
     def allLinesCompletedRemoved(self, rowCount, totalLines):
         super().allLinesCompletedRemoved(rowCount, totalLines)
-        self.board_.setLines(totalLines)
+        self.board_.lines = totalLines
         
         self.drawBoard()
         self.drawLines()

@@ -5,6 +5,7 @@ Version 0.8.1
         * Animation when line(s) completed
         * use argparse as command line parser
         * PYGame : Initial window size depends on desktop size !!!
+        * getters and setters
     * Fixes
         * PyGame Window flickering on ChromeOS
         * BUG : No window resizing on ChromeOS (and avoid scaling !!!)

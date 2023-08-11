@@ -165,9 +165,11 @@ class tetris(object):
 
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
-
-        self.displayMgr_.reDraw()
         
+        if not self.displayMgr_.resizable:
+            time.sleep(1)
+            self.displayMgr_.reDraw()
+
         # Game main loop
         while self.displayMgr_.isRunning():
             diff = 0
@@ -190,9 +192,9 @@ class tetris(object):
                 rLevel = math.floor(seqCount / consts.MOVES_UPDATE_LEVEL) + 1
                 
                 # Change level (if necessary) & accelerate
-                if rLevel >= self.gameData_.level():
+                if rLevel >= self.gameData_.level:
                     self.displayMgr_.levelChanged(self.gameData_.incLevel())
-                    seqDuration = self._updateSpeed(seqDuration, self.gameData_.level(), 1)
+                    seqDuration = self._updateSpeed(seqDuration, self.gameData_.level, 1)
         
         # the game is over
         # wait for gamer to exit
@@ -208,7 +210,7 @@ class tetris(object):
         if not self.displayMgr_.isCancelled():
             # Score handling
             bestScores = scores(self.params_.user_)
-            myScore = self.gameData_.score()
+            myScore = self.gameData_.score
             if False != myScore:
                 self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
 

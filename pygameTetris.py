@@ -77,6 +77,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     colours_        = []                # Table of colours
 
     itemDims_       = [None, None, None] # Texts dims. (scores, lines and level)
+    allowResize_    = True      # The window can be resized !!!
     
     # Construction
     #
@@ -105,9 +106,8 @@ class pygameTetris(tetrisGame.tetrisGame):
 
         # OS type ?
         infos = systemInfos.getSystemInformations()
-        if infos[systemInfos.KEY_WM] == systemInfos.WM_CHROMEOS:
-            # No resize on ChromeOS
-            self.allowResize_ = False
+        # No resize on ChromeOS
+        self.allowResize_ = False if infos[systemInfos.KEY_WM] == systemInfos.WM_CHROMEOS else True
 
         # Compute dimensions
         self.winDims_ = self._setSize()
@@ -130,6 +130,15 @@ class pygameTetris(tetrisGame.tetrisGame):
 
     # overloads from eventHandler
     #
+
+    # Resizable ?
+    #
+    @property
+    def resizable(self):
+        return self.allowResize_
+    @resizable.setter
+    def resizable(self, value):
+        self.allowResize_ = value
 
     # A line has just been completed (but is still visible)
     #
@@ -228,7 +237,7 @@ class pygameTetris(tetrisGame.tetrisGame):
                         self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else 0)
 
                     # redraw (this event is sent at window creation)
-                    self._drawBackGround()
+                    self.drawBackGround()
                     self.drawBoard()
                     self.drawScore()
                     self.drawLevel()
@@ -286,7 +295,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     
     # Draw the background
     #
-    def _drawBackGround(self):
+    def drawBackGround(self):
         
         # Playfield frame
         left = self.gamePos_[0] - 1
@@ -322,7 +331,6 @@ class pygameTetris(tetrisGame.tetrisGame):
         pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(left + width - 1, top))
         pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top + height - 1),(left + width - 1, top + height - 1))
 
-    
     # Draw a coloured block
     #
     

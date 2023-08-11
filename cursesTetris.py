@@ -157,7 +157,7 @@ class cursesTetris(tetrisGame.tetrisGame):
 
     # Draw the background
     #
-    def _drawBackGround(self):
+    def drawBackGround(self):
          # top
         if self.gamePos_[1] >= 1:
             # Le charme de faire du Python !!!

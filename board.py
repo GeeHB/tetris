@@ -59,7 +59,7 @@ class board(object):
     score_, lines_, level_ = 0, 0, 1
     
     currentPiece_ = piece.pieceStatus()   
-    nextIndex_ = -1                     # next piece index
+    nextIndex_ = -1       # next piece index
 
     eventHandler_ = None  # Events handler
 
@@ -84,9 +84,9 @@ class board(object):
 
     def setParameters(self, params = None):   
         self.parameters_ = tetrisParameters(params)
-        self.setScore(0)
-        self.setLines(0)
-        self.setLevel(self.parameters_.startLevel_)
+        self.score = 0
+        self.lines = 0
+        self.level = self.parameters_.startLevel_
         self.setNextPieceIndex(-1)
 
         # Initialization of tetraminos (no rotation)
@@ -116,31 +116,39 @@ class board(object):
 
     # Game level
     #
+    @property
     def level(self):
         return self.level_
-    def setLevel(self, level):
-        self.level_ = level
+    @level.setter
+    def level(self, value):
+        self.level_ = value
     def incLevel(self):
-        self.level_ += 1
-        return self.level_
+        self.level += 1
+        return self.level
 
     # Score
     #
+    @property
     def score(self):
         return self.score_
-    def setScore(self, score):
-        self.score_ = score
+    @score.setter
+    def score(self, value):
+        self.score_ = value
     def incScore(self, inc):    # +=
-        self.score_+=inc
+        self.score+=inc
+        return self.score
 
     # Lines (done)
     #
+    @property
     def lines(self):
         return self.lines_
-    def setLines(self, value = 0):
+    @lines.setter
+    def lines(self, value = 0):
         self.lines_ = value
     def incLines(self, inc):    # +=
-        self.lines_+=inc
+        self.lines+=inc
+        return self.lines
 
     # Next piece
     #
@@ -432,7 +440,7 @@ class board(object):
             self.eventHandler_.incScore(int(delta*mult/100))
 
         if 0 != completedCount:
-            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines() + completedCount)            
+            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines + completedCount)            
 
         # Get a new piece
         self.newPiece()
