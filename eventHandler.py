@@ -30,6 +30,15 @@ class eventHandler(object):
     # Overloadable methods
     #
 
+    # Resizable ?
+    #
+    @property
+    def resizable(self):
+        return True
+    @resizable.setter
+    def resizable(self, value):
+        pass
+
     # The position of  tetraminos has changed
     #   The piece must be erased from its previous pos and redrawwn at the new position
     #

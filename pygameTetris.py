@@ -237,12 +237,7 @@ class pygameTetris(tetrisGame.tetrisGame):
                         self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else 0)
 
                     # redraw (this event is sent at window creation)
-                    self.drawBackGround()
-                    self.drawBoard()
-                    self.drawScore()
-                    self.drawLevel()
-                    self.drawLines()
-                    
+                    self.reDraw()
                     self.updateDisplay()
         except KeyboardInterrupt:
             return pygame.QUIT, 0

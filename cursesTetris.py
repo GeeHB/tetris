@@ -52,7 +52,7 @@ class cursesTetris(tetrisGame.tetrisGame):
     #
 
     # Verifications
-    #   Return True (init done) or False (errors)
+    #   Return "" if not error or error message
     #
     def checkEnvironment(self):
 
@@ -79,18 +79,16 @@ class cursesTetris(tetrisGame.tetrisGame):
     
         # Dimensions
         #
-        self.gamePos_[2]= consts.PLAYFIELD_WIDTH * 2
-        self.gamePos_[3] = consts.PLAYFIELD_HEIGHT
-        self.gamePos_[0] = 2       # (curses.COLS - gameWidth_) / 2;
-        self.gamePos_[1] = curses.LINES - self.gamePos_[3]
+        height = consts.PLAYFIELD_HEIGHT
+        self.gamePos_ = (2, curses.LINES - height, consts.PLAYFIELD_WIDTH * 2, height)
         #self.canDrawNextPiece_ = curses.COLS > (self.gamePos_[2]+ BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
 
         if curses.LINES < self.gamePos_[3]:
-            errorMessage = f"Minimal height for the terminal : {str(self.gamePos_[3])} chars"
+            errorMessage = f"Minimal height for the terminal is {str(self.gamePos_[3])} chars"
             return errorMessage
         
         if curses.COLS < self.gamePos_[2]+ 4:
-            errorMessage = f"Minmal width for the terminal : {str(self.gamePos_[2]+ 4)} chars"
+            errorMessage = f"Minmal width for the terminal is {str(self.gamePos_[2]+ 4)} chars"
             return errorMessage
                 
         # Ok

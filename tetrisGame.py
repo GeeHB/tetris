@@ -147,17 +147,13 @@ class tetrisGame(eventHandler):
             self.currentPos_ = None
 
             # Drawings
-            self.drawBackGround()
-            self.drawBoard()
-            self.drawScore()
-            self.drawLevel()
-            self.drawLines()
+            self.reDraw()
 
             # Let's go
             self.status_ = self.STATUS_RUNNING
             self.board_.start()
             
-            self.updateDisplay()       # redondant
+            self.updateDisplay()       # redondant ?
             return True
 
         return False
@@ -182,8 +178,6 @@ class tetrisGame(eventHandler):
         self.drawLevel()
         self.drawLines()
         
-        self.updateDisplay()
-
     def drawBoard(self):
         if None == self.board_: # Anything to draw ?
             return
@@ -197,9 +191,7 @@ class tetrisGame(eventHandler):
                 self._drawBlock(left, top, self.board_.playField_[y][x], True)
                 left+=w
             top-=h
-        
-        #self.updateDisplay()
-
+       
     def updateDisplay(self):
         pass
     

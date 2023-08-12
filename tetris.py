@@ -75,7 +75,7 @@ class tetris(object):
         self.params_.showScores_ = args.top
         
         # Console mode (forced if displaying scores)
-        self.useGUI_ = False if self.params_.showScores_ else (False == args.console)
+        self.params_.useGUI_ = False if self.params_.showScores_ else (False == args.console)
 
         # Display high-scores
         self.params_.shadow_ = args.shadow
@@ -122,7 +122,7 @@ class tetris(object):
         if False == self.params_.showScores_:
             error = self.displayMgr_.checkEnvironment()
             if len(error) > 0:
-                print(f"Display init. error. Message : {error}")
+                print(f"Display init. error : {error}")
                 return False
 
         self.gameData_ = board(self.displayMgr_)
@@ -169,6 +169,7 @@ class tetris(object):
         if not self.displayMgr_.resizable:
             time.sleep(1)
             self.displayMgr_.reDraw()
+            self.displayMgr_.updateDisplay()
 
         # Game main loop
         while self.displayMgr_.isRunning():
