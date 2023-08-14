@@ -10,12 +10,11 @@
 #
 #   Comment    :   Need Python 3.xx or higher
 #
-
-import sys, math, argparse
+import time, sys, math, argparse
 import consts
 from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
-from board import tetrisParameters
+from board import board, tetrisParameters
 from scores import scores
 
 # Public consts
@@ -100,28 +99,34 @@ class tetris(object):
         # Display mode
         #
         if self.params_.useGUI_:
-            if self.params_.pygameAvailable_:
+            
+            # Try to load pygame
+            try:
+                from pygameTetris import pygameTetris
                 self.displayMgr_ = pygameTetris()
-            else:
+            except ModuleNotFoundError:
                 # GUI wanted but no pygame => try curses
-                print("Error - pygame not installed. Try with curses")
-                params.useGUI_ = False
+                print("Error - pygame is not installed. Trying with nCurses.")
+                self.params_.useGUI_ = False
 
-        if False == params.useGUI_:
-            if self.params_.cursesAvailable_:
+        # Try with nCurses
+        if False == self.params_.useGUI_:
+            try:
+                from cursesTetris import cursesTetris
                 self.displayMgr_ = cursesTetris()
-            else:
-                print("Error - curses not installed")
+            except ModuleNotFoundError:
+                print("Error - nCurses is not installed")    
                 
         # No display ?
-        if not self.displayMgr_:
-            print("Error - no display handler. Ending the game")
+        if self.displayMgr_ is None:
+            print("Error - no display handler found. Ending the game")
             return False
 
         # Check display manager
         if False == self.params_.showScores_:
             error = self.displayMgr_.checkEnvironment()
             if len(error) > 0:
+                self.displayMgr_.clear()
                 print(f"Display init. error : {error}")
                 return False
 
@@ -269,25 +274,7 @@ if "__main__" == __name__:
         print(f"Error - Expected minimum version for Python {str(consts.PYTHON_MIN_MAJOR)}.{str(consts.PYTHON_MIN_MINOR)}")
         exit(1) 
 
-    import time
-    from board import board, tetrisParameters
-
     params = tetrisParameters()
-
-    # Test Pygame presence
-    try:
-        from pygameTetris import pygameTetris
-        params.pygameAvailable_ = True
-    except ModuleNotFoundError:
-        # PYGame isn't installed
-        params.pygameAvailable_ = False
-
-    # At least can we use nCurses ?
-    try:
-        from cursesTetris import cursesTetris
-        params.cursesAvailable_ = True
-    except ModuleNotFoundError:
-        params.cursesAvailable_ = False
     
     #
     # the game ...

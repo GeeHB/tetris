@@ -11,7 +11,6 @@
 #
 
 import random
-
 import consts
 import piece
 import shapes
@@ -21,10 +20,12 @@ from eventHandler import eventHandler
 #   game's parameters
 #
 class tetrisParameters:
+
+    # Members
+    #
     startLevel_ = 1
     dirtyLines_ = 0
     shadow_ = False
-    pygameAvailable_ = False
     cursesAvailable_ = False
     useGUI_ = True
     showScores_ = False
@@ -38,8 +39,6 @@ class tetrisParameters:
             self.startLevel_ = other.startLevel_ 
             self.dirtyLines_ = other.dirtyLines_
             self.shadow_ = other.shadow_
-            self.pygameAvailable_ = other.pygameAvailable_
-            self.cursesAvailable_ = other.cursesAvailable_
             self.useGUI_ = other.useGUI_
             self.showScores_ = other.showScores_
             self.user_ = other.user_

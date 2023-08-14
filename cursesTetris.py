@@ -104,6 +104,9 @@ class cursesTetris(tetrisGame.tetrisGame):
     # Finish ...
     #
     def clear(self):
+        curses.nocbreak()
+        self.term_.keypad(False)
+        curses.echo()
         curses.endwin()
 
     # Wait for an event (a keyboard event on curses)
@@ -172,7 +175,7 @@ class cursesTetris(tetrisGame.tetrisGame):
                 self.term_.addch(' ')
                 self.term_.addch('\u2502')
 
-                self.term_.move(self.gamePos_[1] + y, self.gamePos_[0] + self.gameWidth_)
+                self.term_.move(self.gamePos_[1] + y, self.gamePos_[0] + self.gamePos_[2])
                 self.term_.addch('\u2502')
                 self.term_.addch(' ')
             
