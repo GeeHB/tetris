@@ -41,6 +41,7 @@ class cursesTetris(tetrisGame.tetrisGame):
         # nCurses initialization
         self.term_ = curses.initscr()
         curses.cbreak()
+        curses.noecho()
         self.term_.keypad(True)   # all chars
         self.term_.nodelay(True)  # non-blocking keyboard access
         curses.curs_set(0)        # no cursor
@@ -52,7 +53,7 @@ class cursesTetris(tetrisGame.tetrisGame):
     #
 
     # Verifications
-    #   Return "" if not error or error message
+    #   Return error message ("" if none)
     #
     def checkEnvironment(self):
 
@@ -104,9 +105,9 @@ class cursesTetris(tetrisGame.tetrisGame):
     # Finish ...
     #
     def clear(self):
-        curses.nocbreak()
         self.term_.keypad(False)
         curses.echo()
+        curses.nocbreak()
         curses.endwin()
 
     # Wait for an event (a keyboard event on curses)

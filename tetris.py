@@ -94,6 +94,8 @@ class tetris(object):
         
     # Can we start the game ?
     #
+    #   return tuple(ok?, error message)
+    #
     def isReady(self):
 
         # Display mode
@@ -119,22 +121,21 @@ class tetris(object):
                 
         # No display ?
         if self.displayMgr_ is None:
-            print("Error - no display handler found. Ending the game")
-            return False
+            return False, "Error - no display handler found. Ending the game"
 
         # Check display manager
         if False == self.params_.showScores_:
             error = self.displayMgr_.checkEnvironment()
             if len(error) > 0:
+                # Remove ncurseq
                 self.displayMgr_.clear()
-                print(f"Display init. error : {error}")
-                return False
+                return False, error
 
         self.gameData_ = board(self.displayMgr_)
         self.displayMgr_.setBoard(self.gameData_)
 
         # yes !
-        return True
+        return True, ""
 
     # Starting the game
     #
@@ -287,7 +288,10 @@ if "__main__" == __name__:
             bestScores = scores(myTetris.params_.user_)
             myGame.showScores(myTetris.params_.user_, None, bestScores.add(None))
         else:
-            if myTetris.isReady():    
+            ret, message = myTetris.isReady()
+            if ret:    
                 myTetris.start()
                 myTetris.end()
+            else:
+                print(message)
 #EOF 
