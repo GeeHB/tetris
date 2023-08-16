@@ -85,11 +85,11 @@ class cursesTetris(tetrisGame.tetrisGame):
         #self.canDrawNextPiece_ = curses.COLS > (self.gamePos_[2]+ BORDER_WIDTH * 2 + GAP_WIDTH + SHAPE_WIDTH + 2)
 
         if curses.LINES < self.gamePos_[3]:
-            errorMessage = f"Minimal height for the terminal is {str(self.gamePos_[3])} chars"
+            errorMessage = f"Minimal height for the terminal is {str(self.gamePos_[3])} chars, actual is {curses.LINES}"
             return errorMessage
         
         if curses.COLS < self.gamePos_[2]+ 4:
-            errorMessage = f"Minmal width for the terminal is {str(self.gamePos_[2]+ 4)} chars"
+            errorMessage = f"Minmal width for the terminal is {str(self.gamePos_[2]+ 4)} chars, actual is {curses.COLS}"
             return errorMessage
                 
         # Ok

@@ -144,6 +144,7 @@ class tetris(object):
         self._newGame()
 
     # Game ending
+    #
     def end(self):
         if self.displayMgr_:
             self.displayMgr_.end()
