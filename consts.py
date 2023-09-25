@@ -11,8 +11,8 @@
 #
 
 APP_NAME = "tetris.py"
-APP_CURRENT_VERSION = "0.8.1"
-APP_RELEASE_DATE = "07/31/2023"
+APP_CURRENT_VERSION = "0.9.1"
+APP_RELEASE_DATE = "09 sept. 2023"
 APP_AUTHOR_SHORT = "GeeHB"
 APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"
 
@@ -62,6 +62,19 @@ COLOUR_ID_ANIMATE      = 12     # animation When line if full
 LAST_COLOUR_ID   = COLOUR_ID_ANIMATE
 
 #
+# A few basic colours
+#
+COLOUR_BLACK = (0, 0, 0)
+COLOUR_WHITE = (255, 255, 255)
+COLOUR_RED = (255, 0, 0)
+COLOUR_GREEN = (0, 255, 0)
+COLOUR_YELLOW = (255, 255, 0)
+COLOUR_BLUE = (0, 0, 255)
+COLOUR_PURPLE = (255, 0, 255)
+COLOUR_CYAN = (0, 255, 255)
+COLOUR_ORANGE = (255, 128, 0)
+
+#
 # Command line options
 #
 
@@ -81,9 +94,9 @@ ARG_DIRTY_S     = "-d"
 ARG_DIRTY       = "--dirty"
 COMMENT_DIRTY   = "Start game with dirty lines"
 
-ARG_USER_S     = "-u"
-ARG_USER       = "--user"
-COMMENT_USER   = "Set user name"
+ARG_USER_S      = "-u"
+ARG_USER        = "--user"
+COMMENT_USER    = "Set user name"
 
 ARG_TOP_S       = "-t"
 ARG_TOP         = "--top"
@@ -92,5 +105,14 @@ COMMENT_TOP     = "Show top scores"
 ARG_CONSOLE_S   = "-c "                # Console mode
 ARG_CONSOLE     = "--console"
 COMMENT_CONSOLE = "Force displays in console mode (using nCurses if available)"
+
+ARG_MODE_S      = "-m"
+ARG_MODE        = "--mode"
+COMMENT_MODE    = "Choose display mode"
+
+MODE_AUTO = "auto"              # Search for the best GUI mode (default mode)
+MODE_CONSOLE = "console"        # Console mode using nCurses
+MODE_CASIOPLOT = "casioplot"    # GUI using casioplot library 
+MODE_PYGAME = "pygame"          # Use PYGame library
 
 # EOF

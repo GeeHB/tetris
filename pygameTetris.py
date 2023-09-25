@@ -79,6 +79,15 @@ class pygameTetris(tetrisGame.tetrisGame):
     itemDims_       = [None, None, None] # Texts dims. (scores, lines and level)
     allowResize_    = True      # The window can be resized !!!
     
+    # Resizable ?
+    #
+    @property
+    def resizable(self):
+        return self.allowResize_
+    @resizable.setter
+    def resizable(self, value):
+        self.allowResize_ = value
+    
     # Construction
     #
     def __init__(self):
@@ -87,13 +96,13 @@ class pygameTetris(tetrisGame.tetrisGame):
         #
         self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + consts.LAST_COLOUR_ID)
         
-        self.colours_[1] = tetrisColour((255, 0, 0), (255, 128, 128), (128,0,0))        # Red
-        self.colours_[2] = tetrisColour((0, 255, 0), (255, 128, 128), (0,128,0))        # Green
-        self.colours_[3] = tetrisColour((255, 255, 0), (255, 255, 128), (128,128,0))    # Yellow
-        self.colours_[4] = tetrisColour((0, 0, 255), (128, 128, 255), (0,128,0))        # Blue
-        self.colours_[5] = tetrisColour((255, 0, 255), (255, 128, 255), (128,0,128))    # Purple
-        self.colours_[6] = tetrisColour((0, 255, 255), (128, 255, 255), (0,128,128))    # Cyan
-        self.colours_[7] = tetrisColour((255, 128, 0), (255, 192, 128), (128,64,0))     # Orange
+        self.colours_[1] = tetrisColour(consts.COLOUR_RED, (255, 128, 128), (128,0,0))
+        self.colours_[2] = tetrisColour(consts.COLOUR_GREEN, (255, 128, 128), (0,128,0))
+        self.colours_[3] = tetrisColour(consts.COLOUR_YELLOW, (255, 255, 128), (128,128,0))
+        self.colours_[4] = tetrisColour(consts.COLOUR_BLUE, (128, 128, 255), (0,128,0))
+        self.colours_[5] = tetrisColour(consts.COLOUR_PURPLE, (255, 128, 255), (128,0,128))
+        self.colours_[6] = tetrisColour(consts.COLOUR_CYAN, (128, 255, 255), (0,128,128))
+        self.colours_[7] = tetrisColour(consts.COLOUR_ORANGE, (255, 192, 128), (128,64,0))
 
         self.colours_[consts.COLOUR_ID_SHADOW] = tetrisColour((48,48,48))
         self.colours_[consts.COLOUR_ID_TEXT] = tetrisColour(COLOUR_WHITE)
@@ -128,17 +137,9 @@ class pygameTetris(tetrisGame.tetrisGame):
         height = consts.PLAYFIELD_HEIGHT * self.boxSize_
         self.gamePos_ = (2 * self.boxSize_, self.winDims_[1] - height  - 1, consts.PLAYFIELD_HEIGHT * self.boxSize_, height)
 
+    #
     # overloads from eventHandler
     #
-
-    # Resizable ?
-    #
-    @property
-    def resizable(self):
-        return self.allowResize_
-    @resizable.setter
-    def resizable(self, value):
-        self.allowResize_ = value
 
     # A line has just been completed (but is still visible)
     #
@@ -331,13 +332,13 @@ class pygameTetris(tetrisGame.tetrisGame):
     
     # overloaded method ...
     #
-    def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
-        self._pyDrawBlock(self.win_, left, top, colourID, inBoard, shadow)
+    def _drawSingleBlock(self, left, top, colourID, shadow = False):
+        self._pyDrawBlock(self.win_, left, top, colourID, shadow)
 
     # ... where the stuff is done !
     #   surface : Surface where to draw
     #
-    def _pyDrawBlock(self, surface, left, top, colourID, inBoard, shadow = False):
+    def _pyDrawBlock(self, surface, left, top, colourID, shadow = False):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
             # the single square

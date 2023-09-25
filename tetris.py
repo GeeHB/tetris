@@ -127,7 +127,7 @@ class tetris(object):
         if False == self.params_.showScores_:
             error = self.displayMgr_.checkEnvironment()
             if len(error) > 0:
-                # Remove ncurseq
+                # End nCurses
                 self.displayMgr_.clear()
                 return False, error
 

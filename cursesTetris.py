@@ -202,7 +202,7 @@ class cursesTetris(tetrisGame.tetrisGame):
 
     # Draw a coloured block
     #
-    def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
+    def _drawSingleBlock(self, left, top, colourID, shadow = False):
         self.term_.addstr(top, left, (SHADOW_CHAR if shadow else ' ') * 2, curses.color_pair(colourID))
 
     # Erase a block

@@ -1,4 +1,10 @@
-Version 0.8.1
+Version 0.9.1
+    * 25 sept. 2023
+    * Added
+        * casioplotTetris.py - display on a casio calculator
+        * -m / --mode to specify GUI mode (console, pygame, casioplot)
+
+Version 0.8.xxx
     * 04 aug. 2023
     * Added
         * use fast strings

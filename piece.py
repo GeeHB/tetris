@@ -18,7 +18,7 @@ class piece(object):
 
     # Members
     #
-    points_ = []        # Matrice définissant la piece et ses différentes états (rotations)
+    points_ = []        # Matrix of the piece whith all possible rotations
     rotate_ = 0         # rotation index (ie. index of the piece to draw)
     maxRotate_ = 0      # max; rotation allowed for the piece ( = 360°)
     vertOffset_ = -1    # Initial vert. offset (ie. count of empty lines starting from bottom)

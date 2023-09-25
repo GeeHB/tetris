@@ -188,7 +188,7 @@ class tetrisGame(eventHandler):
         for y in range(consts.PLAYFIELD_HEIGHT):
             left = leftFirst
             for x in range(consts.PLAYFIELD_WIDTH):        
-                self._drawBlock(left, top, self.board_.playField_[y][x], True)
+                self._drawSingleBlock(left, top, self.board_.playField_[y][x])
                 left+=w
             top-=h
        
@@ -209,7 +209,7 @@ class tetrisGame(eventHandler):
 
     # Change the origin and the coordinate system
     #   (x,y) are to be translated
-    #   inBoard : int he board (True) or in the "next piece" area
+    #   inBoard : int he board (True) or in the "next piece" area (False)
     #
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
@@ -219,7 +219,7 @@ class tetrisGame(eventHandler):
 
     # Draw a single colored block
     #
-    def _drawBlock(self, left, top, colourID, inBoard, shadow = False):
+    def _drawSingleBlock(self, left, top, colourID, shadow = False):
         pass
 
     # Erase a tetramino
@@ -322,7 +322,7 @@ class tetrisGame(eventHandler):
             for col in range(PIECE_WIDTH):
                 colour = datas[row][col]
                 if colour != consts.COLOUR_ID_BOARD:
-                    self._drawBlock(x, y, colourID, inBoard, shadow)  # only non-empty squares
+                    self._drawSingleBlock(x, y, colourID, shadow)  # only non-empty squares
                 x+=w
             y+=h
 
