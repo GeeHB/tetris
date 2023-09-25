@@ -28,7 +28,7 @@ class tetris(object):
     #
     gameData_       = None        # Game's datas
     displayMgr_     = None        # Display manager
-    txtColours_     = color.colorizer(True)
+    txtColours_     = color.colorizer(colored = None)
 
     params_ = tetrisParameters()
 
