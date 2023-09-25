@@ -2,7 +2,7 @@
 #
 #   File     :   cursesTetris.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   cursesTetris obejct - Drawings using curses library
 #

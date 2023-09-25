@@ -1,8 +1,8 @@
-#   File     :   casioPlotTetris.py
+#   File     :   casioplotTetris.py
 #
 #   Author     :   JHB
 #
-#   Description :   casioPlotTetris object - Drawings using casioplot library
+#   Description :   casioplotTetris object - Drawings using casioplot library
 #                   
 #   Comment    :   Python 3.xx
 #

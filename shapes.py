@@ -11,7 +11,7 @@
 #                   
 #                   Based on Nintendo for pieces and rotation. 
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   tetraminos definitions
 #

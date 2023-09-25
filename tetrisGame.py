@@ -2,7 +2,7 @@
 #
 #   File     :   tetrisGame.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   Tetris'outputs - abstract class 
 #                   

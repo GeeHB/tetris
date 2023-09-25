@@ -2,7 +2,7 @@
 #
 #   File        :   consts.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   shared consts for Tetris Game
 
@@ -12,7 +12,7 @@
 
 APP_NAME = "tetris.py"
 APP_CURRENT_VERSION = "0.9.1"
-APP_RELEASE_DATE = "09 sept. 2023"
+APP_RELEASE_DATE = "25 sept. 2023"
 APP_AUTHOR_SHORT = "GeeHB"
 APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"
 

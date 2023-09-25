@@ -2,7 +2,7 @@
 #
 #   File     :   board.py
 #
-#   Authors     :   JHB
+#   Author      :   JHB
 #
 #   Description :   board class - gameplay
 #                   The matrix with all the colored bloceked (ie dirty lines and / or posed tetraminos)

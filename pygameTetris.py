@@ -2,7 +2,7 @@
 #
 #   File     :   pygameTetris.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   pygameTetris object - Drawings using PYGame library
 #                   

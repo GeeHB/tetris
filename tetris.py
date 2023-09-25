@@ -4,14 +4,14 @@
 #
 #   File     :   tetris.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   The "tetris" game 
 #
 #   Comment    :   Need Python 3.xx or higher
 #
 import time, sys, math, argparse
-import consts
+import consts, display
 from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
 from board import board, tetrisParameters
@@ -51,11 +51,11 @@ class tetris(object):
         # High scores
         parser.add_argument(consts.ARG_TOP_S, consts.ARG_TOP, action='store_true', help = consts.COMMENT_TOP, required = False)
         
-        # Console display mode ?
-        parser.add_argument(consts.ARG_CONSOLE_S, consts.ARG_CONSOLE, action='store_true', help = consts.COMMENT_CONSOLE, required = False)
-
-        # Console display mode ?
+        # Display shadow ?
         parser.add_argument(consts.ARG_SHADOW_S, consts.ARG_SHADOW, action='store_true', help = consts.COMMENT_SHADOW, required = False)
+
+        # Display mode ?
+        parser.add_argument(consts.ARG_MODE_S, consts.ARG_MODE, help = consts.COMMENT_MODE, required = False, nargs = 1, default = [consts.MODE_AUTO], type=str, choice=[consts.MODE_AUTO, consts.MODE_CONSOLE, consts.MODE_CASIOPLOT, consts.MODE_PYGAME])
 
         # Start level
         parser.add_argument(consts.ARG_STARTLEVEL_S, consts.ARG_STARTLEVEL, help = consts.COMMENT_STARTLEVEL, required = False, nargs=1, default = [consts.DEF_LEVEL], type=int, choices=range(consts.MIN_LEVEL, consts.MAX_LEVEL))
@@ -73,8 +73,8 @@ class tetris(object):
         # Display high-scores
         self.params_.showScores_ = args.top
         
-        # Console mode (forced if displaying scores)
-        self.params_.useGUI_ = False if self.params_.showScores_ else (False == args.console)
+        # Display mode
+        self.mode_ = args.mode
 
         # Display high-scores
         self.params_.shadow_ = args.shadow
@@ -100,28 +100,12 @@ class tetris(object):
 
         # Display mode
         #
-        if self.params_.useGUI_:
-            
-            # Try to load pygame
-            try:
-                from pygameTetris import pygameTetris
-                self.displayMgr_ = pygameTetris()
-            except ModuleNotFoundError:
-                # GUI wanted but no pygame => try curses
-                print("Error - pygame is not installed. Trying with nCurses.")
-                self.params_.useGUI_ = False
-
-        # Try with nCurses
-        if False == self.params_.useGUI_:
-            try:
-                from cursesTetris import cursesTetris
-                self.displayMgr_ = cursesTetris()
-            except ModuleNotFoundError:
-                print("Error - nCurses is not installed")    
-                
+        displayMgr = display.display()
+        self.displayMgr_ = displayMgr.create(self.mode_)
+        
         # No display ?
         if self.displayMgr_ is None:
-            return False, "Error - no display handler found. Ending the game"
+            return False, f"Error - no display handler found for '{self.mode_}'. Ending the game"
 
         # Check display manager
         if False == self.params_.showScores_:

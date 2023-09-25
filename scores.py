@@ -4,7 +4,7 @@
 #
 #   File     :   scores.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   Handle scoring
 #

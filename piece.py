@@ -2,7 +2,7 @@
 #
 #   File     :   piece.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   piece & pieceStatus objects : a tetraminos and all the informations for its drawing
 #

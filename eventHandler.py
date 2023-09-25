@@ -2,7 +2,7 @@
 #
 #   File     :   eventHandler.py
 #
-#   Authors     :   JHB
+#   Author     :   JHB
 #
 #   Description :   Handle the notifications to update display
 #                   
