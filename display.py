@@ -8,7 +8,6 @@
 #   Comment    :
 #
 import consts
-from tetrisGame import tetrisGame
 
 # display object
 #
