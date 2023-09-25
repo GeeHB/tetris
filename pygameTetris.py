@@ -19,11 +19,6 @@ from sharedTools import systemInfos
 #
 BOX_SIZE       = 25    # Default dimensions of a small square
 
-# A few colours
-#
-COLOUR_BLACK        = (0, 0, 0)
-COLOUR_WHITE        = (255, 255, 255)
-
 # Font for the text (and default size)
 #
 FONT_NAME       = 'helvetica'
@@ -74,7 +69,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     fontSize_       = FONT_SIZE
     allowResize_    = True
     
-    colours_        = []                # Table of colours
+    colours_        = []                # Table of tetrisColour objects
 
     itemDims_       = [None, None, None] # Texts dims. (scores, lines and level)
     allowResize_    = True      # The window can be resized !!!
@@ -94,7 +89,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         
         # Table of colours
         #
-        self.colours_ = [tetrisColour(COLOUR_BLACK)] * (1 + consts.LAST_COLOUR_ID)
+        self.colours_ = [tetrisColour(consts.COLOUR_BLACK)] * (1 + consts.LAST_COLOUR_ID)
         
         self.colours_[1] = tetrisColour(consts.COLOUR_RED, (255, 128, 128), (128,0,0))
         self.colours_[2] = tetrisColour(consts.COLOUR_GREEN, (255, 128, 128), (0,128,0))
@@ -105,7 +100,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.colours_[7] = tetrisColour(consts.COLOUR_ORANGE, (255, 192, 128), (128,64,0))
 
         self.colours_[consts.COLOUR_ID_SHADOW] = tetrisColour((48,48,48))
-        self.colours_[consts.COLOUR_ID_TEXT] = tetrisColour(COLOUR_WHITE)
+        self.colours_[consts.COLOUR_ID_TEXT] = tetrisColour(consts.COLOUR_WHITE)
         self.colours_[consts.COLOUR_ID_BORDER] = tetrisColour((192,192,192))
         self.colours_[consts.COLOUR_ID_BOARD] = tetrisColour((32,32,32))
         self.colours_[consts.COLOUR_ID_ANIMATE] = tetrisColour((72, 72, 70), (92,92,95),(52,52,55))
@@ -138,7 +133,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         self.gamePos_ = (2 * self.boxSize_, self.winDims_[1] - height  - 1, consts.PLAYFIELD_HEIGHT * self.boxSize_, height)
 
     #
-    # overloads from eventHandler
+    # Overloads from eventHandler
     #
 
     # A line has just been completed (but is still visible)
@@ -265,8 +260,8 @@ class pygameTetris(tetrisGame.tetrisGame):
             self.end()
             return ''
      
-    
-    # overloads of tetrisGame methods
+    #
+    # Overloads of tetrisGame methods
     #
 
     def updateDisplay(self):
@@ -382,6 +377,10 @@ class pygameTetris(tetrisGame.tetrisGame):
 
         return (left, top, self.boxSize_, self.boxSize_)
 
+    #
+    # Internal methods
+    #
+    
     # Box size to window size
     #
     #   return a tuple (width, height)
