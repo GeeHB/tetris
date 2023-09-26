@@ -156,7 +156,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         tempPiece = pygame.Surface((self.boxSize_, self.boxSize_))
 
         # draw a single grey piece inside
-        self._pyDrawBlock(tempPiece, 0, 0, consts.COLOUR_ID_ANIMATE, True, False)
+        self._pyDrawBlock(tempPiece, 0, 0, consts.COLOUR_ID_ANIMATE, True)
 
         # replace blocks by the temp piece
         lineTop = pos[1] + dims[1] - 1
@@ -352,7 +352,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     # Erase a block
     #
     def _eraseBlocks(self, left, top, width, height, colourID):        
-        x,y,w,h = self._changeCoordonateSystem(left, top)
+        x,y,w,h = self._changeCoordonateSystem(left, top, False)
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
 
     # Change the origin and the coordinate system

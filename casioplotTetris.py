@@ -9,7 +9,8 @@
 
 from casioplot import *
 import consts
-import tetrisGame
+#import tetrisGame
+import consoleTetris
 
 #
 # CASIO calculator consts
@@ -28,20 +29,33 @@ CASIO_BOX_HEIGHT = CASIO_BOX_WIDTH
 CASIO_BOX_RWIDTH = (1 + CASIO_BOX_WIDTH)
 CASIO_BOX_RHEIGHT = CASIO_BOX_RWIDTH
 
-# Positions and dims.
+# Playfield positions and dims.
 CASIO_PLAYFIELD_BORDER = 3
 CASIO_BORDER_GAP = 2
-CASIO_PLAYFIELD_LEFT = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
-CASIO_PLAYFIELD_TOP = CASIO_PLAYFIELD_LEFT
+CASIO_PLAYFIELD_LEFT = 100 + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
+CASIO_PLAYFIELD_TOP = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
+
+# Next piece and value info box
+CASIO_TEXT_SIZE = "small"
+CASIO_INFO_GAP = 4
+CASIO_INFO_LEFT = 250
+CASIO_INFO_TOP = CASIO_PLAYFIELD_BORDER
+
+CASIO_NP_TOP = 100
+
 
 # casioplotTetris object - drawing of tertraminos using casioplot library
 #
-class casioplotTetris(tetrisGame.tetrisGame):
+#class casioplotTetris(tetrisGame.tetrisGame):
+class casioplotTetris(consoleTetris.consoleTetris):
 
     # Construction
     #
     def __init__(self):
         
+        # Call parent constructor
+        super().__init__()
+
         # Table of colours
         #
         self.colours_ = [consts.COLOUR_WHITE] * (1 + consts.LAST_COLOUR_ID)
@@ -60,6 +74,9 @@ class casioplotTetris(tetrisGame.tetrisGame):
         self.colours_[consts.COLOUR_ID_TEXT] = consts.COLOUR_BLACK
         self.colours_[consts.COLOUR_ID_BORDER] = consts.COLOUR_DKGREY
 
+        # Dims. & pos.
+        self.gamePos_ = [CASIO_PLAYFIELD_LEFT - CASIO_BORDER_GAP, CASIO_PLAYFIELD_TOP - CASIO_BORDER_GAP, consts.PLAYFIELD_WIDTH * CASIO_BOX_RWIDTH + 2 * CASIO_BORDER_GAP, consts.PLAYFIELD_HEIGHT * CASIO_BOX_RHEIGHT + 2 * CASIO_BORDER_GAP]
+
     #
     # overloads from tetrisGame
     #
@@ -71,9 +88,17 @@ class casioplotTetris(tetrisGame.tetrisGame):
     def drawBackGround(self):
         
         # Border around the playfield
-        self.__drawRectangle(CASIO_PLAYFIELD_BORDER, CASIO_PLAYFIELD_BORDER, 
-                             consts.PLAYFIELD_WIDTH * CASIO_BOX_RWIDTH + 2 * CASIO_BORDER_GAP, 
-                             consts.PLAYFIELD_HEIGHT * CASIO_BOX_RHEIGHT + 2 * CASIO_BORDER_GAP, 
+        self.__drawRectangle(self.gamePos_[0], self.gamePos_[1],
+                             self.gamePos_[2], self.gamePos_[3],
+                             None, self.colours_[consts.COLOUR_ID_BORDER])
+        
+        # Next piece
+        draw_string(CASIO_INFO_LEFT + CASIO_INFO_GAP, CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
+
+        self.__drawRectangle(CASIO_INFO_LEFT + CASIO_INFO_GAP, 
+                             CASIO_NP_TOP + 10,
+                             CASIO_BOX_RWIDTH * 4 + CASIO_BORDER_GAP * 2, 
+                             CASIO_BOX_RHEIGHT * 4 + CASIO_BORDER_GAP * 2, 
                              None, self.colours_[consts.COLOUR_ID_BORDER])
 
     # Change the origin and the coordinate system
@@ -90,7 +115,8 @@ class casioplotTetris(tetrisGame.tetrisGame):
             top = CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * CASIO_BOX_RHEIGHT
         else:
             # Next piece
-            left, top = 1, 1
+            left = CASIO_INFO_LEFT + CASIO_INFO_GAP + CASIO_BORDER_GAP
+            top = CASIO_NP_TOP + 10 + CASIO_BORDER_GAP
 
         return (left, top, CASIO_BOX_RWIDTH, CASIO_BOX_RHEIGHT)
 

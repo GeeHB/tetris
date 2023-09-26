@@ -150,6 +150,7 @@ class tetris(object):
         if not self.displayMgr_.resizable:
             time.sleep(1)
             self.displayMgr_.reDraw()
+            self.displayMgr_.drawNextPiece()
             self.displayMgr_.updateDisplay()
             
         # Cancel the game ?

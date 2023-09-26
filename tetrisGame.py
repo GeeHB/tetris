@@ -50,7 +50,7 @@ class tetrisGame(eventHandler):
     currentPos_ = None
 
     # Blocks of text
-    itemTexts_     = ["Score", "Level", "Lines", "Next piece"]
+    itemTexts_     = ["Score", "Level", "Lines", "next piece"]
     itemDims_ = None
 
     # Dimensions & position
@@ -332,7 +332,7 @@ class tetrisGame(eventHandler):
         # Erase the previous piece 
         self._eraseBlocks(0, 0, 4, 4, consts.COLOUR_ID_BOARD)
         
-        # ... and the new one
+        # ... and then draw the new one
         if -1 != pieceIndex :     
             datas, colourIndex = self.board_.nextPieceDatas()
             self._drawSinglePiece(datas, 0, 0, colourIndex, False)

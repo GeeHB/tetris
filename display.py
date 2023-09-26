@@ -31,7 +31,7 @@ class display(object):
             if obj is None:
                 obj =  self._cursesTetrisObject()
                 if obj is None:
-                    obj =  self._casioplotTetrisObject
+                    obj =  self._casioplotTetrisObject()
         else:
             if consts.MODE_CONSOLE == mode:
                 return self._cursesTetrisObject()

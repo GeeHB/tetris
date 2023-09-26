@@ -4,13 +4,13 @@
 #
 #   Author     :   JHB
 #
-#   Description :   cursesTetris obejct - Drawings using curses library
+#   Description :   cursesTetris object - Drawings using curses library
 #
 #   Comment    :   Python 3.xx
 #
 
 import curses, sys, os, termios, fcntl
-import tetrisGame
+import consoleTetris, tetrisGame
 import consts
 
 # Public consts
@@ -31,12 +31,14 @@ COLOUR_HILIGHT   = 9
 
 # cursesTetris object - Drawings with curses library
 #
-class cursesTetris(tetrisGame.tetrisGame):
+class cursesTetris(consoleTetris.consoleTetris):
 
     term_ = None      # curses term.
     
     # Construction
     def __init__(self):
+
+        super().__init__()
 
         # nCurses initialization
         self.term_ = curses.initscr()
@@ -45,9 +47,6 @@ class cursesTetris(tetrisGame.tetrisGame):
         self.term_.keypad(True)   # all chars
         self.term_.nodelay(True)  # non-blocking keyboard access
         curses.curs_set(0)        # no cursor
-
-        # Texts dims. (scores, lines and level)
-        self.itemDims_  = [0] * 3
 
     # overloads of tetrisGame methods
     #
@@ -65,7 +64,7 @@ class cursesTetris(tetrisGame.tetrisGame):
         # Colors ?
         #
         if False == curses.has_colors():
-            errorMessage = "Terminal dosen't accept colorized outputs"
+            errorMessage = "Terminal doesn't accept colorized outputs"
             return False, errorMessage
         
         curses.start_color()
@@ -109,41 +108,6 @@ class cursesTetris(tetrisGame.tetrisGame):
         curses.echo()
         curses.nocbreak()
         curses.endwin()
-
-    # Wait for an event (a keyboard event on curses)
-    #
-    def waitForEvent(self):
-        wait = True
-        while wait:
-            c = self.checkKeyboard()
-            if len(c) :
-                wait = False
-        return (cursesTetris.EVT_KEYDOWN, c)
-
-    # Read the keyboard (non-blocking)
-    #   returns the char or ''
-    def checkKeyboard(self):
-        fd = sys.stdin.fileno()
-
-        oldterm = termios.tcgetattr(fd)
-        newattr = termios.tcgetattr(fd)
-        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-        termios.tcsetattr(fd, termios.TCSANOW, newattr)
-
-        oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-
-        try:        
-            while True:            
-                try:
-                    c = sys.stdin.read(1)
-                    break
-                except IOError: 
-                    pass
-        finally:
-            termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
-        return c
 
     def updateDisplay(self):
         self.term_.refresh()
@@ -207,7 +171,7 @@ class cursesTetris(tetrisGame.tetrisGame):
 
     # Erase a block
     #
-    def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
+    def _eraseBlocks(self, left, top, width, height, colourID):
         x,y,w,_ = self._changeCoordonateSystem(0,0, False)
         for row in range(height):
             self.term_.addstr(y + row, x, ' ' * w * width, curses.color_pair(colourID))
