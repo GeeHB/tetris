@@ -109,8 +109,8 @@ class tetris(object):
 
         # Check display manager
         if False == self.params_.showScores_:
-            error = self.displayMgr_.checkEnvironment()
-            if len(error) > 0:
+            done, error = self.displayMgr_.checkEnvironment()
+            if not done and len(error) > 0:
                 # End nCurses
                 self.displayMgr_.clear()
                 return False, error
@@ -147,6 +147,11 @@ class tetris(object):
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
         
+        if not self.displayMgr_.resizable:
+            time.sleep(1)
+            self.displayMgr_.reDraw()
+            self.displayMgr_.updateDisplay()
+            
         # Cancel the game ?
         cont = True
         while cont :

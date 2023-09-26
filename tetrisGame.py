@@ -224,7 +224,7 @@ class tetrisGame(eventHandler):
 
     # Erase a tetramino
     #
-    def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
+    def _eraseBlocks(self, left, top, width, height, colourID):
         pass
 
     # eventHandler overloads
@@ -330,7 +330,7 @@ class tetrisGame(eventHandler):
     #
     def _drawNextPiece(self, pieceIndex):
         # Erase the previous piece 
-        self._eraseBlocks(0, 0, 4, 4, consts.COLOUR_ID_BOARD, False)
+        self._eraseBlocks(0, 0, 4, 4, consts.COLOUR_ID_BOARD)
         
         # ... and the new one
         if -1 != pieceIndex :     

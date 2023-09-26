@@ -190,7 +190,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     #
 
     # Verifications
-    #   Return True (init done) or False (errors)
+    #   Return (Done, error message)
     #
     def checkEnvironment(self):
         
@@ -198,7 +198,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         rets = pygame.init()
 
         if 0 != rets[1] :
-            return "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
+            return False, "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
 
         # Main window creation
         self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else pygame.SHOWN)
@@ -208,7 +208,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         
         # Ok
         self.status_ = tetrisGame.tetrisGame.STATUS_INIT
-        return ""
+        return True, ""
 
     # End ...
     def clear(self):
@@ -351,9 +351,8 @@ class pygameTetris(tetrisGame.tetrisGame):
 
     # Erase a block
     #
-    def _eraseBlocks(self, left, top, width, height, colourID, inBoard):
-        
-        x,y,w,h = self._changeCoordonateSystem(left, top, inBoard)
+    def _eraseBlocks(self, left, top, width, height, colourID):        
+        x,y,w,h = self._changeCoordonateSystem(left, top)
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
 
     # Change the origin and the coordinate system

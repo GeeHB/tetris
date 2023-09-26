@@ -53,20 +53,20 @@ class cursesTetris(tetrisGame.tetrisGame):
     #
 
     # Verifications
-    #   Return error message ("" if none)
+    #   Return (Done, error message)
     #
     def checkEnvironment(self):
 
         errorMessage = ""
 
         if tetrisGame.tetrisGame.STATUS_INIT == self.status_:
-            return ""   # Already done
+            return True, ""   # Already done
 
         # Colors ?
         #
         if False == curses.has_colors():
             errorMessage = "Terminal dosen't accept colorized outputs"
-            return errorMessage
+            return False, errorMessage
         
         curses.start_color()
         for i in range(1,8):
@@ -86,15 +86,15 @@ class cursesTetris(tetrisGame.tetrisGame):
 
         if curses.LINES < self.gamePos_[3]:
             errorMessage = f"Minimal height for the terminal is {str(self.gamePos_[3])} chars, actual is {curses.LINES}"
-            return errorMessage
+            return False, errorMessage
         
         if curses.COLS < self.gamePos_[2]+ 4:
             errorMessage = f"Minmal width for the terminal is {str(self.gamePos_[2]+ 4)} chars, actual is {curses.COLS}"
-            return errorMessage
+            return False, errorMessage
                 
         # Ok
         self.status_ = tetrisGame.tetrisGame.STATUS_INIT
-        return ""   # no message
+        return True, ""   # no message
 
     # Display "hall of fame"
     #   Basic display on console
