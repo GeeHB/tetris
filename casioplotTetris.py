@@ -140,6 +140,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     #   Return (Done, error message)
     #
     def checkEnvironment(self):
+        self.status_ = self.STATUS_INIT
         return True, ""
    
     # overloads from eventhandler
