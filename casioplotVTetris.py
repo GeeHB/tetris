@@ -80,7 +80,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         nx+=(self.CASIO_BOX_WIDTH - self.CASIO_BORDER_GAP)
         if fillColour is not None:
             for px in range(width - 1):
-                for py in range(height - 2):
+                for py in range(height - 1):
                     #set_pixel(x + px, y + py, fillColour)
                     set_pixel(nx - px, ny - py, fillColour)
 
