@@ -16,38 +16,37 @@ import consoleTetris
 # CASIO calculator consts
 # 
 
-# Screen dimensions in pixels
-#
-CASIO_WIDTH = 384
-CASIO_HEIGH = 192
-
-# Single block dims in pixels (without borders)
-CASIO_BOX_WIDTH = 8
-CASIO_BOX_HEIGHT = CASIO_BOX_WIDTH
-
-# SingleBlocks real dims (including borders)
-CASIO_BOX_RWIDTH = (1 + CASIO_BOX_WIDTH)
-CASIO_BOX_RHEIGHT = CASIO_BOX_RWIDTH
-
-# Playfield positions and dims.
-CASIO_PLAYFIELD_BORDER = 3
-CASIO_BORDER_GAP = 2
-CASIO_PLAYFIELD_LEFT = 100 + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
-CASIO_PLAYFIELD_TOP = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
-
-# Next piece and value info box
-CASIO_TEXT_SIZE = "small"
-CASIO_INFO_GAP = 4
-CASIO_INFO_LEFT = 250
-CASIO_INFO_TOP = CASIO_PLAYFIELD_BORDER
-
-CASIO_NP_TOP = 100
-
-
 # casioplotTetris object - drawing of tertraminos using casioplot library
 #
 #class casioplotTetris(tetrisGame.tetrisGame):
 class casioplotTetris(consoleTetris.consoleTetris):
+
+    # Screen dimensions in pixels
+    #
+    CASIO_WIDTH = 384
+    CASIO_HEIGHT = 192
+
+    # Single block dims in pixels (without borders)
+    CASIO_BOX_WIDTH = 8
+    CASIO_BOX_HEIGHT = CASIO_BOX_WIDTH
+
+    # SingleBlocks real dims (including borders)
+    CASIO_BOX_RWIDTH = (1 + CASIO_BOX_WIDTH)
+    CASIO_BOX_RHEIGHT = CASIO_BOX_RWIDTH
+
+    # Playfield positions and dims.
+    CASIO_PLAYFIELD_BORDER = 3
+    CASIO_BORDER_GAP = 2
+    CASIO_PLAYFIELD_LEFT = 100 + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
+    CASIO_PLAYFIELD_TOP = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
+
+    # Next piece and value info box
+    CASIO_TEXT_SIZE = "small"
+    CASIO_INFO_GAP = 4
+    CASIO_INFO_LEFT = 250
+    CASIO_INFO_TOP = CASIO_PLAYFIELD_BORDER
+
+    CASIO_NP_TOP = 100
 
     # Construction
     #
@@ -75,7 +74,10 @@ class casioplotTetris(consoleTetris.consoleTetris):
         self.colours_[consts.COLOUR_ID_BORDER] = consts.COLOUR_DKGREY
 
         # Dims. & pos.
-        self.gamePos_ = [CASIO_PLAYFIELD_LEFT - CASIO_BORDER_GAP, CASIO_PLAYFIELD_TOP - CASIO_BORDER_GAP, consts.PLAYFIELD_WIDTH * CASIO_BOX_RWIDTH + 2 * CASIO_BORDER_GAP, consts.PLAYFIELD_HEIGHT * CASIO_BOX_RHEIGHT + 2 * CASIO_BORDER_GAP]
+        self.gamePos_ = [self.CASIO_PLAYFIELD_LEFT - self.CASIO_BORDER_GAP,
+                         self.CASIO_PLAYFIELD_TOP - self.CASIO_BORDER_GAP,
+                         consts.PLAYFIELD_WIDTH * self.CASIO_BOX_RWIDTH + 2 * self.CASIO_BORDER_GAP,
+                         consts.PLAYFIELD_HEIGHT * self.CASIO_BOX_RHEIGHT + 2 * self.CASIO_BORDER_GAP]
 
     #
     # overloads from tetrisGame
@@ -88,17 +90,17 @@ class casioplotTetris(consoleTetris.consoleTetris):
     def drawBackGround(self):
         
         # Border around the playfield
-        self.__drawRectangle(self.gamePos_[0], self.gamePos_[1],
+        self._drawRectangle(self.gamePos_[0], self.gamePos_[1],
                              self.gamePos_[2], self.gamePos_[3],
                              None, self.colours_[consts.COLOUR_ID_BORDER])
         
         # Next piece
-        draw_string(CASIO_INFO_LEFT + CASIO_INFO_GAP, CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
+        draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
 
-        self.__drawRectangle(CASIO_INFO_LEFT + CASIO_INFO_GAP, 
-                             CASIO_NP_TOP + 10,
-                             CASIO_BOX_RWIDTH * 4 + CASIO_BORDER_GAP * 2, 
-                             CASIO_BOX_RHEIGHT * 4 + CASIO_BORDER_GAP * 2, 
+        self._drawRectangle(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, 
+                             self.CASIO_NP_TOP + 10,
+                             self.CASIO_BOX_RWIDTH * 4 + self.CASIO_BORDER_GAP * 2, 
+                             self.CASIO_BOX_RHEIGHT * 4 + self.CASIO_BORDER_GAP * 2, 
                              None, self.colours_[consts.COLOUR_ID_BORDER])
 
     # Change the origin and the coordinate system
@@ -111,25 +113,25 @@ class casioplotTetris(consoleTetris.consoleTetris):
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         if inBoard:
             # For the game
-            left = CASIO_PLAYFIELD_LEFT + x * CASIO_BOX_RWIDTH
-            top = CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * CASIO_BOX_RHEIGHT
+            left = self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_RWIDTH
+            top = self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_RHEIGHT
         else:
             # Next piece
-            left = CASIO_INFO_LEFT + CASIO_INFO_GAP + CASIO_BORDER_GAP
-            top = CASIO_NP_TOP + 10 + CASIO_BORDER_GAP
+            left = self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP + self.CASIO_BORDER_GAP
+            top = self.CASIO_NP_TOP + 10 + self.CASIO_BORDER_GAP
 
-        return (left, top, CASIO_BOX_RWIDTH, CASIO_BOX_RHEIGHT)
+        return (left, top, self.CASIO_BOX_RWIDTH, self.CASIO_BOX_RHEIGHT)
 
     # Draw a single colored block
     #
     def _drawSingleBlock(self, left, top, colourID, shadow = False):
-        self.__drawRectangle(left, top, CASIO_BOX_RWIDTH, CASIO_BOX_RWIDTH, self.colours_[colourID])
+        self._drawRectangle(left, top, self.CASIO_BOX_RWIDTH, self.CASIO_BOX_RWIDTH, self.colours_[colourID])
 
     # Erase a tetramino
     #
     def _eraseBlocks(self, left, top, width, height, colourID):
         x,y,w,h = self._changeCoordonateSystem(left, top)
-        self.__drawRectangle(x, y, w, h, self.colours_[colourID], None)
+        self._drawRectangle(x, y, w, h, self.colours_[colourID], None)
 
     # overloads from gameRendering
     #
@@ -160,7 +162,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     #   borderColour : Colour of the border in RGB format or None (if no border)
     #   fillColour : Filling colour in RGB format or None (if empty) 
     #
-    def __drawRectangle(self, x, y, width, height, fillColour = None, borderColour = None):
+    def _drawRectangle(self, x, y, width, height, fillColour = None, borderColour = None):
         # A border ?
         if borderColour is not None:
             for px in range(width):

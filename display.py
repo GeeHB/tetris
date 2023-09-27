@@ -39,9 +39,11 @@ class display(object):
                 if consts.MODE_CASIOPLOT == mode:
                     return self._casioplotTetrisObject()
                 else:
-                    if consts.MODE_PYGAME == mode:
-                        return self._pygameTetrisObject()
-                    
+                    if consts.MODE_CASIOPLOTV == mode:
+                        return self._casioplotVTetrisObject()
+                    else:
+                        if consts.MODE_PYGAME == mode:
+                            return self._pygameTetrisObject()
         # ???
         return obj
 
@@ -81,5 +83,16 @@ class display(object):
             return casioplotTetris()
         except ModuleNotFoundError:
             return None
-
+        
+    #   Create a casioplotVTetris object
+    #
+    #   return the object or None
+    #
+    def _casioplotVTetrisObject(self):
+        try:
+            from casioplotVTetris import casioplotVTetris
+            return casioplotVTetris()
+        except ModuleNotFoundError:
+            return None
+        
 # EOF

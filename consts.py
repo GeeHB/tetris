@@ -117,6 +117,7 @@ COMMENT_MODE    = "Choose display mode"
 MODE_AUTO = "auto"              # Search for the best GUI mode (default mode)
 MODE_CONSOLE = "console"        # Console mode using nCurses
 MODE_CASIOPLOT = "casioplot"    # GUI using casioplot library 
+MODE_CASIOPLOTV = "casioplotv"    # GUI using casioplot library vertically
 MODE_PYGAME = "pygame"          # Use PYGame library
 
 # EOF

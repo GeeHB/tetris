@@ -55,7 +55,7 @@ class tetris(object):
         parser.add_argument(consts.ARG_SHADOW_S, consts.ARG_SHADOW, action='store_true', help = consts.COMMENT_SHADOW, required = False)
 
         # Display mode ?
-        parser.add_argument(consts.ARG_MODE_S, consts.ARG_MODE, help = consts.COMMENT_MODE, required = False, nargs = 1, default = [consts.MODE_AUTO], type=str, choices=[consts.MODE_AUTO, consts.MODE_CONSOLE, consts.MODE_CASIOPLOT, consts.MODE_PYGAME])
+        parser.add_argument(consts.ARG_MODE_S, consts.ARG_MODE, help = consts.COMMENT_MODE, required = False, nargs = 1, default = [consts.MODE_AUTO], type=str, choices=[consts.MODE_AUTO, consts.MODE_CONSOLE, consts.MODE_CASIOPLOT, consts.MODE_CASIOPLOTV, consts.MODE_PYGAME])
 
         # Start level
         parser.add_argument(consts.ARG_STARTLEVEL_S, consts.ARG_STARTLEVEL, help = consts.COMMENT_STARTLEVEL, required = False, nargs=1, default = [consts.DEF_LEVEL], type=int, choices=range(consts.MIN_LEVEL, consts.MAX_LEVEL))
@@ -162,6 +162,8 @@ class tetris(object):
 
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
+
+            #print("Char :", evt[1])
         
         if not self.displayMgr_.resizable:
             time.sleep(1)
