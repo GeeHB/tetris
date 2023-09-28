@@ -189,7 +189,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
         
         # Next piece
         #draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
-        self._drawRectangle(self.CASIO_NP_LEFT, self.CASIO_NP_TOP,
+        self._drawRectangle(self.CASIO_NP_LEFT + self.CASIO_BORDER_GAP, self.CASIO_NP_TOP  + self.CASIO_BORDER_GAP,
                             self.CASIO_NP_WIDTH, self.CASIO_NP_HEIGHT, 
                             None, self.colours_[consts.COLOUR_ID_BORDER])
 

@@ -27,7 +27,11 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         #self.CASIO_PLAYFIELD_TOP = self.CASIO_WIDTH - self.CASIO_PLAYFIELD_BORDER - self.CASIO_BORDER_GAP - (consts.PLAYFIELD_HEIGHT - 1) * self.CASIO_BOX_HEIGHT
 
         # Next-Piece
-        self.CASIO_NP_LEFT = self.CASIO_HEIGHT - self.CASIO_PLAYFIELD_BORDER - 4 * self.CASIO_NP_BOX_WIDTH
+        
+        self.CASIO_NP_WIDTH = 4 * self.CASIO_NP_BOX_WIDTH + 2 * self.CASIO_INFO_GAP
+        self.CASIO_NP_HEIGHT = self.CASIO_NP_WIDTH
+        
+        self.CASIO_NP_LEFT = self.CASIO_HEIGHT - 1 * self.CASIO_PLAYFIELD_BORDER - self.CASIO_NP_WIDTH
         self.CASIO_NP_TOP = self.CASIO_PLAYFIELD_BORDER
 
         # Call parent constructor
