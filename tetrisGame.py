@@ -188,7 +188,7 @@ class tetrisGame(eventHandler):
         for y in range(consts.PLAYFIELD_HEIGHT):
             left = leftFirst
             for x in range(consts.PLAYFIELD_WIDTH):        
-                self._drawSingleBlock(left, top, self.board_.playField_[y][x])
+                self._drawSingleBlock(left, top, w, h, self.board_.playField_[y][x])
                 left+=w
             top-=h
        
@@ -219,7 +219,7 @@ class tetrisGame(eventHandler):
 
     # Draw a single colored block
     #
-    def _drawSingleBlock(self, left, top, colourID, shadow = False):
+    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
         pass
 
     # Erase a tetramino
@@ -322,7 +322,7 @@ class tetrisGame(eventHandler):
             for col in range(PIECE_WIDTH):
                 colour = datas[row][col]
                 if colour != consts.COLOUR_ID_BOARD:
-                    self._drawSingleBlock(x, y, colourID, shadow)  # only non-empty squares
+                    self._drawSingleBlock(x, y, w, h, colourID, shadow)  # only non-empty squares
                 x+=w
             y+=h
 

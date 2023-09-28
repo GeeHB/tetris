@@ -327,27 +327,27 @@ class pygameTetris(tetrisGame.tetrisGame):
     
     # overloaded method ...
     #
-    def _drawSingleBlock(self, left, top, colourID, shadow = False):
-        self._pyDrawBlock(self.win_, left, top, colourID, shadow)
+    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
+        self._pyDrawBlock(self.win_, left, top, width, height, colourID, shadow)
 
     # ... where the stuff is done !
     #   surface : Surface where to draw
     #
-    def _pyDrawBlock(self, surface, left, top, colourID, shadow = False):
+    def _pyDrawBlock(self, surface, left, top, width, height, colourID, shadow = False):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
             # the single square
-            pygame.draw.rect(surface, paintColour.base_, (left + 1, top + 1, self.boxSize_ - 2, self.boxSize_ -2))
+            pygame.draw.rect(surface, paintColour.base_, (left + 1, top + 1, width - 2, height -2))
 
             # 3D effect
-            pygame.draw.line(surface, paintColour.light_, (left, top),(left, top + self.boxSize_ - 1))
-            pygame.draw.line(surface, paintColour.light_, (left, top),(left + self.boxSize_ - 1, top))
+            pygame.draw.line(surface, paintColour.light_, (left, top),(left, top + height - 1))
+            pygame.draw.line(surface, paintColour.light_, (left, top),(left + width - 1, top))
 
-            pygame.draw.line(surface, paintColour.dark_, (left + self.boxSize_ - 1, top),(left + self.boxSize_ - 1, top + self.boxSize_ - 1))
-            pygame.draw.line(surface, paintColour.dark_, (left, top + self.boxSize_ - 1),(left + self.boxSize_ - 1, top + self.boxSize_ - 1))
+            pygame.draw.line(surface, paintColour.dark_, (left + width - 1, top),(left + width - 1, top + height - 1))
+            pygame.draw.line(surface, paintColour.dark_, (left, top + height - 1),(left + width - 1, top + height - 1))
         else:
             # Just a square
-            pygame.draw.rect(surface, paintColour.base_, (left, top, self.boxSize_, self.boxSize_))
+            pygame.draw.rect(surface, paintColour.base_, (left, top, width, height))
 
     # Erase a block
     #

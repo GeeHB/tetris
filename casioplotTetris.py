@@ -28,13 +28,9 @@ class casioplotTetris(consoleTetris.consoleTetris):
     CASIO_WIDTH = 384
     CASIO_HEIGHT = 192
 
-    # Single block dims in pixels (without borders)
-    CASIO_BOX_WIDTH = 8
-    CASIO_BOX_HEIGHT = CASIO_BOX_WIDTH
-
     # SingleBlocks real dims (including borders)
-    CASIO_BOX_RWIDTH = (1 + CASIO_BOX_WIDTH)
-    CASIO_BOX_RHEIGHT = CASIO_BOX_RWIDTH
+    CASIO_BOX_WIDTH = 9
+    CASIO_BOX_HEIGHT = CASIO_BOX_WIDTH
 
     # Playfield positions and dims.
     CASIO_PLAYFIELD_BORDER = 3
@@ -51,7 +47,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     CASIO_INFO_GAP = 4
 
     # Next-Piece
-    CASIO_NP_BOX_WIDTH = CASIO_BOX_RWIDTH   # could be different !!!
+    CASIO_NP_BOX_WIDTH = CASIO_BOX_WIDTH   # could be different !!!
     
     CASIO_NP_LEFT = CASIO_INFO_LEFT + CASIO_INFO_GAP
     CASIO_NP_TOP = 10
@@ -87,8 +83,8 @@ class casioplotTetris(consoleTetris.consoleTetris):
         # Dims. & pos.
         self.gamePos_ = [self.CASIO_PLAYFIELD_LEFT - self.CASIO_BORDER_GAP,
                          self.CASIO_PLAYFIELD_TOP - self.CASIO_BORDER_GAP,
-                         consts.PLAYFIELD_WIDTH * self.CASIO_BOX_RWIDTH + 2 * self.CASIO_BORDER_GAP,
-                         consts.PLAYFIELD_HEIGHT * self.CASIO_BOX_RHEIGHT + 2 * self.CASIO_BORDER_GAP]
+                         consts.PLAYFIELD_WIDTH * self.CASIO_BOX_WIDTH + 2 * self.CASIO_BORDER_GAP,
+                         consts.PLAYFIELD_HEIGHT * self.CASIO_BOX_HEIGHT + 2 * self.CASIO_BORDER_GAP]
 
     #
     # overloads from tetrisGame
@@ -99,17 +95,12 @@ class casioplotTetris(consoleTetris.consoleTetris):
 
     # Draw borders
     def drawBackGround(self):
-        
-        # Border around the playfield
-        self._drawRectangle(self.gamePos_[0], self.gamePos_[1],
-                             self.gamePos_[2], self.gamePos_[3],
-                             None, self.colours_[consts.COLOUR_ID_BORDER])
-        
-        # Next piece
-        #draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
-        self._drawRectangle(self.CASIO_NP_LEFT, self.CASIO_NP_TOP,
-                            self.CASIO_NP_WIDTH, self.CASIO_NP_HEIGHT, 
-                            None, self.colours_[consts.COLOUR_ID_BORDER])
+        # Border around the playfield and 'next piece'
+        self._drawFrames()
+
+        # Draw texts
+
+
 
     # Change the origin and the coordinate system
     #   (x,y) are to be translated
@@ -121,19 +112,19 @@ class casioplotTetris(consoleTetris.consoleTetris):
     def _changeCoordonateSystem(self, x, y, inBoard = True):
         if inBoard:
             # For the game
-            left = self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_RWIDTH
-            top = self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_RHEIGHT
+            left = self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_WIDTH
+            top = self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_HEIGHT
         else:
             # Next piece
             left = self.CASIO_NP_LEFT + self.CASIO_INFO_GAP
             top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP
 
-        return (left, top, self.CASIO_BOX_RWIDTH, self.CASIO_BOX_RHEIGHT)
+        return (left, top, self.CASIO_BOX_WIDTH, self.CASIO_BOX_HEIGHT)
 
     # Draw a single colored block
     #
-    def _drawSingleBlock(self, left, top, colourID, shadow = False):
-        self._drawRectangle(left, top, self.CASIO_BOX_RWIDTH, self.CASIO_BOX_RWIDTH, self.colours_[colourID])
+    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
+        self._drawRectangle(left, top, width, height, self.colours_[colourID])
 
     # Erase a tetramino
     #
@@ -188,5 +179,18 @@ class casioplotTetris(consoleTetris.consoleTetris):
                 for py in range(height - 1):
                     set_pixel(x + px, y + py, fillColour)
 
+    # Draw frames
+    def _drawFrames(self):
+        
+        # Border around the playfield
+        self._drawRectangle(self.gamePos_[0], self.gamePos_[1],
+                             self.gamePos_[2], self.gamePos_[3],
+                             None, self.colours_[consts.COLOUR_ID_BORDER])
+        
+        # Next piece
+        #draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
+        self._drawRectangle(self.CASIO_NP_LEFT, self.CASIO_NP_TOP,
+                            self.CASIO_NP_WIDTH, self.CASIO_NP_HEIGHT, 
+                            None, self.colours_[consts.COLOUR_ID_BORDER])
 
 # EOF
