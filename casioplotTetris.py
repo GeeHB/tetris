@@ -21,6 +21,8 @@ import consoleTetris
 #class casioplotTetris(tetrisGame.tetrisGame):
 class casioplotTetris(consoleTetris.consoleTetris):
 
+    KEY_START       = 'w'
+    
     # Screen dimensions in pixels
     #
     CASIO_WIDTH = 384
@@ -130,7 +132,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     # Erase a tetramino
     #
     def _eraseBlocks(self, left, top, width, height, colourID):
-        x,y,w,h = self._changeCoordonateSystem(left, top)
+        x,y,w,h = self._changeCoordonateSystem(left, top, False)
         self._drawRectangle(x, y, w, h, self.colours_[colourID], None)
 
     # overloads from gameRendering

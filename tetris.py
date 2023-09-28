@@ -146,12 +146,6 @@ class tetris(object):
         # start !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
-        
-        if not self.displayMgr_.resizable:
-            time.sleep(1)
-            self.displayMgr_.reDraw()
-            self.displayMgr_.drawNextPiece()
-            self.displayMgr_.updateDisplay()
             
         # Cancel the game ?
         cont = True
@@ -162,13 +156,13 @@ class tetris(object):
 
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
-
-            #print("Char :", evt[1])
         
         if not self.displayMgr_.resizable:
             time.sleep(1)
             self.displayMgr_.reDraw()
             self.displayMgr_.updateDisplay()
+
+        self.displayMgr_.drawNextPiece()
 
         # Game main loop
         while self.displayMgr_.isRunning():
@@ -179,6 +173,7 @@ class tetris(object):
             while self.displayMgr_.isRunning() and diff < seqDuration :
                 self._handleGameKeys()
                 time.sleep(uWait) # usleep(5000)
+        
                 now = time.monotonic_ns()
                 diff = now - ts
 
