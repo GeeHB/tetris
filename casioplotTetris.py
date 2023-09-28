@@ -133,7 +133,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     #
     def _eraseBlocks(self, left, top, width, height, colourID):
         x,y,w,h = self._changeCoordonateSystem(left, top, False)
-        self._drawRectangle(x, y, w, h, self.colours_[colourID], None)
+        self._drawRectangle(x, y, w * width, h * height, self.colours_[colourID], None)
 
     # overloads from gameRendering
     #
