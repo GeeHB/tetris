@@ -16,6 +16,7 @@ import casioplotTetris
 #
 #class casioplotTetris(tetrisGame.tetrisGame):
 class casioplotVTetris(casioplotTetris.casioplotTetris):    
+     
     # Construction
     #
     def __init__(self):
@@ -30,6 +31,10 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         self.CASIO_PLAYFIELD_LEFT = self.CASIO_PLAYFIELD_BORDER + self.CASIO_BORDER_GAP
         #self.CASIO_PLAYFIELD_TOP = self.CASIO_WIDTH - self.CASIO_PLAYFIELD_BORDER - self.CASIO_BORDER_GAP - (consts.PLAYFIELD_HEIGHT - 1) * self.CASIO_BOX_RHEIGHT
 
+        # Next-Piece
+        self.CASIO_NP_LEFT = self.CASIO_HEIGHT - self.CASIO_PLAYFIELD_BORDER - 4 * self.CASIO_NP_BOX_WIDTH
+        self.CASIO_NP_TOP = self.CASIO_PLAYFIELD_BORDER
+
         # Call parent constructor
         super().__init__()
 
@@ -43,6 +48,32 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         self._drawRectangle(self.gamePos_[0], self.gamePos_[1],
                              self.gamePos_[2], self.gamePos_[3],
                              None, self.colours_[consts.COLOUR_ID_BORDER])
+        
+        # Next piece
+        #draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
+        self._drawRectangle(self.CASIO_NP_LEFT, self.CASIO_NP_TOP,
+                            self.CASIO_NP_WIDTH, self.CASIO_NP_HEIGHT, 
+                            None, self.colours_[consts.COLOUR_ID_BORDER])
+    
+    # Change the origin and the coordinate system
+    #   (x,y) are to be translated
+    #   inBoard : int he board (True) or in the "next piece" area (False)
+    #
+    #   returns a tuple (x,y, dx, dy) in the new coordonate system
+    #       dx, dy  are the width and height of the block in the screen
+    # 
+    """
+    def _changeCoordonateSystem(self, x, y, inBoard = True):
+        if inBoard:
+            # For the game
+            return super()._changeCoordonateSystem(x,y, True)
+        
+        # Next piece
+        left = self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP + self.CASIO_BORDER_GAP
+        top = self.CASIO_NP_TOP + 10 + self.CASIO_BORDER_GAP
+
+        return (left, top, self.CASIO_BOX_SWIDTH, self.CASIO_BOX_SHEIGHT)
+    """
     
     #
     # Internal methods

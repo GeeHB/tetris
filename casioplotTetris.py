@@ -42,13 +42,22 @@ class casioplotTetris(consoleTetris.consoleTetris):
     CASIO_PLAYFIELD_LEFT = 100 + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
     CASIO_PLAYFIELD_TOP = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP
 
-    # Next piece and value info box
+    # Texts
+    #
     CASIO_TEXT_SIZE = "small"
-    CASIO_INFO_GAP = 4
+    
     CASIO_INFO_LEFT = 250
     CASIO_INFO_TOP = CASIO_PLAYFIELD_BORDER
+    CASIO_INFO_GAP = 4
 
-    CASIO_NP_TOP = 100
+    # Next-Piece
+    CASIO_NP_BOX_WIDTH = CASIO_BOX_RWIDTH   # could be different !!!
+    
+    CASIO_NP_LEFT = CASIO_INFO_LEFT + CASIO_INFO_GAP
+    CASIO_NP_TOP = 10
+
+    CASIO_NP_WIDTH = 4 * CASIO_NP_BOX_WIDTH + 2 * CASIO_INFO_GAP
+    CASIO_NP_HEIGHT = CASIO_NP_WIDTH
 
     # Construction
     #
@@ -97,13 +106,10 @@ class casioplotTetris(consoleTetris.consoleTetris):
                              None, self.colours_[consts.COLOUR_ID_BORDER])
         
         # Next piece
-        draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
-
-        self._drawRectangle(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, 
-                             self.CASIO_NP_TOP + 10,
-                             self.CASIO_BOX_RWIDTH * 4 + self.CASIO_BORDER_GAP * 2, 
-                             self.CASIO_BOX_RHEIGHT * 4 + self.CASIO_BORDER_GAP * 2, 
-                             None, self.colours_[consts.COLOUR_ID_BORDER])
+        #draw_string(self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP, self.CASIO_NP_TOP, self.itemTexts_[3], self.colours_[consts.COLOUR_ID_TEXT], "medium")
+        self._drawRectangle(self.CASIO_NP_LEFT, self.CASIO_NP_TOP,
+                            self.CASIO_NP_WIDTH, self.CASIO_NP_HEIGHT, 
+                            None, self.colours_[consts.COLOUR_ID_BORDER])
 
     # Change the origin and the coordinate system
     #   (x,y) are to be translated
@@ -119,8 +125,8 @@ class casioplotTetris(consoleTetris.consoleTetris):
             top = self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_RHEIGHT
         else:
             # Next piece
-            left = self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP + self.CASIO_BORDER_GAP
-            top = self.CASIO_NP_TOP + 10 + self.CASIO_BORDER_GAP
+            left = self.CASIO_NP_LEFT + self.CASIO_INFO_GAP
+            top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP
 
         return (left, top, self.CASIO_BOX_RWIDTH, self.CASIO_BOX_RHEIGHT)
 
