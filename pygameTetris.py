@@ -156,7 +156,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         tempPiece = pygame.Surface((self.boxSize_, self.boxSize_))
 
         # draw a single grey piece inside
-        self._pyDrawBlock(tempPiece, 0, 0, consts.COLOUR_ID_ANIMATE, True)
+        self._pyDrawBlock(tempPiece, 0, 0, self.boxSize_, self.boxSize_, consts.COLOUR_ID_ANIMATE, True)
 
         # replace blocks by the temp piece
         lineTop = pos[1] + dims[1] - 1

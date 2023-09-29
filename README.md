@@ -30,6 +30,7 @@
 |  |  |  | = *casioplotv* : Use casioplot library to display on casio computers vertically| 
 | *\-d {#lines}* | *\--dirty {#lines}* | 0 | Count of dirty lines present at startup |
 | *\-l* {#level}| *\--level {#level}* |  1 | Starting game level|
+| *\-s* | *\--shadow* |   | Display piece shadow|
 
 ## Samples
 
