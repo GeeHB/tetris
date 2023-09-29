@@ -27,7 +27,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         #self.CASIO_PLAYFIELD_TOP = self.CASIO_WIDTH - self.CASIO_PLAYFIELD_BORDER - self.CASIO_BORDER_GAP - (consts.PLAYFIELD_HEIGHT - 1) * self.CASIO_BOX_HEIGHT
 
         # Next-Piece
-        
+        self.CASIO_NP_BOX_WIDTH = 8
         self.CASIO_NP_WIDTH = 4 * self.CASIO_NP_BOX_WIDTH + 2 * self.CASIO_INFO_GAP
         self.CASIO_NP_HEIGHT = self.CASIO_NP_WIDTH
         
@@ -53,18 +53,16 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
     # 
-    """
-    def _changeCoordonateSystem(self, x, y, inBoard = True):
+    def _changeOrigin(self, x, y, inBoard = True):
         if inBoard:
             # For the game
-            return super()._changeCoordonateSystem(x,y, True)
+            return super()._changeOrigin(x,y, True)
         
         # Next piece
-        left = self.CASIO_INFO_LEFT + self.CASIO_INFO_GAP + self.CASIO_BORDER_GAP
-        top = self.CASIO_NP_TOP + 10 + self.CASIO_BORDER_GAP
+        left = self.CASIO_NP_LEFT + self.CASIO_INFO_GAP
+        top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP
 
-        return (left, top, self.CASIO_BOX_SWIDTH, self.CASIO_BOX_SHEIGHT)
-    """
+        return (left, top, self.CASIO_NP_BOX_WIDTH, self.CASIO_NP_BOX_WIDTH)
     
     #
     # Internal methods

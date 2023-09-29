@@ -302,7 +302,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         pygame.draw.line(self.win_, self.colours_[consts.COLOUR_ID_BORDER].base_, (left, top),(right, top))
 
         # background
-        #x,y,w,h = self._changeCoordonateSystem(left, top, True)
+        #x,y,w,h = self._changeOrigin(left, top, True)
         #pygame.draw.rect(self.win_, self.colours_[COLOUR_ID_BOARD].base_, (x, y, w * board.PLAYFIELD_WIDTH, h * board.PLAYFIELD_HEIGHT))
         
         # Next piece text
@@ -352,7 +352,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     # Erase a block
     #
     def _eraseBlocks(self, left, top, width, height, colourID):        
-        x,y,w,h = self._changeCoordonateSystem(left, top, False)
+        x,y,w,h = self._changeOrigin(left, top, False)
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
 
     # Change the origin and the coordinate system
@@ -363,7 +363,7 @@ class pygameTetris(tetrisGame.tetrisGame):
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
     #
-    def _changeCoordonateSystem(self, x, y, inBoard = True):
+    def _changeOrigin(self, x, y, inBoard = True):
         
         if inBoard:
             # For the game

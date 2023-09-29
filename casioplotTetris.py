@@ -76,7 +76,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
         self.colours_[6] = consts.COLOUR_CYAN
         self.colours_[7] = consts.COLOUR_ORANGE
 
-        self.colours_[consts.COLOUR_ID_SHADOW] = consts.COLOUR_GREY
+        self.colours_[consts.COLOUR_ID_SHADOW] = consts.COLOUR_LTGREY
         self.colours_[consts.COLOUR_ID_TEXT] = consts.COLOUR_BLACK
         self.colours_[consts.COLOUR_ID_BORDER] = consts.COLOUR_DKGREY
 
@@ -109,7 +109,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
     # 
-    def _changeCoordonateSystem(self, x, y, inBoard = True):
+    def _changeOrigin(self, x, y, inBoard = True):
         if inBoard:
             # For the game
             left = self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_WIDTH
@@ -129,7 +129,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     # Erase a tetramino
     #
     def _eraseBlocks(self, left, top, width, height, colourID):
-        x,y,w,h = self._changeCoordonateSystem(left, top, False)
+        x,y,w,h = self._changeOrigin(left, top, False)
         self._drawRectangle(x, y, w * width, h * height, self.colours_[colourID], None)
 
     # overloads from gameRendering

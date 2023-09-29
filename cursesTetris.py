@@ -153,7 +153,7 @@ class cursesTetris(consoleTetris.consoleTetris):
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
     #
-    def _changeCoordonateSystem(self, x, y, inBoard = True):
+    def _changeOrigin(self, x, y, inBoard = True):
         
         if inBoard:
             left = self.gamePos_[0] + 2 * x
@@ -172,7 +172,7 @@ class cursesTetris(consoleTetris.consoleTetris):
     # Erase a block
     #
     def _eraseBlocks(self, left, top, width, height, colourID):
-        x,y,w,_ = self._changeCoordonateSystem(0,0, False)
+        x,y,w,_ = self._changeOrigin(0,0, False)
         for row in range(height):
             self.term_.addstr(y + row, x, ' ' * w * width, curses.color_pair(colourID))
 # EOF

@@ -76,7 +76,7 @@ COLOUR_ORANGE = (255, 128, 0)
 
 COLOUR_LTGREY = ( 192, 192, 192)
 COLOUR_GREY = ( 128, 128, 128)
-COLOUR_DKGREY = ( 64, 64, 64)
+COLOUR_DKGREY = ( 32, 32, 32)
 
 #
 # Command line options

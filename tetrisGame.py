@@ -182,7 +182,7 @@ class tetrisGame(eventHandler):
         if None == self.board_: # Anything to draw ?
             return
 
-        leftFirst, top, w, h = self._changeCoordonateSystem(0,0,True)
+        leftFirst, top, w, h = self._changeOrigin(0,0,True)
 
         # Draw all the blocks (colored or not)
         for y in range(consts.PLAYFIELD_HEIGHT):
@@ -214,7 +214,7 @@ class tetrisGame(eventHandler):
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
     # 
-    def _changeCoordonateSystem(self, x, y, inBoard = True):
+    def _changeOrigin(self, x, y, inBoard = True):
         return (x,y,1,1)
 
     # Draw a single colored block
@@ -315,7 +315,7 @@ class tetrisGame(eventHandler):
         else:
             rowFirst = 0    # all rows are visible
         
-        xFirst,y,w,h = self._changeCoordonateSystem(cornerX, cornerY - rowFirst, inBoard)
+        xFirst,y,w,h = self._changeOrigin(cornerX, cornerY - rowFirst, inBoard)
         
         for row in range(rowFirst, PIECE_HEIGHT):
             x = xFirst
