@@ -48,6 +48,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
 
     # Next-Piece
     CASIO_NP_BOX_WIDTH = CASIO_BOX_WIDTH   # could be different !!!
+    CASIO_NP_BOX_HEIGHT = CASIO_NP_BOX_WIDTH    
     
     CASIO_NP_LEFT = CASIO_INFO_LEFT + CASIO_INFO_GAP
     CASIO_NP_TOP = 10
@@ -110,17 +111,18 @@ class casioplotTetris(consoleTetris.consoleTetris):
     #       dx, dy  are the width and height of the block in the screen
     # 
     def _changeOrigin(self, x, y, inBoard = True):
+        
         if inBoard:
             # For the game
-            left = self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_WIDTH
-            top = self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_HEIGHT
+            return (self.CASIO_PLAYFIELD_LEFT + x * self.CASIO_BOX_WIDTH,
+                    self.CASIO_PLAYFIELD_TOP + (consts.PLAYFIELD_HEIGHT - 1 - y) * self.CASIO_BOX_HEIGHT,
+                    self.CASIO_BOX_WIDTH, self.CASIO_BOX_HEIGHT)
         else:
             # Next piece
-            left = self.CASIO_NP_LEFT + self.CASIO_INFO_GAP
-            top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP
-
-        return (left, top, self.CASIO_BOX_WIDTH, self.CASIO_BOX_HEIGHT)
-
+            return (self.CASIO_NP_LEFT + self.CASIO_INFO_GAP, 
+                    top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP,
+                    self.CASIO_NP_BOX_WIDTH, self.CASIO_NP_BOX_HEIGHT)
+    
     # Draw a single colored block
     #
     def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):

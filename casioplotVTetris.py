@@ -12,7 +12,6 @@ import casioplotTetris
 
 # casioplotVTetris object - drawing of tertraminos using casioplot library
 #
-#class casioplotTetris(tetrisGame.tetrisGame):
 class casioplotVTetris(casioplotTetris.casioplotTetris):    
      
     # Construction
@@ -27,7 +26,8 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
         #self.CASIO_PLAYFIELD_TOP = self.CASIO_WIDTH - self.CASIO_PLAYFIELD_BORDER - self.CASIO_BORDER_GAP - (consts.PLAYFIELD_HEIGHT - 1) * self.CASIO_BOX_HEIGHT
 
         # Next-Piece
-        self.CASIO_NP_BOX_WIDTH = 8
+        self.CASIO_NP_BOX_WIDTH = 8 # Smaller in preview
+        self.CASIO_NP_BOX_HEIGHT = self.CASIO_NP_BOX_WIDTH
         self.CASIO_NP_WIDTH = 4 * self.CASIO_NP_BOX_WIDTH + 2 * self.CASIO_INFO_GAP
         self.CASIO_NP_HEIGHT = self.CASIO_NP_WIDTH
         
@@ -45,25 +45,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
     def drawBackGround(self):
         # Border around the playfield and 'next piece'
         self._drawFrames()
-
-    # Change the origin and the coordinate system
-    #   (x,y) are to be translated
-    #   inBoard : int he board (True) or in the "next piece" area (False)
-    #
-    #   returns a tuple (x,y, dx, dy) in the new coordonate system
-    #       dx, dy  are the width and height of the block in the screen
-    # 
-    def _changeOrigin(self, x, y, inBoard = True):
-        if inBoard:
-            # For the game
-            return super()._changeOrigin(x,y, True)
         
-        # Next piece
-        left = self.CASIO_NP_LEFT + self.CASIO_INFO_GAP
-        top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP
-
-        return (left, top, self.CASIO_NP_BOX_WIDTH, self.CASIO_NP_BOX_WIDTH)
-    
     #
     # Internal methods
     #
