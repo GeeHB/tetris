@@ -1,11 +1,11 @@
-# *tetris* - Simple and portable tetraminos game
+## *jTetris* - A simple and portable tetraminos game
 
-## Présentation
+### Présentation
 
-`tetris` ...
+`jTetris` ...
 
 
-## Version
+### Version
 
 | Dépôt | https://github.com/GeeHB/dCleaner |
 |-------|-------------------------------------|
@@ -16,7 +16,7 @@
 || *MacOS Ventura* |
 ||*Windows 10* |
 
-## Command line
+### Command line
 
 
 | Short param. | Long param | Def. value | Meaning |
@@ -32,10 +32,12 @@
 | *\-l* {#level}| *\--level {#level}* |  1 | Starting game level|
 | *\-s* | *\--shadow* |   | Display piece shadow|
 
-## Samples
+### Samples
+
+Displaying in a simple console using curses :
+![console outputs](captures/console.png)
 
 Display by the PYGame library :
-
 ![PYGame outputs](captures/pyGame.png)
 
 *casioplot* mode on a PC :

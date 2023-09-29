@@ -2,11 +2,11 @@
 #
 # coding=UTF-8
 #
-#   File     :   tetris.py
+#   File     :     jtetris.py
 #
 #   Author     :   JHB
 #
-#   Description :   The "tetris" game 
+#   Description :  The "tetris" game 
 #
 #   Comment    :   Need Python 3.xx or higher
 #
@@ -203,7 +203,6 @@ class tetris(object):
 #
 # Entry point
 #
-
 if "__main__" == __name__:
     ver = sys.version_info
     if ver.major < consts.PYTHON_MIN_MAJOR or (ver.major == consts.PYTHON_MIN_MAJOR and ver.minor < consts.PYTHON_MIN_MINOR):
