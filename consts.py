@@ -11,6 +11,7 @@
 #
 
 APP_NAME = "tetris.py"
+APP_TITLE = "jTetris"
 APP_CURRENT_VERSION = "0.9.1"
 APP_RELEASE_DATE = "29 sept. 2023"
 APP_AUTHOR_SHORT = "GeeHB"

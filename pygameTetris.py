@@ -198,13 +198,13 @@ class pygameTetris(tetrisGame.tetrisGame):
         rets = pygame.init()
 
         if 0 != rets[1] :
-            return False, "PYGame initialization error. Returned " + str(rets[1]) + " error(s)"
+            return False, f"PYGame initialization error. Returned {str(rets[1])} error(s)"
 
         # Main window creation
         self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE if self.allowResize_ else pygame.SHOWN)
         #self.win_ = pygame.display.set_mode((self.winDims_[0], self.winDims_[1]), pygame.RESIZABLE)
         # pygame.NOFRAME
-        pygame.display.set_caption('jTetris')
+        pygame.display.set_caption(consts.APP_TITLE)
         
         # Ok
         self.status_ = tetrisGame.tetrisGame.STATUS_INIT

@@ -34,8 +34,14 @@
 
 ## Samples
 
-*casioplot* mode on a PC :
+Display by the PYGame library :
 
+![PYGame outputs](captures/pyGame.png)
+
+*casioplot* mode on a PC :
 ![CasioPlot](captures/casioplotPC.png)
+
+*casioplotv* mode on a PC :
+![CasioPlot vertically](captures/casioplotvPC.png)
 
 
