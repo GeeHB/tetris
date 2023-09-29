@@ -74,9 +74,9 @@ COLOUR_PURPLE = (255, 0, 255)
 COLOUR_CYAN = (0, 255, 255)
 COLOUR_ORANGE = (255, 128, 0)
 
-COLOUR_LTGREY = ( 192, 192, 192)
+COLOUR_LTGREY = ( 224, 224, 224)
 COLOUR_GREY = ( 128, 128, 128)
-COLOUR_DKGREY = ( 32, 32, 32)
+COLOUR_DKGREY = ( 64, 64, 64)
 
 #
 # Command line options
@@ -105,10 +105,6 @@ COMMENT_USER    = "Set user name"
 ARG_TOP_S       = "-t"
 ARG_TOP         = "--top"
 COMMENT_TOP     = "Show top scores"
-
-ARG_CONSOLE_S   = "-c "                # Console mode
-ARG_CONSOLE     = "--console"
-COMMENT_CONSOLE = "Force displays in console mode (using nCurses if available)"
 
 ARG_MODE_S      = "-m"
 ARG_MODE        = "--mode"

@@ -120,7 +120,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
         else:
             # Next piece
             return (self.CASIO_NP_LEFT + self.CASIO_INFO_GAP, 
-                    top = self.CASIO_NP_TOP + self.CASIO_INFO_GAP,
+                    self.CASIO_NP_TOP + self.CASIO_INFO_GAP,
                     self.CASIO_NP_BOX_WIDTH, self.CASIO_NP_BOX_HEIGHT)
     
     # Draw a single colored block
