@@ -23,13 +23,14 @@ class tetrisParameters:
 
     # Members
     #
-    startLevel_ = 1
+    startLevel_ = consts.DEF_LEVEL
     dirtyLines_ = 0
     shadow_ = False
     cursesAvailable_ = False
     useGUI_ = True
     showScores_ = False
     user_ = None
+    mode_ = consts.MODE_AUTO
 
     # Constructor
     #
@@ -42,6 +43,7 @@ class tetrisParameters:
             self.useGUI_ = other.useGUI_
             self.showScores_ = other.showScores_
             self.user_ = other.user_
+            self.mode_ = other.mode_
 
 # board
 #   Handle the gameplay and the game (without display !)

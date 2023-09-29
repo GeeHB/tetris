@@ -18,7 +18,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
     #
     def __init__(self):
         
-        # SingleBlocks real dims (including borders)
+        # SingleBlocks dims
         self.CASIO_BOX_WIDTH = 14
         self.CASIO_BOX_HEIGHT = self.CASIO_BOX_WIDTH
 
@@ -27,6 +27,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
 
         # Next-Piece
         self.CASIO_NP_BOX_WIDTH = 8 # Smaller in preview
+        
         self.CASIO_NP_BOX_HEIGHT = self.CASIO_NP_BOX_WIDTH
         self.CASIO_NP_WIDTH = 4 * self.CASIO_NP_BOX_WIDTH + 2 * self.CASIO_INFO_GAP
         self.CASIO_NP_HEIGHT = self.CASIO_NP_WIDTH
@@ -45,7 +46,7 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
     def drawBackGround(self):
         # Border around the playfield and 'next piece'
         self._drawFrames()
-        
+
     #
     # Internal methods
     #
@@ -68,12 +69,6 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
                 set_pixel(top[0], top[1], borderColour)
                 set_pixel(bottom[0], bottom[1], borderColour)
 
-                # set_pixel(x + px, y, borderColour)
-                # set_pixel(x + px, y + height - 1, borderColour)
-
-                #set_pixel(nx - 1, ny - px, borderColour)
-                #set_pixel(nx + height - 2, ny - px, borderColour)
-
             for py in range(height-2):
                 left = self.__rotate(x, y + py + 1)
                 right = self.__rotate(x + width - 1, y + py + 1)
@@ -81,22 +76,12 @@ class casioplotVTetris(casioplotTetris.casioplotTetris):
                 set_pixel(left[0], left[1], borderColour)
                 set_pixel(right[0], right[1], borderColour)
 
-                #set_pixel(x, y + py + 1, borderColour)
-                #set_pixel(x + width - 1, y + py + 1, borderColour)
-                
-                #set_pixel(nx + py, ny, borderColour)
-                #set_pixel(nx + py, ny -width + 1, borderColour)
-
         # Filling ?
         if fillColour is not None:
             for px in range(width - 2):
                 for py in range(height - 2):
                     dest = self.__rotate(x + px + 1, y + py + 1)
-                    set_pixel(dest[0], dest[1], fillColour)
-                    
-                    #set_pixel(x + px, y + py, fillColour)
-                    
-                    #set_pixel(nx - px, ny - py, fillColour)
+                    set_pixel(dest[0], dest[1], fillColour)                    
 
     # Rotation
     #
