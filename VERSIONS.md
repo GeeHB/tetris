@@ -4,8 +4,9 @@ Version 0.9.1
         * consoleTetris.py - abstract class for console clients
         * display.py - Instantiate the valid display mgr
         * casioplotTetris.py - display on a casio calculator
-        	* casioplatVTetris.py - display vertically
+        	* casioplotVTetris.py - display vertically
         * -m / --mode to specify GUI mode (auto, console, pygame, casioplot, casioplotv)
+        * piece in preview can have different size (smaller in casioplotv mode)
 
 Version 0.8.xxx
     * 04 aug. 2023

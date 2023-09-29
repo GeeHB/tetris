@@ -11,7 +11,7 @@
 #   Comment    :   Need Python 3.xx or higher
 #
 import argparse
-import consts, display
+import consts
 from sharedTools import colorizer as color
 from board import tetrisParameters
 
@@ -94,5 +94,4 @@ class cmdParser(object):
 
         return f"{self.txtColours_.colored(consts.APP_NAME, formatAttr=[color.textAttribute.BOLD], datePrefix=(False == verbose))} by {consts.APP_AUTHOR} - release {consts.APP_CURRENT_VERSION} - {consts.APP_RELEASE_DATE}"
 
-    
 # EOF

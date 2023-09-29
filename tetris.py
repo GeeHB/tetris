@@ -12,7 +12,6 @@
 #
 import time, sys, math
 import consts, display
-from sharedTools import colorizer as color
 from tetrisGame import tetrisGame
 from board import board, tetrisParameters
 from scores import scores
@@ -208,7 +207,7 @@ class tetris(object):
 if "__main__" == __name__:
     ver = sys.version_info
     if ver.major < consts.PYTHON_MIN_MAJOR or (ver.major == consts.PYTHON_MIN_MAJOR and ver.minor < consts.PYTHON_MIN_MINOR):
-        print(f"Error - Expected minimum version for Python {str(consts.PYTHON_MIN_MAJOR)}.{str(consts.PYTHON_MIN_MINOR)}")
+        print(f"Error - Minimum expected Python version {str(consts.PYTHON_MIN_MAJOR)}.{str(consts.PYTHON_MIN_MINOR)}")
         exit(1) 
 
     params = tetrisParameters()
