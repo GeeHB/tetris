@@ -1,6 +1,9 @@
 .vscode/
 __pycache__/
 archives/
+Debug/
+Release/
+essai/
 *.high
 casioplot.png
 

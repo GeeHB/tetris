@@ -5,7 +5,7 @@
 #   Author      :   JHB
 #
 #   Description :   board class - gameplay
-#                   The matrix with all the colored bloceked (ie dirty lines and / or posed tetraminos)
+#                   The matrix with all the colored blocks (ie dirty lines and / or putted tetraminos)
 #
 #   Comment    :    Python 3.xx needed
 #

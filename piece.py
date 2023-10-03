@@ -4,7 +4,7 @@
 #
 #   Author     :   JHB
 #
-#   Description :   piece & pieceStatus objects : a tetraminos and all the informations for its drawing
+#   Description :   piece & pieceStatus objects : a tetramino and all the informations for its drawing
 #
 
 # Dimensions a the tetramino's matrix
@@ -20,7 +20,7 @@ class piece(object):
     #
     points_ = []        # Matrix of the piece whith all possible rotations
     rotate_ = 0         # rotation index (ie. index of the piece to draw)
-    maxRotate_ = 0      # max; rotation allowed for the piece ( = 360°)
+    maxRotate_ = 0      # max. rotation(s) allowed for the piece ( = 360°)
     vertOffset_ = -1    # Initial vert. offset (ie. count of empty lines starting from bottom)
     colourIndex_ = 0    # Colour ID (0 = invisible)
 
@@ -128,7 +128,7 @@ class piece(object):
         datas =  [[0] * PIECE_WIDTH for _ in range(PIECE_HEIGHT)]
         return datas
 
-    # Copie des points d'une piece
+    # Copy a single piece
     def _copy(self, src):
         dest = []
         for line in src:
@@ -152,7 +152,7 @@ class piece(object):
         return self.points_[key]
 
 #  pieceStatus object
-#   All the informations concerning a tatramino : index, rotation, position ...
+#   All the informations concerning a tetramino : index, rotation, position ...
 #
 class pieceStatus(object):
     index_ = -1              # By default not drawn
