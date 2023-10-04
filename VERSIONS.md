@@ -7,6 +7,8 @@
         * casioplotVTetris.py - display vertically
     * -m / --mode to specify GUI mode (auto, console, pygame, casioplot, casioplotv)
     * piece in preview can have different size (smaller in casioplotv mode)
+* Corrections
+    - Simplify color management (shadow, erase, back block color, ...)
 
 #### Version 0.8.xxx
 * 04 aug. 2023

@@ -27,6 +27,8 @@
 // Different pieces and their rotations
 //
 
+#define TETRAMINOS_COUNT    7
+
 // "S" tetramino x 2 - green
 #define S_0     ".2.."\
                 ".22."\
@@ -66,7 +68,7 @@
                 ".33."\
                 "...."
 
-// "L"  X 4 - Orange
+// "L"  x 4 - Orange
 #define L_0     "77.."\
                 ".7.."\
                 ".7.."\
@@ -87,7 +89,7 @@
                 "...."\
                 "...."
 
-// "J" X 4 -  Blue
+// "J" x 4 -  Blue
 #define J_0     ".4.."\
                 ".4.."\
                 "44.."\
@@ -108,7 +110,7 @@
                 "...."\
                 "...."
 
-// "T" X 4 - Violet
+// "T" x 4 - Violet
 #define T_0     ".5.."\
                 "55.."\
                 ".5.."\

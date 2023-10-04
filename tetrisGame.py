@@ -219,7 +219,7 @@ class tetrisGame(eventHandler):
 
     # Draw a single colored block
     #
-    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
+    def _drawSingleBlock(self, left, top, width, height, colourID):
         pass
 
     # Erase a tetramino
@@ -238,18 +238,18 @@ class tetrisGame(eventHandler):
         if self.currentPos_ == None  or self.currentPos_ != newState: 
             # Erase the tetramino (and maybe it's shadow)
             if None != self.currentPos_:                    
-                self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, consts.COLOUR_ID_BOARD)
+                self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, True, consts.COLOUR_ID_BOARD)
                 if -1 != self.currentPos_.shadowTopPos_:
                     # then the shadow
-                    self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.shadowTopPos_, consts.COLOUR_ID_BOARD)
+                    self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.shadowTopPos_, True, consts.COLOUR_ID_BOARD)
 
             # ... redraw
             if -1 != newState.shadowTopPos_:
                 # first : the shadow
-                self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , consts.COLOUR_ID_SHADOW, shadow = True)
+                self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , True, consts.COLOUR_ID_SHADOW)
             
             # and then the tetramino (can recover the shadow !!!!)
-            self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_ , self.board_.tetraminos_[newState.index_].colour())
+            self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_)
 
             self.updateDisplay()
             
@@ -306,7 +306,7 @@ class tetrisGame(eventHandler):
     # Draw a tetramino using the given colour
     #   inBoard : True => draw in the board, False => draw "next" piece
     #
-    def _drawSinglePiece(self, datas, cornerX, cornerY, colourID, inBoard = True, shadow = False):
+    def _drawSinglePiece(self, datas, cornerX, cornerY, inBoard = True, colourID = None):
         
         # First visible row ID
         if True == inBoard:
@@ -322,7 +322,7 @@ class tetrisGame(eventHandler):
             for col in range(PIECE_WIDTH):
                 colour = datas[row][col]
                 if colour != consts.COLOUR_ID_BOARD:
-                    self._drawSingleBlock(x, y, w, h, colourID, shadow)  # only non-empty squares
+                    self._drawSingleBlock(x, y, w, h, colourID if colourID is not None else colour)     # only non-empty squares
                 x+=w
             y+=h
 
@@ -334,8 +334,8 @@ class tetrisGame(eventHandler):
         
         # ... and then draw the new one
         if -1 != pieceIndex :     
-            datas, colourIndex = self.board_.nextPieceDatas()
-            self._drawSinglePiece(datas, 0, 0, colourIndex, False)
+            datas = self.board_.nextPieceDatas()
+            self._drawSinglePiece(datas, 0, 0, False)
 
     # Format integer
     #

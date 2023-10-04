@@ -166,8 +166,8 @@ class cursesTetris(consoleTetris.consoleTetris):
 
     # Draw a coloured block
     #
-    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
-        self.term_.addstr(top, left, (SHADOW_CHAR if shadow else ' ') * 2, curses.color_pair(colourID))
+    def _drawSingleBlock(self, left, top, width, height, colourID):
+        self.term_.addstr(top, left, (SHADOW_CHAR if (colourID == consts.COLOUR_ID_SHADOW) else ' ') * 2, curses.color_pair(colourID))
 
     # Erase a block
     #

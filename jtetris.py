@@ -82,7 +82,6 @@ class tetris(object):
     # Starting the game
     #
     def start(self):
-        self.gameData_.setParameters(self.params_)
         self._newGame()
 
     # Game ending

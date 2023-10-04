@@ -8,7 +8,7 @@
 //--
 //---------------------------------------------------------------------------
 //--
-//--	Descritpion:
+//--	Description:
 //--
 //--			Definition of piece & pieceStatus objects : 
 //--                a tetramino and all the informations for its drawing
@@ -18,10 +18,7 @@
 #ifndef __J_TETRIS_PIECE_h__
 #define __J_TETRIS_PIECE_h__    1
 
-#include <cstdint> // <stdint.h>
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
+#include "consts.h"
 #include <malloc.h>
 
 // Public consts
@@ -56,7 +53,6 @@ class pieceStatus{
 
         // Constructors
         //
-
         pieceStatus(){
             // Use default values
             index_ = -1; 
@@ -115,13 +111,13 @@ class piece{
         piece(piece& other);
 
         // Destructor
-        ~piece(){
+        virtual ~piece(){
             clear();
         }
 
         // Add from a template
+        //
         bool addPiece(const char* tempPiece);
-
 
         // Clear the current piece
         //
@@ -134,11 +130,6 @@ class piece{
 
         // Access
         //
-
-        // Colour index
-        uint8_t colour() {
-            return colourIndex_;
-        }
 
         // Piece's datas in the curent rotation state (index = rotate_)
         uint8_t* datas() {
@@ -180,14 +171,7 @@ class piece{
 
         // Clockwise rotation
         uint8_t rotateRight() {
-            if (!maxRotate_) {
-                rotate_ = 0;
-            }
-            else{
-                rotate_ = (rotate_ == 0 ? maxRotate_ - 1: rotate_ -1);
-            }
-
-            return rotate_;
+            return rotate_ = (!maxRotate_?0: (rotate_ == 0 ? maxRotate_ - 1 : rotate_ - 1));
         }
 
     // Private methods
@@ -203,11 +187,10 @@ class piece{
             rotate_ = 0;
             maxRotate_ = 0;
             vertOffset_ = -1;
-            colourIndex_ = 0;
         }
 
         // Add a rotation to the current piece
-        bool _addRotation(uint8_t* tempPiece);
+        bool _addPiece(uint8_t* tempPiece);
 
         // Is the "line" empty ?
         bool _isLineEmpty(uint8_t pieceIndex, uint8_t lineIndex);
@@ -225,5 +208,5 @@ class piece{
 };
 
 #endif __J_TETRIS_PIECE_h_
-
+    
 // EOF
