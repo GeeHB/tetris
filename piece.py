@@ -22,8 +22,7 @@ class piece(object):
     rotate_ = 0         # rotation index (ie. index of the piece to draw)
     maxRotate_ = 0      # max. rotation(s) allowed for the piece ( = 360°)
     vertOffset_ = -1    # Initial vert. offset (ie. count of empty lines starting from bottom)
-    colourIndex_ = 0    # Colour ID (0 = invisible)
-
+    
     # Construction
     #
     def __init__(self, other = None, template = None):
@@ -52,8 +51,7 @@ class piece(object):
                             i = 0
                             for char in line:
                                 if not char == '.':
-                                    self.colourIndex_ = ord(char) - ordO
-                                    points[j][i] = self.colourIndex_
+                                    points[j][i] = ord(char) - ordO
                                 i += 1
                         j +=  1
                     self.points_.append(points) # It's a new state
@@ -69,11 +67,6 @@ class piece(object):
             # By default the piece is empty
             self.points_ = self._new()
 
-    # Colour index
-    #
-    def colour(self):
-        return self.colourIndex_
-    
     # Piece's datas in the curent rotation state (index = rotate_)
     #
     def datas(self):

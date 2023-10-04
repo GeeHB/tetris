@@ -156,7 +156,7 @@ class pygameTetris(tetrisGame.tetrisGame):
         tempPiece = pygame.Surface((self.boxSize_, self.boxSize_))
 
         # draw a single grey piece inside
-        self._pyDrawBlock(tempPiece, 0, 0, self.boxSize_, self.boxSize_, consts.COLOUR_ID_ANIMATE, True)
+        self._pyDrawBlock(tempPiece, 0, 0, self.boxSize_, self.boxSize_, consts.COLOUR_ID_ANIMATE)
 
         # replace blocks by the temp piece
         lineTop = pos[1] + dims[1] - 1
@@ -327,13 +327,13 @@ class pygameTetris(tetrisGame.tetrisGame):
     
     # overloaded method ...
     #
-    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
-        self._pyDrawBlock(self.win_, left, top, width, height, colourID, shadow)
+    def _drawSingleBlock(self, left, top, width, height, colourID):
+        self._pyDrawBlock(self.win_, left, top, width, height, colourID)
 
     # ... where the stuff is done !
     #   surface : Surface where to draw
     #
-    def _pyDrawBlock(self, surface, left, top, width, height, colourID, shadow = False):
+    def _pyDrawBlock(self, surface, left, top, width, height, colourID):
         paintColour = self.colours_[colourID]
         if None != paintColour.light_:
             # the single square

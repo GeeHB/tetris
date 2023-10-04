@@ -8,7 +8,7 @@
 //--
 //---------------------------------------------------------------------------
 //--
-//--	Descritpion:
+//--	Description:
 //--
 //--			Implementation of piece & pieceStatus objects : 
 //--                a tetramino and all the informations for its drawing
@@ -16,7 +16,6 @@
 //---------------------------------------------------------------------------
 
 #include "piece.h"
-#include "consts.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -87,7 +86,7 @@ bool piece::addPiece(const char* tempPiece) {
     }
 
     // Added ?
-    if (false == _addRotation(newRotation)) {
+    if (false == _addPiece(newRotation)) {
         free(newRotation);
         return false;
     }
@@ -135,13 +134,12 @@ void piece::print(uint8_t rotIndex) {
             std::cout << std::endl;
         }
     }
-
 }
 #endif // _DEBUG
 
 // Add a rotation to the current piece
 //
-bool piece::_addRotation(uint8_t* tempPiece) {
+bool piece::_addPiece(uint8_t* tempPiece) {
     if (nullptr == tempPiece) {
         return false;
     }

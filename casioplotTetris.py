@@ -125,7 +125,7 @@ class casioplotTetris(consoleTetris.consoleTetris):
     
     # Draw a single colored block
     #
-    def _drawSingleBlock(self, left, top, width, height, colourID, shadow = False):
+    def _drawSingleBlock(self, left, top, width, height, colourID):
         self._drawRectangle(left, top, width, height, self.colours_[colourID])
 
     # Erase a tetramino

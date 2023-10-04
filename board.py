@@ -79,7 +79,7 @@ class board(object):
         for shape in shapes.shapes_:
             self.tetraminos_.append(piece.piece(template = shape))
 
-    # Game's paraeters
+    # Game's parameters
     def parameters(self):
         return self.parameters_ 
 
@@ -139,7 +139,7 @@ class board(object):
         self.score+=inc
         return self.score
 
-    # Lines (done)
+    # Lines completed
     #
     @property
     def lines(self):
@@ -159,11 +159,11 @@ class board(object):
         self.nextIndex_ = index
     
     # About a piece ...
-    #  returns the tuple (blocks'datas, block colour)
+    #  returns blocks'datas
     def nextPieceDatas(self):
         if self.nextPieceIndex() < 0 or self.nextPieceIndex() >= len(self.tetraminos_): # L'index doit être correct
             raise IndexError
-        return (self.tetraminos_[self.nextPieceIndex()].datas(), self.tetraminos_[self.nextPieceIndex()].colour())
+        return self.tetraminos_[self.nextPieceIndex()].datas()
 
     # Datas of a piece
     #
@@ -172,7 +172,7 @@ class board(object):
             raise IndexError
         return self.tetraminos_[index][rotIndex]
 
-    # New pièce
+    # New piece
     #
     def newPiece(self):
         # New indexes
@@ -334,26 +334,24 @@ class board(object):
         # current pos. is invalid => go up one line
         return currentTop+1
 
-    # Put the tetramino a the current position
+    # Put the tetramino at the current position
     #
     def _putPiece(self, colour = None):
         if None == colour:
             vertPos = self.currentPiece_.topPos_
-
-            realColour = self.tetraminos_[self.currentPiece_.index_].colourIndex_
         else:
             vertPos = self.currentPiece_.shadowTopPos_
-            realColour = colour
 
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
-        # Copuy all the colored blocks in the gameplay
+        # Copy all the colored blocks in the gameplay
         #
         maxY = 0 if consts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - consts.PLAYFIELD_HEIGHT + 1
         for y in range(maxY, piece.PIECE_HEIGHT):
             for x in range(piece.PIECE_WIDTH):
-                if not 0 == datas[y][x] and (vertPos - y) < consts.PLAYFIELD_HEIGHT:
-                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
+                bColour = datas[y][x]
+                if not consts.COLOUR_ID_BOARD ==  bColour and (vertPos - y) < consts.PLAYFIELD_HEIGHT:
+                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = bColour if colour is None else colour
 
     # Clear and remove a line (completed)
     #

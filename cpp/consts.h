@@ -8,7 +8,7 @@
 //--
 //---------------------------------------------------------------------------
 //--
-//--	Descritpion:
+//--	Description:
 //--
 //--			Definition of piece & pieceStatus objects : 
 //--                a tetramino and all the informations for its drawing
@@ -17,6 +17,11 @@
 
 #ifndef __J_TETRIS_CONSTS_h__
 #define __J_TETRIS_CONSTS_h__    1
+
+#include <cstdint> // <stdint.h>
+#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Playfield's dimensions (in box unit)
 //
