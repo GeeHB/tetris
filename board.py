@@ -182,7 +182,7 @@ class board(object):
         # The piece is a the top of the game play, centered horizontally
         self.currentPiece_.leftPos_ = int((consts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
         self.currentPiece_.topPos_ = consts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
-        self.currentPiece_.minHeight_ = -1          # no shadow
+        self.currentPiece_.shadowTopPos_ = -1       # no shadow
         self.currentPiece_.rotationIndex_ = 0       # no rotation
         self.tetraminos_[self.currentPiece_.index_].rotateBack()    
 
@@ -340,6 +340,7 @@ class board(object):
         if None == colour:
             vertPos = self.currentPiece_.topPos_
         else:
+            # A shadow
             vertPos = self.currentPiece_.shadowTopPos_
 
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
@@ -356,14 +357,12 @@ class board(object):
     # Clear and remove a line (completed)
     #
     def _clearLine(self, index):
-        if index < 0 or index >= consts.PLAYFIELD_HEIGHT:
-            return
-        
-        # Remove the line from the screen
-        self.playField_.pop(index)
+        if index >= 0 and index < consts.PLAYFIELD_HEIGHT:
+            # Remove the line from the screen
+            self.playField_.pop(index)
 
-        # Add a ne empty line 
-        self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
+            # Add a ne empty line 
+            self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
     # Add a randomly generated dirty line at the bottom of the gameplay
     #

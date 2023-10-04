@@ -28,6 +28,7 @@ im//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
 // Constrcution
+//
 board::board() {
 
     // Default values
@@ -75,7 +76,8 @@ board::board() {
     tetraminos_[6].addPiece(T_3);
 }
     
-// Game's paraeters
+// Game's parmaeters
+//
 void board::setParameters(tetrisParameters& params) {
     // Copy (and init) parameters
     parameters_.copy(params);
@@ -109,238 +111,230 @@ void board::setParameters(tetrisParameters& params) {
     }
 }
 
+// New piece (in the game)
+//
+void board::newPiece() {
+    // Next piece => current
+    currentPiece_.index_ = (-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex();
+    
+    // Next one
+    setNextPieceIndex(_newPieceIndex());
 
-            
-            # About a piece ...
-            #  returns the tuple(blocks'datas, block colour)
-                def nextPieceDatas(self) :
-                if self.nextPieceIndex() < 0 or self.nextPieceIndex() >= len(self.tetraminos_) : # L'index doit être correct
-                    raise IndexError
-                    return (self.tetraminos_[self.nextPieceIndex()].datas(), self.tetraminos_[self.nextPieceIndex()].colour())
+    // The piece is a the top of the game play, centered horizontally
+    currentPiece_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2);
+    currentPiece_.topPos_ = PLAYFIELD_HEIGHT + tetraminos_[currentPiece_.index_].verticalOffset();
+    currentPiece_.shadowTopPos_ = -1;
+    currentPiece_.rotationIndex_ = 0;
+    tetraminos_[currentPiece_.index_].rotateBack();
 
-                    # Datas of a piece
-#
-                    def pieceDatas(self, index, rotIndex) :
-                    if index < 0 or index >= len(self.tetraminos_) or rotIndex < 0 or rotIndex >= self.tetraminos_[index].maxRotations() : # L'index doit être correct
-                        raise IndexError
-                        return self.tetraminos_[index][rotIndex]
+    // Notify the display manager
+    //self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
 
-                        # New pièce
-#
-                        def newPiece(self) :
-                        # New indexes
-                        self.currentPiece_.index_ = self._newPieceIndex() if - 1 == self.nextPieceIndex() else self.nextPieceIndex()
-                        self.setNextPieceIndex(self._newPieceIndex())
+    // Can I go on line down ?
+    if (!_down(true)) {
+        // No = > the game is over
+        //self.eventHandler_.gameFinished()
+    }
+}
 
-                        # The piece is a the top of the game play, centered horizontally
-                        self.currentPiece_.leftPos_ = int((consts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
-                        self.currentPiece_.topPos_ = consts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
-                        self.currentPiece_.minHeight_ = -1          # no shadow
-                        self.currentPiece_.rotationIndex_ = 0       # no rotation
-                        self.tetraminos_[self.currentPiece_.index_].rotateBack()
+// anti-clockwise rotation
+//
+bool board::rotateLeft() {
 
-                        # Notify the display manager
-                        self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
+    // Try to rotate
+    rotIndex = tetraminos_[currentPiece_.index_].rotateLeft();
 
-                        # Can I go on line down ?
-                        if False == self._down(True) :
-                            # No = > the game is over
-                            self.eventHandler_.gameFinished()
+    // Possible ?
+    if (_canMove(currentPiece_.leftPos_, currentPiece_.topPos_)){
+        currentPiece_.rotationIndex_ = rotIndex;
 
-                            # Rotation(s)
-#
+        // Apply rotation
+        piecePosChanged();
+        return true;
+     }
 
-                            # anti - clockwise
-                            def rotateLeft(self) :
+    // No = > cancel rotation
+    tetraminos_[currentPiece_.index_].rotateRight();
+    return false;
+}
 
-                            # Rotate
-                            rotIndex = self.tetraminos_[self.currentPiece_.index_].rotateLeft()
+// Move left
+//
+bool board::left(){                    
+    // Test position
+    if (_canMove(currentPiece_.leftPos_ - 1, currentPiece_.topPos_)) {
+        // Correct
+        currentPiece_.leftPos_ -= 1;
+        piecePosChanged();
+        return true;
+    }
 
-                            # Possible ?
-                            if True == self._canMove() :
-                                self.currentPiece_.rotationIndex_ = rotIndex
+    // Impossible
+    return false;
+}
 
-                                # Apply rotation
-                                self.piecePosChanged()
-                                return True
+// Move right
+//
+bool board::right(){
+    // Test position
+    if (_canMove(currentPiece_.leftPos_ + 1, currentPiece_.topPos_)){
+        // Correct
+        currentPiece_.leftPos_ += 1;
+        piecePosChanged();
+        return true;
+    }
 
-                                # No = > cancel rotation
-                                self.tetraminos_[self.currentPiece_.index_].rotateRight()
-                                return False
+    // Impossible
+    return false;
+}
 
-#
-                                # Piece movements
-#
+// Go down (as many lines as possible)
+//
+bool board::fall() {
+    uint8_t bottom = _minTopPosition();
+    uint8_t delta = currentPiece_.topPos_ - bottom;
+    currentPiece_.topPos_ = bottom;
 
-                                # Move left
-#
-                                def left(self) :
+    // updates ...
+    piecePosChanged();
+    _reachLowerPos(delta);
+}
 
-                                # Test position
-                                if True == self._canMove(leftPos = self.currentPiece_.leftPos_ - 1) :
-                                    # Correct
-                                    self.currentPiece_.leftPos_ -= 1
+// The position of the piece just changed
+//
+void board::piecePosChanged() {
+    // Compute the pos ot the shadow ?
+    if (parameters_.shadow_) {
+        currentPiece_.shadowTopPos_ = _minTopPosition();
+    }
 
-                                    # apply chgmnt
-                                    self.piecePosChanged()
-                                    return True
+     // Notification
+     //self.eventHandler_.piecePosChanged(self.currentPiece_);
+}
 
-                                    # Impossible
-                                    return False
+//
+// "Private" methods
+//
 
-                                    # Move right
-#
-                                    def right(self) :
+// Can the piece go down ?
+//
+bool board::_down(bool newPiece) {
+    // Test position
+    if (_canMove(currentPiece_.leftPos_, currentPiece_.topPos_ - 1)) {
+        // correct
+        currentPiece_.topPos_ -= 1
+        piecePosChanged();
+        return true;
+    }
 
-                                    # Test position
-                                    if True == self._canMove(leftPos = self.currentPiece_.leftPos_ + 1) :
-                                        # Correct
-                                        self.currentPiece_.leftPos_ += 1
+    if (!newPiece) {
+        _reachLowerPos();
+    }
 
-                                        # apply chgmnt
-                                        self.piecePosChanged()
-                                        return True
+    return false;
+}
 
-                                        # Impossible
-                                        return False
+// Can the current piece be at the given position ?
+//
+bool board::_canMove(uint8_t leftPos, uint8_t  topPos) {
+    // Piece's datas (in its current state)
+    uint8_t* datas = tetraminos_[currentPiece_.index_].currentDatas();
 
-                                        # One line down
-                                        def down(self) :
-                                        return self._down()
-
-                                        def _down(self, newPiece = False) :
-
-                                        # Test position
-                                        if True == self._canMove(topPos = self.currentPiece_.topPos_ - 1) :
-                                            # correct
-                                            self.currentPiece_.topPos_ -= 1
-                                            self.piecePosChanged()
-                                            return True
-
-                                            if not newPiece:
-self._reachLowerPos()
-
-return False
-
-# Go down(as many lines as possible)
-#
-def fall(self) :
-
-    bottom = self._minTopPosition()
-    delta = self.currentPiece_.topPos_ - bottom
-    self.currentPiece_.topPos_ = bottom
-
-    # updates ...
-    self.piecePosChanged()
-    self._reachLowerPos(delta)
-
-# "private" methods
-#
-
-    # Get a new index for the next piece
-#
-    def _newPieceIndex(self) :
-    return random.randint(0, len(self.tetraminos_) - 1)
-
-    # Can the current piece be at the given position ?
-#
-    def _canMove(self, leftPos = None, topPos = None) :
-
-    # No coordinates = > use current pos.
-    if None == leftPos:
-leftPos = self.currentPiece_.leftPos_
-if None == topPos :
-    topPos = self.currentPiece_.topPos_
-
-    # Piece's datas
-    datas = self.tetraminos_[self.currentPiece_.index_].datas()
-
-    # Test all the contained blocks starting from bottom
-# ... to optimize a little ...
-    for y in range(piece.PIECE_HEIGHT - 1, -1, -1) :
-        for x in range(piece.PIECE_WIDTH) :
-            if not 0 == datas[y][x] :
-# "real" position of the block 
+    // Test all the contained blocks starting from bottom
+    for (uint8_t y = PIECE_HEIGHT - 1; y >=0; y--){
+        for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
+            if (COLOUR_ID_BOARD != datas[y * PIECE_WIDTH + x]) {
+                // "real" position of the block 
                 realX = x + leftPos
                 realY = topPos - y
 
-                # out of the gameplay's limits ?
-                if realX < 0 or realY < 0 or realX >= consts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
-                    return False
+                // out of the gameplay's limits ?
+                if (realX < 0 || realY < 0 || realX >= PLAYFIELD_WIDTH || realY >= PLAYFIELD_HEIGHT) {
+                    return false;
+                }
 
-                    # Is there a block at this place ?
-                    if realY < consts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0 :
-                        return False
+                // Is there a block at this place ?
+                if (realY < PLAYFIELD_HEIGHT && playField_[realY][realX] != COLOUR_ID_BOARD) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    // Yes = > the position is valid
+    return true;
+}
 
-                        # Yes = > the position is valid
-                        return True
+// Get a piece min.pos.index(vertical value)
+//
+uint8_t board::_minTopPosition() {
+    uint8_t currentTop(currentPiece_.topPos_);
 
-                        # Get a piece min.pos.index(vertical value)
-#
-                        def _minTopPosition(self) :
-                        currentTop = self.currentPiece_.topPos_
+    // Try to move one line down
+    while (_canMove(currentPiece_.leftPos_, currentTop)){
+        currentTop -= 1;
+    }
 
-                        # Try to move one line down
-                        while self._canMove(self.currentPiece_.leftPos_, currentTop) :
-                            currentTop -= 1
+    // current pos.is invalid = > go up one line
+    return currentTop + 1;
+}
 
-                            # current pos.is invalid = > go up one line
-                            return currentTop + 1
+// Clear and remove a completed line
+//
+void board::_clearLine(uint8_t index) {
+    if (index >= 0 && index < PLAYFIELD_HEIGHT) {
+        // Remove the line from the screen
+        playField_.pop(index);
 
-                            # Put the tetramino a the current position
-#
-                            def _putPiece(self, colour = None) :
-                            if None == colour :
-                                vertPos = self.currentPiece_.topPos_
+        // Add a ne empty line
+        playField_.append([0] * PLAYFIELD_WIDTH);
+    }
+}
 
-                                realColour = self.tetraminos_[self.currentPiece_.index_].colourIndex_
-                            else :
-                                vertPos = self.currentPiece_.shadowTopPos_
-                                realColour = colour
+// Add a randomly generated dirty line at the bottom of the gameplay
+//
+void board::_addDirtyLine(uint8_t line) {
+    uint16_t cubes(rand() % (2 * *consts.PLAYFIELD_WIDTH - 1));
+    uint16_t sBit(1); // 2 ^ 0
 
-                                datas = self.tetraminos_[self.currentPiece_.index_].datas()
+    // Convert 'cubes' bits into coloured blocks
+    for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
+        // Is the bit set ?
+        if ((cubes & sBit) > 0) {
+            // yes = > add a colored block
+            playField_[line][col] = 1 + rand() % 6;
+        }
 
-                                # Copuy all the colored blocks in the gameplay
-#
-                                maxY = 0 if consts.PLAYFIELD_HEIGHT - vertPos >= 1 else vertPos - consts.PLAYFIELD_HEIGHT + 1
-                                for y in range(maxY, piece.PIECE_HEIGHT) :
-                                    for x in range(piece.PIECE_WIDTH) :
-                                        if not 0 == datas[y][x] and (vertPos - y) < consts.PLAYFIELD_HEIGHT :
-                                            self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = realColour
+        // next bit value
+        sBit *= 2
+    }
+}
+ 
+// Put the tetramino at the current position
+//
+void board::_putPiece(uint8_t colour) {
+    if (COLOUR_ID_SHADOW == colour) {
+        vertPos = currentPiece_.shadowTopPos_;
+    }
+    else {
+        vertPos = currentPiece_.topPos_;
+    }
 
-                                            # Clear and remove a line(completed)
-#
-                                            def _clearLine(self, index) :
-                                            if index < 0 or index >= consts.PLAYFIELD_HEIGHT :
-                                                return
+    uint8_t* datas = tetraminos_[currentPiece_.index_].currentDatas();
+    uint8 - t bColour(0);
 
-                                                # Remove the line from the screen
-                                                self.playField_.pop(index)
-
-                                                # Add a ne empty line
-                                                self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
-
-                                                # Add a randomly generated dirty line at the bottom of the gameplay
-#
-                                                def _addDirtyLine(self) :
-                                                cubes = random.randint(1, 2 * *consts.PLAYFIELD_WIDTH - 1)
-                                                line = []
-                                                sBit = 1 # 2 ^ 0
-                                                for _ in range(consts.PLAYFIELD_WIDTH) :
-                                                    # bit is set ?
-                                                    if cubes& sBit > 0:
-# yes = > add a colored block
-line.append(random.randint(1, 7))
-                                                    else :
-                                                        # no = > empty space
-                                                        line.append(0)
-
-                                                        # next bit value
-                                                        sBit *= 2
-
-                                                        # Add the line
-                                                        self.playField_.append(line)
-
+    // Copy all the colored blocks in the gameplay
+    uint8_t maxY = (PLAYFIELD_HEIGHT - vertPos >= 1) ? 0 : (vertPos - PLAYFIELD_HEIGHT + 1);
+    for (uint8_t y = maxY; y < PIECE_HEIGHT; y++) {
+        for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
+            bColour = datas[y * PIECE_WIDTH + x];
+            if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
+                playField_[vertPos - y][x + currentPiece_.leftPos_] = ((COLOUR_ID_SHADOW == colour) ? colour : bColour);
+            }
+        }
+    }
+}
+                                               
                                                         # The piece is at the lowest possible level
 #
                                                         def _reachLowerPos(self, downRowcount = 0) :
@@ -401,13 +395,6 @@ if False == self.parameters_.shadow_ :
 
         # The piece has moved or rotated
 #
-        def piecePosChanged(self) :
-
-        # Compute the pos ot the shadow ?
-        if True == self.parameters_.shadow_ :
-            self.currentPiece_.shadowTopPos_ = self._minTopPosition()
-
-            # Notification
-            self.eventHandler_.piecePosChanged(self.currentPiece_)
+        
 
 // EOF

@@ -78,7 +78,7 @@ class pieceStatus{
 
     // Members
     //
-    protected:
+    public:
         uint8_t  index_;             // Index of the piece (-1 = don't draw)
         uint8_t  leftPos_;           // Initial pos. 
         uint8_t  topPos_;
@@ -131,9 +131,12 @@ class piece{
         // Access
         //
 
-        // Piece's datas in the curent rotation state (index = rotate_)
-        uint8_t* datas() {
-            return (points_ == nullptr ||  rotate_ >= maxRotate_ ? NULL : points_[rotate_]);
+        // Piece's datas in the any rotation state (index = rotate_)
+        uint8_t* datas(uint8_t index) {
+            return (points_ == nullptr ||  index >= maxRotate_ ? NULL : points_[index]);
+        }
+        uint8_t* currentDatas() {
+            return datas(rotate_);
         }
 
         // Vertical offset (when rotationIndex = 0)

@@ -127,16 +127,66 @@ class board {
         // Game's parameters
         void setParameters(tetrisParameters & params);
 
+        //
+        // Pieces management
+        //
+
+        // Datas of a piece
+        uint8_t** nextPieceDatas() {
+            return (nextIndex_ < 0 || nextIndex_ >= TETRAMINOS_COUNT) ? nullptr : tetraminos_[nextIndex_].datas(0);
+        }
+        uint8_t** pieceDatas(uint8_t index, uint8_t  rotIndex) {
+            return (index < 0 || index >= TETRAMINOS_COUNT || rotindex >= ? nullptr : tetraminos_[index].datas(rotIndex));
+        }
+
+        // New piece (in the game)
+        void newPiece();
+
         // Let's play
         void start() {
             newPiece(); // the first piece
         }
 
+        //
+        // Mouvements
+        //
+        bool rotateLeft();
+        bool left();
+        bool right();
+        bool down() {
+            return _down();
+        }
+        bool fall();
+
+        // The position of the piece just changed
+        void piecePosChanged();
 
     // Internal methods
     //
     protected:
 
+        // Get a new index for the next piece
+        uint8_t _newPieceIndex() {
+            return (rand() % TETRAMINOS_COUNT);
+        }
+
+        // Can the piece go down ?
+        bool _down(bool newPiece = false);
+
+        // Can the current piece be at the given position ?
+        bool _canMove(uint8_t leftPos, uint8_t  topPos);
+
+        // Get a piece min.pos.index (vertical value)
+        uint8_t _minTopPosition();
+
+        // Clear and remove a completed line
+        void _clearLine(uint8_t index);
+
+        // Add a randomly generated dirty line at the bottom of the gameplay
+        void _addDirtyLine(uint8_t line);
+
+        // Put the tetramino at the current position
+        void _putPiece(uint8_t colour = COLOUR_ID_SHADOW);
 
     // Members
     // 

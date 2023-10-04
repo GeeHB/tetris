@@ -67,7 +67,7 @@ class piece(object):
             # By default the piece is empty
             self.points_ = self._new()
 
-    # Piece's datas in the curent rotation state (index = rotate_)
+    # Piece's datas in the current rotation state (index = rotate_)
     #
     def datas(self):
         if self.rotate_ < 0 or self.rotate_ >= self.maxRotate_:
