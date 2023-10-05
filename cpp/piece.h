@@ -124,7 +124,7 @@ class piece{
         void clear();
 
 #ifdef _DEBUG
-        // Affichage en mode texte
+        // Test ...
         void print(uint8_t rotIndex);
 #endif // _DEBUG
 

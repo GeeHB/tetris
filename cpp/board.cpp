@@ -2,9 +2,9 @@
 //--
 //--	File	: board.cpp
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--	Author	: JÃ©rÃ´me Henry-BarnaudiÃ¨re - GeeHB
 //--
-//--	Project	: jtetris - cpp version
+//--	Project	: jtetris / cpp version
 //--
 //---------------------------------------------------------------------------
 //--
@@ -17,9 +17,15 @@
 
 #include "board.h"
 
+#include <cmath>
 #include <time.h> 
 
-im//---------------------------------------------------------------------------
+#ifdef _DEBUG
+#include <iostream>
+using namespace std;
+#endif // _DEBUG
+
+//---------------------------------------------------------------------------
 //--
 //-- board object
 //--
@@ -36,8 +42,10 @@ board::board() {
     score_ = lines_ = 0;
     level_ = 1;
 
+    _emptyBoard();
+
     // Initialize rand num. generator
-    srand(time(NULL));
+    srand((int)time(NULL));
 
     // Build the tetraminos'list
     //
@@ -75,8 +83,22 @@ board::board() {
     tetraminos_[6].addPiece(T_2);
     tetraminos_[6].addPiece(T_3);
 }
+
+#ifdef _DEBUG
+// Test ...
+void board::print() {
+    cout << endl << "Board :" << endl;
+    for (uint8_t line = 0; line < PLAYFIELD_HEIGHT; line++) {
+        cout << int(PLAYFIELD_HEIGHT - line - 1) << "- \t";
+        for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
+            cout << int(playField_[PLAYFIELD_HEIGHT - line -1][col]);
+        }
+        cout << endl;
+    }
+}
+#endif // _DEBUG
     
-// Game's parmaeters
+// Game's parameters
 //
 void board::setParameters(tetrisParameters& params) {
     // Copy (and init) parameters
@@ -93,13 +115,13 @@ void board::setParameters(tetrisParameters& params) {
     }
 
     // Empty the play-set
-    memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
+    _emptyBoard();
 
     // Add dirty lines ...
     //
     uint8_t maxLines(PLAYFIELD_HEIGHT - PIECE_HEIGHT - 1);
     if (parameters_.dirtyLines_ > maxLines) {
-        parameters_.dirtyLines_ = maxLines
+        parameters_.dirtyLines_ = maxLines;
     }
     else
         if (parameters_.dirtyLines_ < 0) {
@@ -142,7 +164,7 @@ void board::newPiece() {
 bool board::rotateLeft() {
 
     // Try to rotate
-    rotIndex = tetraminos_[currentPiece_.index_].rotateLeft();
+    uint8_t rotIndex = tetraminos_[currentPiece_.index_].rotateLeft();
 
     // Possible ?
     if (_canMove(currentPiece_.leftPos_, currentPiece_.topPos_)){
@@ -190,9 +212,9 @@ bool board::right(){
 
 // Go down (as many lines as possible)
 //
-bool board::fall() {
-    uint8_t bottom = _minTopPosition();
-    uint8_t delta = currentPiece_.topPos_ - bottom;
+void board::fall() {
+    uint8_t bottom(_minTopPosition());
+    uint8_t delta(currentPiece_.topPos_ - bottom);
     currentPiece_.topPos_ = bottom;
 
     // updates ...
@@ -200,7 +222,7 @@ bool board::fall() {
     _reachLowerPos(delta);
 }
 
-// The position of the piece just changed
+// The position of the piece has just changed
 //
 void board::piecePosChanged() {
     // Compute the pos ot the shadow ?
@@ -222,7 +244,7 @@ bool board::_down(bool newPiece) {
     // Test position
     if (_canMove(currentPiece_.leftPos_, currentPiece_.topPos_ - 1)) {
         // correct
-        currentPiece_.topPos_ -= 1
+        currentPiece_.topPos_ -= 1;
         piecePosChanged();
         return true;
     }
@@ -241,12 +263,13 @@ bool board::_canMove(uint8_t leftPos, uint8_t  topPos) {
     uint8_t* datas = tetraminos_[currentPiece_.index_].currentDatas();
 
     // Test all the contained blocks starting from bottom
+    uint8_t realX(0), realY(0);
     for (uint8_t y = PIECE_HEIGHT - 1; y >=0; y--){
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             if (COLOUR_ID_BOARD != datas[y * PIECE_WIDTH + x]) {
                 // "real" position of the block 
-                realX = x + leftPos
-                realY = topPos - y
+                realX = x + leftPos;
+                realY = topPos - y;
 
                 // out of the gameplay's limits ?
                 if (realX < 0 || realY < 0 || realX >= PLAYFIELD_WIDTH || realY >= PLAYFIELD_HEIGHT) {
@@ -284,17 +307,23 @@ uint8_t board::_minTopPosition() {
 void board::_clearLine(uint8_t index) {
     if (index >= 0 && index < PLAYFIELD_HEIGHT) {
         // Remove the line from the screen
-        playField_.pop(index);
+        for (uint8_t line = index; line < (PLAYFIELD_HEIGHT - 1); line++) {
+            for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
+                playField_[line][col] = playField_[line + 1][col];
+            }
+        }
 
-        // Add a ne empty line
-        playField_.append([0] * PLAYFIELD_WIDTH);
+        // Add a new empty line
+        for (uint8_t col=0; col<PLAYFIELD_WIDTH; col++){
+            playField_[PLAYFIELD_HEIGHT-1][col] = COLOUR_ID_BOARD;    
+        }
     }
 }
 
 // Add a randomly generated dirty line at the bottom of the gameplay
 //
 void board::_addDirtyLine(uint8_t line) {
-    uint16_t cubes(rand() % (2 * *consts.PLAYFIELD_WIDTH - 1));
+    uint16_t cubes(rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
     uint16_t sBit(1); // 2 ^ 0
 
     // Convert 'cubes' bits into coloured blocks
@@ -302,32 +331,27 @@ void board::_addDirtyLine(uint8_t line) {
         // Is the bit set ?
         if ((cubes & sBit) > 0) {
             // yes = > add a colored block
-            playField_[line][col] = 1 + rand() % 6;
+            playField_[line][col] = 1 + rand() % TETRAMINOS_COUNT;
         }
 
         // next bit value
-        sBit *= 2
+        sBit *= 2;
     }
 }
  
 // Put the tetramino at the current position
 //
 void board::_putPiece(uint8_t colour) {
-    if (COLOUR_ID_SHADOW == colour) {
-        vertPos = currentPiece_.shadowTopPos_;
-    }
-    else {
-        vertPos = currentPiece_.topPos_;
-    }
-
+    uint8_t vertPos((COLOUR_ID_SHADOW == colour) ? currentPiece_.shadowTopPos_ : currentPiece_.topPos_);
+    
     uint8_t* datas = tetraminos_[currentPiece_.index_].currentDatas();
-    uint8 - t bColour(0);
+    uint8_t bColour(0);
 
     // Copy all the colored blocks in the gameplay
     uint8_t maxY = (PLAYFIELD_HEIGHT - vertPos >= 1) ? 0 : (vertPos - PLAYFIELD_HEIGHT + 1);
-    for (uint8_t y = maxY; y < PIECE_HEIGHT; y++) {
-        for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
-            bColour = datas[y * PIECE_WIDTH + x];
+    for (uint8_t y = maxY; y < PLAYFIELD_HEIGHT; y++) {
+        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
+            bColour = datas[y * PLAYFIELD_WIDTH + x];
             if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
                 playField_[vertPos - y][x + currentPiece_.leftPos_] = ((COLOUR_ID_SHADOW == colour) ? colour : bColour);
             }
@@ -335,66 +359,81 @@ void board::_putPiece(uint8_t colour) {
     }
 }
                                                
-                                                        # The piece is at the lowest possible level
-#
-                                                        def _reachLowerPos(self, downRowcount = 0) :
+// The piece is at the lowest possible level
+//
+void board::_reachLowerPos(uint8_t downRowcount){
+    // put it
+    _putPiece();
 
-                                                        # put it
-                                                        self._putPiece()
+    // Notify
+    //self.eventHandler_.pieceReachedLowerPos()
 
-                                                        # Notify
-                                                        self.eventHandler_.pieceReachedLowerPos()
+    // Are line(s) completed ?
+    // Check the 4 possible lines
+    uint8_t completedLines[4];
+    uint8_t completedCount(0);       // # of completed lines
 
-                                                        # Are line(s) completed ?
-                                                        # Check the 4 possible lines
-                                                        completedLines = []
-                                                        maxY = self.currentPiece_.topPos_ + 1
-                                                        if maxY > consts.PLAYFIELD_HEIGHT:
-maxY = consts.PLAYFIELD_HEIGHT
-for line in range(self.currentPiece_.topPos_ - piece.PIECE_HEIGHT + 1, maxY) :
-    currentLineValue = 1
-    for col in range(consts.PLAYFIELD_WIDTH) :
-        currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
+    uint8_t maxY(currentPiece_.topPos_ + 1);
+    if (maxY > PLAYFIELD_HEIGHT){
+        maxY = PLAYFIELD_HEIGHT;
+    }
 
-        # The line is complete
-        if not 0 == currentLineValue:
-completedLines.insert(0, line)
+    uint8_t currentLineValue(0);
+    for (uint8_t line = currentPiece_.topPos_ - PLAYFIELD_HEIGHT + 1; line < maxY; line++){
+        currentLineValue = 1;
+        for (uint8_t col = 0; col <PLAYFIELD_WIDTH; col++){
+            // one empty block and the whole line "value" = 0
+            currentLineValue *= playField_[line][col];
+        }
 
-for lineIndex in completedLines :
-# Animate
-self.eventHandler_.lineCompleted(lineIndex)
+        // The line is complete
+        if (currentLineValue){
+            completedLines[completedCount++] = line;
+        }
+    }
 
-# update datas
-self._clearLine(lineIndex)
+    // Remove lines in reverse order (max -> min)
+    for (uint8_t line = (completedCount-1); line >=0; line--){
+        // Animate
+        //self.eventHandler_.lineCompleted(line)
 
-# Update the score
-completedCount = len(completedLines)
-if completedCount >= 1:
-delta = 0
-if 1 == completedCount :
-    delta += 100
-    elif 2 == completedCount :
-    delta += 300
-    elif 3 == completedCount :
-    delta += 500
-else:
-# 4 !
-delta += 800    #  * 800 ?
+        // Update datas
+        _clearLine(line);
+    }
 
-mult = 100 + consts.SCORE_SPEED_GAME * downRowcount + consts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_ + consts.SCORE_LEVEL_VALUATION * self.lines_
-if False == self.parameters_.shadow_ :
-    mult += consts.SCORE_NO_SHADOW
+    // Update the score
+    if (completedCount){
+        double delta(0.0);    
+        switch(completedCount){
+            case 1:
+                delta = 100.0;
+                break;
 
-    self.eventHandler_.incScore(int(delta * mult / 100))
+            case 2:
+                delta = 300.0;
+                break;
 
-    if 0 != completedCount :
-        self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines + completedCount)
+            case 3:
+                delta = 500.0;
+                break;
 
-        # Get a new piece
-        self.newPiece()
+            // 4
+            default:
+                delta = 800.0;
+                break;
+        }
 
-        # The piece has moved or rotated
-#
-        
+        double mult(100. + SCORE_SPEED_GAME * downRowcount + SCORE_DIRTY_LINES * parameters_.dirtyLines_ + SCORE_LEVEL_VALUATION * lines_);
+        if (!parameters_.shadow_){
+            mult += SCORE_NO_SHADOW;
+        }
+
+        // self.eventHandler_.incScore(uint32_t(delta * mult / 100.0))
+        //self.eventHandler_.allLinesCompletedRemoved(completedCount, lines() + completedCount)
+    }
+
+    // Get a new piece
+    newPiece();
+}
 
 // EOF

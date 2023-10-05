@@ -28,21 +28,19 @@
 #define PLAYFIELD_WIDTH     10
 #define PLAYFIELD_HEIGHT    20
 
-/*
-# Score valorisation (in %)
-SCORE_NO_SHADOW     = 10        # +10% if no pieces'shadowing
-SCORE_SPEED_GAME    = 2         # 2% * {piece's height} => quick play <=> more points
-SCORE_DIRTY_LINES   = 0.1       # 0.1% per starting dirty-line
-SCORE_LEVEL_VALUATION = 15      # 15% more for each level
+// Scores valorisation (in %)
+//
+#define SCORE_NO_SHADOW         10.0    // +10% if no pieces'shadowing
+#define SCORE_SPEED_GAME        2.0     // 2% * {piece's height} => quick play <=> more points
+#define SCORE_DIRTY_LINES       0.1     // 0.1% per starting dirty-line
+#define SCORE_LEVEL_VALUATION   15.0    // 15% more for each level
 
-#
-# Timer & game's Levels
-#
-MAX_LEVEL_ACCELERATION = 15     # No more acceleration when this level is reached
-ACCELERATION_STEP = 0.19        # Growing speed % per level
-INITIAL_SPEED = 1200            # Level 1 speed (larger is slower)
-MOVES_UPDATE_LEVEL = 250        # Change level criterium (# of pieces going down one step)
-*/
+// Timer & game's Levels
+//
+#define MAX_LEVEL_ACCELERATION  15      // No more acceleration when this level is reached
+#define ACCELERATION_STEP       0.19    // Growing speed % per level
+#define INITIAL_SPEED           200     // Level 1 speed (larger is slower)
+#define MOVES_UPDATE_LEVEL      250     // Change level criterium (# of pieces going down one step)
 
 //
 // Colour IDs

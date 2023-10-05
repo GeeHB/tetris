@@ -436,8 +436,6 @@ class board(object):
                 mult+=consts.SCORE_NO_SHADOW
             
             self.eventHandler_.incScore(int(delta*mult/100))
-
-        if 0 != completedCount:
             self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines + completedCount)            
 
         # Get a new piece

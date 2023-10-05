@@ -2,7 +2,7 @@
 //--
 //--	File	: board.h
 //--
-//--	Author	: Jérôme Henry-Barnaudière - GeeHB
+//--	Author	: Jï¿½rï¿½me Henry-Barnaudiï¿½re - GeeHB
 //--
 //--	Project	: jtetris - cpp version
 //--
@@ -80,6 +80,11 @@ class board {
 
         }
 
+#ifdef _DEBUG
+        // Test ...
+        void print();
+#endif // _DEBUG
+
         // Game level 
         uint8_t level() {
             return level_;
@@ -96,7 +101,7 @@ class board {
         uint16_t score() {
             return score_;
         }
-        void setScore(uint16_t, value) {
+        void setScore(uint16_t value) {
             score_ = value;
         }
         uint16_t incScore(uint16_t inc) {
@@ -106,7 +111,7 @@ class board {
 
         // Next piece index
         uint8_t nextPieceIndex() {
-            return nextIndex;
+            return nextIndex_;
         }
         void setNextPieceIndex(uint8_t index) {
             nextIndex_ = index;
@@ -121,7 +126,7 @@ class board {
         }
         uint8_t incLines(uint8_t inc) {
             lines_ += inc;
-            return self.lines_;
+            return lines_;
         }
 
         // Game's parameters
@@ -132,11 +137,11 @@ class board {
         //
 
         // Datas of a piece
-        uint8_t** nextPieceDatas() {
-            return (nextIndex_ < 0 || nextIndex_ >= TETRAMINOS_COUNT) ? nullptr : tetraminos_[nextIndex_].datas(0);
+        uint8_t* nextPieceDatas() {
+            return ((nextIndex_ < 0 || nextIndex_ >= TETRAMINOS_COUNT) ? nullptr : tetraminos_[nextIndex_].datas(0));
         }
-        uint8_t** pieceDatas(uint8_t index, uint8_t  rotIndex) {
-            return (index < 0 || index >= TETRAMINOS_COUNT || rotindex >= ? nullptr : tetraminos_[index].datas(rotIndex));
+        uint8_t* pieceDatas(uint8_t index, uint8_t  rotIndex) {
+            return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
         }
 
         // New piece (in the game)
@@ -156,7 +161,7 @@ class board {
         bool down() {
             return _down();
         }
-        bool fall();
+        void fall();
 
         // The position of the piece just changed
         void piecePosChanged();
@@ -164,6 +169,11 @@ class board {
     // Internal methods
     //
     protected:
+
+        // The board is empty ...
+        void _emptyBoard() {
+            memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
+        }
 
         // Get a new index for the next piece
         uint8_t _newPieceIndex() {
@@ -179,14 +189,17 @@ class board {
         // Get a piece min.pos.index (vertical value)
         uint8_t _minTopPosition();
 
-        // Clear and remove a completed line
-        void _clearLine(uint8_t index);
-
         // Add a randomly generated dirty line at the bottom of the gameplay
         void _addDirtyLine(uint8_t line);
 
+        // Clear and remove a completed line
+        void _clearLine(uint8_t index);
+
         // Put the tetramino at the current position
         void _putPiece(uint8_t colour = COLOUR_ID_SHADOW);
+
+        // The piece is at the lowest possible level
+        void _reachLowerPos(uint8_t downRowcount = 0);
 
     // Members
     // 
