@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Definition of piece & pieceStatus objects : 
+//--			Definition of piece & pieceStatus objects :
 //--                a tetramino and all the informations for its drawing
 //--
 //---------------------------------------------------------------------------
@@ -41,7 +41,7 @@
 //--
 //-- pieceStatus object
 //--
-//--    All the informations concerning a tetramino : 
+//--    All the informations concerning a tetramino :
 // --       index, rotation, position ...
 //--
 //---------------------------------------------------------------------------
@@ -56,7 +56,7 @@ class pieceStatus{
         pieceStatus(){
             // Use default values
             valid_ = false;
-            index_ = -1; 
+            index_ = -1;
             leftPos_ = topPos_  = 0;
             rotationIndex_ = 0;
             shadowTopPos_ = -1;
@@ -89,6 +89,8 @@ class pieceStatus{
             shadowTopPos_ = other.shadowTopPos_;
 
             valid_ = true;
+
+            return *this;
         }
 
         // Equal ?
@@ -105,9 +107,9 @@ class pieceStatus{
     public:
         bool valid_;
         uint8_t index_;             // Index of the piece (-1 = don't draw)
-        uint8_t leftPos_;           // Initial pos. 
+        uint8_t leftPos_;           // Initial pos.
         uint8_t topPos_;
-    
+
         uint8_t rotationIndex_;
         uint8_t shadowTopPos_;      // yPos of shadow (-1 = no shadow)
 };
@@ -205,10 +207,10 @@ class piece{
     // Private methods
     //
     protected:
-        
+
         // Initialize members
         void _init(){
-            
+
             points_ = nullptr;  // No rotation
             maxAllocated_ = 0;
 
@@ -230,11 +232,11 @@ class piece{
         uint8_t rotate_;        // rotation index (ie. index of the piece to draw)
         uint8_t maxRotate_;     // max. rotation(s) allowed for the piece ( = 360°)
         uint8_t maxAllocated_;  // Size of points_ in "rotation" count
-        
+
         int8_t vertOffset_;     // Initial vert. offset (ie. count of empty lines starting from bottom)
         uint8_t colourIndex_;   // Colour ID (0 = invisible)
 };
 
-#endif __J_TETRIS_PIECE_h_
-    
+#endif // __J_TETRIS_PIECE_h_
+
 // EOF

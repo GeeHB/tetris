@@ -17,7 +17,7 @@
 #include "tetrisGame.h"
 
 #include <cmath>
-#include <time.h> 
+#include <time.h>
 
 #ifdef _DEBUG
 #include <iostream>
@@ -99,7 +99,7 @@ void tetrisGame::print() {
     }
 }
 #endif // _DEBUG
-    
+
 // Game's parameters
 //
 void tetrisGame::setParameters(tetrisParameters& params) {
@@ -152,7 +152,7 @@ bool tetrisGame::start() {
         updateDisplay();    // Redundant ???
         return true;
     }
-    
+
     return false;
 }
 
@@ -161,7 +161,7 @@ bool tetrisGame::start() {
 void tetrisGame::newPiece() {
     // Next piece => current
     nextPos_.index((-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex());
-    
+
     // Next one
     setNextPieceIndex(_newPieceIndex());
 
@@ -221,7 +221,7 @@ bool tetrisGame::rotateLeft() {
 
 // Move left
 //
-bool tetrisGame::left(){                    
+bool tetrisGame::left(){
     // Test position
     if (_canMove(nextPos_.leftPos_ - 1, nextPos_.topPos_)) {
         // Correct
@@ -324,13 +324,13 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
 
     // Max index visible on desk
     uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ? PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos : PIECE_HEIGHT - 1;
-    
+
     // Test all the contained blocks starting from bottom
     uint8_t realX(0), realY(0);
     for (int8_t y = maxY; y >=0; y--){
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             if (COLOUR_ID_BOARD != datas[y * PIECE_WIDTH + x]) {
-                // "real" position of the block 
+                // "real" position of the block
                 realX = x + leftPos;
                 realY = topPos - y;
 
@@ -346,7 +346,7 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
             }
         }
     }
-    
+
     // Yes = > the position is valid
     return true;
 }
@@ -378,7 +378,7 @@ void tetrisGame::_clearLine(uint8_t index) {
 
         // Add a new empty line
         for (uint8_t col=0; col<PLAYFIELD_WIDTH; col++){
-            playField_[PLAYFIELD_HEIGHT-1][col] = COLOUR_ID_BOARD;    
+            playField_[PLAYFIELD_HEIGHT-1][col] = COLOUR_ID_BOARD;
         }
     }
 }
@@ -401,12 +401,12 @@ void tetrisGame::_addDirtyLine(uint8_t line) {
         sBit *= 2;
     }
 }
- 
+
 // Put the tetramino at the current position
 //
 void tetrisGame::_putPiece(uint8_t colour) {
     uint8_t vertPos((COLOUR_ID_SHADOW == colour) ? nextPos_.shadowTopPos_ : nextPos_.topPos_);
-    
+
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
     uint8_t bColour(0);
 
@@ -421,15 +421,15 @@ void tetrisGame::_putPiece(uint8_t colour) {
         }
     }
 }
-                                               
+
 // The piece is at the lowest possible level
 //
 void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     // put it
     _putPiece();
 
-    // Notify
-    //self.eventHandler_.pieceReachedLowerPos()
+    // Don't erase this piece !!!
+    currentPos_.valid(false);
 
     // Are line(s) completed ?
     // Check the 4 possible lines
@@ -456,8 +456,9 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     }
 
     // Remove lines in reverse order (max -> min)
-    for (int8_t line = (completedCount-1); line >=0; line--){
+    for (int8_t lineID = (completedCount-1); lineID >=0; lineID--){
         // Animate
+        uint8_t line(completedLines[lineID]);
         //self.eventHandler_.lineCompleted(line)
 
         // Update datas
@@ -466,7 +467,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
     // Update the score
     if (completedCount){
-        double delta(0.0);    
+        double delta(0.0);
         switch(completedCount){
             case 1:
                 delta = 100.0;

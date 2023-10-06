@@ -43,7 +43,7 @@ class tetrisParameters {
             dirtyLines_ = 0;
             shadow_ = false;
         }
-        
+
         // recopy
         void copy(tetrisParameters& other) {
             startLevel_ = other.startLevel_;
@@ -68,7 +68,7 @@ class tetrisParameters {
 //---------------------------------------------------------------------------
 
 class tetrisGame {
-    
+
     // Public methods
     //
     public:
@@ -105,7 +105,7 @@ class tetrisGame {
                 end(true);
             }
         }
-                
+
         // Escaped / canceled by the user ?
         bool isCancelled() {
             return ((status_ & STATUS_CANCELED) == STATUS_CANCELED);
@@ -150,16 +150,17 @@ class tetrisGame {
         // Draw the tetrisGame
         void drawtetrisGame();
 
-        // Game level 
+        // Game level
         uint8_t level() {
             return level_;
         }
-        
+
         // The game level just changed
         uint8_t levelChanged(uint8_t inc) {
             level_ += inc;
             drawLevel();
             updateDisplay();
+            return level_;
         }
 
         // Score
@@ -238,12 +239,6 @@ class tetrisGame {
         // The position of the piece just changed
         void piecePosChanged();
 
-        // A tetramino is at the lowest possible position
-        void pieceReachedLowerPos() {
-            // Don't erase this piece !!!
-            currentPos_.valid(false);
-        }
-
         // Update drawings after removing lines
         void allLinesCompletedRemoved(uint8_t rowCount, uint8_t totalLines) {
             lines_ = totalLines;
@@ -303,18 +298,18 @@ class tetrisGame {
         // Display the next piece
         void _drawNextPiece(uint8_t pieceIndex);
 
-        // Numeric value 
+        // Numeric value
         void _drawNumValue(uint8_t index, uint16_t value){}
 
         // Draw a line of text(and erase the prrevious value)
         void _drawText(uint8_t index, const char* value){}
-        
+
         // Draw borders
         void drawBackGround(){}
 
         // Draw a tetramino using the given colour
         void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame = true, uint8_t colourID = COLOUR_ID_NONE);
-        
+
         // Draw a single coloured block
         void _drawSingleBlock(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height,uint8_t colourID){}
 
@@ -323,20 +318,20 @@ class tetrisGame {
 
 
     // Members
-    // 
+    //
     protected:
-       
+
         uint8_t status_; // Game status
-        
+
         uint8_t playField_[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];      // The playfield
         piece   tetraminos_[TETRAMINOS_COUNT];                      // The tetraminos' list
-        
+
         tetrisParameters parameters_;
 
         // Piece and next one
         int8_t nextIndex_ = -1;
         pieceStatus nextPos_, currentPos_;
-        
+
         // Indicators
         uint16_t    score_;
         uint8_t lines_, level_;

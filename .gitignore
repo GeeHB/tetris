@@ -4,6 +4,7 @@ archives/
 Debug/
 Release/
 essai/
+linux/
 *.high
 casioplot.png
 

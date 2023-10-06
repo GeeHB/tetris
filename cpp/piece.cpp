@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Implementation of piece & pieceStatus objects : 
+//--			Implementation of piece & pieceStatus objects :
 //--                a tetramino and all the informations for its drawing
 //--
 //---------------------------------------------------------------------------
@@ -42,7 +42,7 @@ piece::piece(piece& other) {
     points_ = (uint8_t**)malloc(rotate_ * sizeof(uint8_t*));
     if (points_) {
         for (uint8_t index(0); index < other.maxRotate_; index++) {
-            if (points_[index] = (uint8_t*)malloc(PIECE_SIZE)) {
+            if (NULL != (points_[index] = (uint8_t*)malloc(PIECE_SIZE))) {
                 memcpy(points_[index], other.points_[index], PIECE_SIZE);
                 maxAllocated_ = other.maxAllocated_;
             }
@@ -102,7 +102,7 @@ bool piece::addPiece(const char* tempPiece) {
     // Success
     return true;
 }
-    
+
 // Clear the current piece
 //
 void piece::clear() {
