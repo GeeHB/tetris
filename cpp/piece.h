@@ -55,20 +55,35 @@ class pieceStatus{
         //
         pieceStatus(){
             // Use default values
+            valid_ = false;
             index_ = -1; 
             leftPos_ = topPos_  = 0;
             rotationIndex_ = 0;
             shadowTopPos_ = -1;
         }
-        
+
+        // Valid (or initialized) ?
+        bool isValid() {
+            return valid_;
+        }
+        void valid(bool value) {
+            valid_ = value;
+        }
+
         // Copy
-        pieceStatus(pieceStatus& other){
+        pieceStatus& operator = (const pieceStatus& other) {
+            // Me ???
+            if (this == &other) {
+                return *this;
+            }
             // Copy the values
             index_ = other.index_;
             leftPos_ = other.leftPos_;
             topPos_ = other.topPos_;
             rotationIndex_ = other.rotationIndex_;
             shadowTopPos_ = other.shadowTopPos_;
+
+            valid_ = true;
         }
 
         // Equal ?
@@ -76,15 +91,20 @@ class pieceStatus{
             return (index_ == right.index_ && leftPos_ == right.leftPos_ && topPos_ == right.topPos_ && rotationIndex_ == right.rotationIndex_);
         }
 
+        bool operator != (pieceStatus& right) {
+            return (index_ != right.index_ || leftPos_ != right.leftPos_ || topPos_ != right.topPos_ || rotationIndex_ != right.rotationIndex_);
+        }
+
     // Members
     //
     public:
-        uint8_t  index_;             // Index of the piece (-1 = don't draw)
-        uint8_t  leftPos_;           // Initial pos. 
-        uint8_t  topPos_;
+        bool valid_;
+        uint8_t index_;             // Index of the piece (-1 = don't draw)
+        uint8_t leftPos_;           // Initial pos. 
+        uint8_t topPos_;
     
-        uint8_t  rotationIndex_;
-        uint8_t  shadowTopPos_;      // yPos of shadow (-1 = no shadow)
+        uint8_t rotationIndex_;
+        uint8_t shadowTopPos_;      // yPos of shadow (-1 = no shadow)
 };
 
 //---------------------------------------------------------------------------

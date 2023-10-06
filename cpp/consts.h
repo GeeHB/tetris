@@ -28,6 +28,14 @@
 #define PLAYFIELD_WIDTH     10
 #define PLAYFIELD_HEIGHT    20
 
+// Game status
+//
+#define STATUS_CREATED	0
+#define STATUS_INIT		1
+#define STATUS_RUNNING	2
+#define STATUS_STOPPED	4
+#define STATUS_CANCELED 8
+
 // Scores valorisation (in %)
 //
 #define SCORE_NO_SHADOW         10.0    // +10% if no pieces'shadowing
@@ -54,7 +62,9 @@
 #define COLOUR_ID_BKGRND    11
 #define COLOUR_ID_ANIMATE   12     // animation When line if full
 
-#define LAST_COLOUR_ID   = COLOUR_ID_ANIMATE
+#define LAST_COLOUR_ID		COLOUR_ID_ANIMATE
+
+#define COLOUR_ID_NONE		(LAST_COLOUR_ID +1)		// This is not a colour !!!
 
 /*
 #

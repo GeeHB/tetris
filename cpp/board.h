@@ -85,6 +85,67 @@ class board {
         void print();
 #endif // _DEBUG
 
+        // Status
+        //
+        bool isRunning() {
+            return STATUS_RUNNING == status_;
+        }
+
+        // Cancel the game
+        void cancel() {
+            // Already escaped ?
+            if (!isCancelled()) {
+                status_ += STATUS_CANCELED;
+
+                // stop the game
+                end(true);
+            }
+        }
+                
+        // Escaped / canceled by the user ?
+        bool isCancelled() {
+            return ((status_ & STATUS_CANCELED) == STATUS_CANCELED);
+        }
+
+        // Force the end of the game
+        void end(bool force = false) {
+            if (force) {
+                status_ |= STATUS_CANCELED;
+            }
+            else {
+                status_ = STATUS_STOPPED;
+            }
+        }
+
+        // Helpers for drawings
+        //
+        void drawScore() {
+            _drawNumValue(0, score_);
+        }
+        void drawLevel() {
+            _drawNumValue(1, level_);
+        }
+        void drawLines() {
+            _drawNumValue(2, lines_);
+        }
+        void drawNextPiece() {
+            _drawNextPiece(nextPieceIndex());
+        }
+
+        void updateDisplay(){}
+
+        // Draw all
+        void reDraw() {
+            drawBackGround();
+            drawBoard();
+            drawScore();
+            drawLevel();
+            drawLines();
+        }
+
+        // Draw the board
+        void drawBoard();
+
         // Game level 
         uint8_t level() {
             return level_;
@@ -148,9 +209,7 @@ class board {
         void newPiece();
 
         // Let's play
-        void start() {
-            newPiece(); // the first piece
-        }
+        bool start();
 
         //
         // Mouvements
@@ -201,19 +260,50 @@ class board {
         // The piece is at the lowest possible level
         void _reachLowerPos(uint8_t downRowcount = 0);
 
+        // Change origin for drawing
+        void _changeOrigin(bool inBoard, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
+
+        // Drawings
+        //
+
+        // Display the next piece
+        void _drawNextPiece(uint8_t pieceIndex);
+
+        // Numeric value 
+        void _drawNumValue(uint8_t index, uint16_t value){}
+
+        // Draw a line of text(and erase the prrevious value)
+        void _drawText(uint8_t index, const char* value){}
+        
+        // Draw borders
+        void drawBackGround(){}
+
+        // Draw a tetramino using the given colour
+        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inBoard = true, uint8_t colourID = COLOUR_ID_NONE);
+        
+        // Draw a single coloured block
+        void _drawSingleBlock(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height,uint8_t colourID){}
+
+        // Erase a tetramino
+        void _eraseBlocks(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){}
+
+
     // Members
     // 
     protected:
+       
+        uint8_t status_; // Game status
+        
         uint8_t playField_[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];      // The playfield
         piece   tetraminos_[TETRAMINOS_COUNT];                      // The tetraminos' list
         
         tetrisParameters parameters_;
 
         // Piece and next one
-        pieceStatus currentPiece_;
         int8_t nextIndex_ = -1;
-
-        // Game status
+        pieceStatus nextPos_, currentPos_;
+        
+        // Indicators
         uint16_t    score_;
         uint8_t lines_, level_;
 };

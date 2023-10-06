@@ -59,7 +59,7 @@ class tetrisGame(eventHandler):
     # Construction
     def __init__(self):
         self.status_ = self.STATUS_CREATED
-        self.itemDims_  = [None] * 3
+        self.itemDims_  = [None] * 4
 
     # Destruction
     def __del__(self):
@@ -110,7 +110,7 @@ class tetrisGame(eventHandler):
             self.status_ |= self.STATUS_CANCELED
         # stop the game
         self.end(True)
-    # Escaped/canceled par the user ?
+    # Escaped/canceled by the user ?
     def isCancelled(self):
         return ((self.status_ & self.STATUS_CANCELED) == self.STATUS_CANCELED)
 
@@ -338,6 +338,8 @@ class tetrisGame(eventHandler):
             self._drawSinglePiece(datas, 0, 0, False)
 
     # Format integer
+    #
+    #   1256896 => "1 256 896"
     #
     def _formatNumber(self, number):
         current = str(number)
