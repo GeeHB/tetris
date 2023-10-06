@@ -322,7 +322,7 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
 
-    // Min index visible on desk
+    // Max index visible on desk
     uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ? PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos : PIECE_HEIGHT - 1;
     
     // Test all the contained blocks starting from bottom

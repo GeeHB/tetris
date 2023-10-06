@@ -289,7 +289,7 @@ class tetrisGame {
         void _clearLine(uint8_t index);
 
         // Put the tetramino at the current position
-        void _putPiece(uint8_t colour = COLOUR_ID_SHADOW);
+        void _putPiece(uint8_t colour = COLOUR_ID_NONE);
 
         // The piece is at the lowest possible level
         void _reachLowerPos(uint8_t downRowcount = 0);
