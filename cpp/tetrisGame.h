@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: board.h
+//--	File	: tetrisGame.h
 //--
-//--	Author	: J�r�me Henry-Barnaudi�re - GeeHB
+//--	Author	: Jerome Henry-Barnaudiere - GeeHB
 //--
 //--	Project	: jtetris - cpp version
 //--
@@ -11,14 +11,15 @@
 //--	Description:
 //--
 //--	    Definition of :
-//--            - board : The matrix with all the colored blocks(ie dirty lines and / or putted tetraminos)
+//--
+//--            - tetrisGame
 //--
 //--            - tetrisParameters
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_BOARD_h__
-#define __J_TETRIS_BOARD_h__	1
+#ifndef __J_TETRIS_GAME_h__
+#define __J_TETRIS_GAME_h__	1
 
 #include "consts.h"
 #include "piece.h"
@@ -60,25 +61,28 @@ class tetrisParameters {
 
 //---------------------------------------------------------------------------
 //--
-//-- board object
+//-- tetrisGame object
 //--
 //--    Handle the gameplay and the game(without display !)
 //--
 //---------------------------------------------------------------------------
 
-class board {
+class tetrisGame {
     
     // Public methods
     //
     public:
 
         // Constrcution
-        board();
+        tetrisGame();
 
         // Destruction
-        virtual ~board() {
+        virtual ~tetrisGame() {
 
         }
+
+        // Finish (end of displays)
+        void clear(){}
 
 #ifdef _DEBUG
         // Test ...
@@ -137,25 +141,25 @@ class board {
         // Draw all
         void reDraw() {
             drawBackGround();
-            drawBoard();
+            drawtetrisGame();
             drawScore();
             drawLevel();
             drawLines();
         }
 
-        // Draw the board
-        void drawBoard();
+        // Draw the tetrisGame
+        void drawtetrisGame();
 
         // Game level 
         uint8_t level() {
             return level_;
         }
-        void setLevel(uint8_t value) {
-            level_ = value;
-        }
-        uint8_t incLevel() {
-            level_ += 1;
-            return level_;
+        
+        // The game level just changed
+        uint8_t levelChanged(uint8_t inc) {
+            level_ += inc;
+            drawLevel();
+            updateDisplay();
         }
 
         // Score
@@ -167,6 +171,9 @@ class board {
         }
         uint16_t incScore(uint16_t inc) {
             score_ += inc;
+
+            drawScore();
+            updateDisplay();
             return score_;
         }
 
@@ -225,12 +232,33 @@ class board {
         // The position of the piece just changed
         void piecePosChanged();
 
+        // A tetramino is at the lowest possible position
+        void pieceReachedLowerPos() {
+            // Don't erase this piece !!!
+            currentPos_.valid(false);
+        }
+
+        // Update drawings after removing lines
+        void allLinesCompletedRemoved(uint8_t rowCount, uint8_t totalLines) {
+            lines_ = totalLines;
+
+            drawtetrisGame();
+            drawLines();
+            updateDisplay();
+        }
+
+        // New index for the "next piece"
+        void nextPieceIndexChanged(uint8_t nextPieceIndex){
+            _drawNextPiece(nextPieceIndex);
+            updateDisplay();
+        }
+
     // Internal methods
     //
     protected:
 
-        // The board is empty ...
-        void _emptyBoard() {
+        // The tetrisGame is empty ...
+        void _emptytetrisGame() {
             memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
         }
 
@@ -261,7 +289,7 @@ class board {
         void _reachLowerPos(uint8_t downRowcount = 0);
 
         // Change origin for drawing
-        void _changeOrigin(bool inBoard, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
+        void _changeOrigin(bool intetrisGame, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
 
         // Drawings
         //
@@ -279,7 +307,7 @@ class board {
         void drawBackGround(){}
 
         // Draw a tetramino using the given colour
-        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inBoard = true, uint8_t colourID = COLOUR_ID_NONE);
+        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame = true, uint8_t colourID = COLOUR_ID_NONE);
         
         // Draw a single coloured block
         void _drawSingleBlock(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height,uint8_t colourID){}
@@ -308,6 +336,6 @@ class board {
         uint8_t lines_, level_;
 };
 
-#endif // __J_TETRIS_BOARD_h__
+#endif // __J_TETRIS_GAME_h__
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: board.cpp
+//--	File	: tetrisGame.cpp
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -10,12 +10,11 @@
 //--
 //--	Description:
 //--
-//--	    Implementation of 
-//--            - board : The matrix with all the colored blocks(ie dirty lines and / or putted tetraminos)
+//--	    Implementation of tetrisGame object
 //--
 //---------------------------------------------------------------------------
 
-#include "board.h"
+#include "tetrisGame.h"
 
 #include <cmath>
 #include <time.h> 
@@ -27,7 +26,7 @@ using namespace std;
 
 //---------------------------------------------------------------------------
 //--
-//-- board object
+//-- tetrisGame object
 //--
 //--    Handle the gameplay and the game(without display !)
 //--
@@ -35,14 +34,14 @@ using namespace std;
 
 // Constrcution
 //
-board::board() {
+tetrisGame::tetrisGame() {
 
     // Default values
     nextIndex_ = -1;
     score_ = lines_ = 0;
     level_ = 1;
 
-    _emptyBoard();
+    _emptytetrisGame();
 
     // Initialize rand num. generator
     srand((int)time(NULL));
@@ -89,8 +88,8 @@ board::board() {
 
 #ifdef _DEBUG
 // Test ...
-void board::print() {
-    cout << endl << "Board :" << endl;
+void tetrisGame::print() {
+    cout << endl << "tetrisGame :" << endl;
     for (uint8_t line = 0; line < PLAYFIELD_HEIGHT; line++) {
         cout << int(PLAYFIELD_HEIGHT - line - 1) << "- \t";
         for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
@@ -103,7 +102,7 @@ void board::print() {
     
 // Game's parameters
 //
-void board::setParameters(tetrisParameters& params) {
+void tetrisGame::setParameters(tetrisParameters& params) {
     // Copy (and init) parameters
     parameters_.copy(params);
 
@@ -117,8 +116,8 @@ void board::setParameters(tetrisParameters& params) {
         tetraminos_[index].rotateBack();
     }
 
-    // Empty the play-set
-    _emptyBoard();
+    // Empty the playset
+    _emptytetrisGame();
 
     // Add dirty lines ...
     //
@@ -138,7 +137,7 @@ void board::setParameters(tetrisParameters& params) {
 
 // Let's play
 //
-bool board::start() {
+bool tetrisGame::start() {
     // Check the object state
     if (STATUS_INIT == status_ || STATUS_STOPPED == status_) {
         //Initializations ...
@@ -159,7 +158,7 @@ bool board::start() {
 
 // New piece (in the game)
 //
-void board::newPiece() {
+void tetrisGame::newPiece() {
     // Next piece => current
     nextPos_.index_ = (-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex();
     
@@ -173,8 +172,7 @@ void board::newPiece() {
     nextPos_.rotationIndex_ = 0;
     tetraminos_[nextPos_.index_].rotateBack();
 
-    // Notify the display manager
-    //self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
+    nextPieceIndexChanged(nextPieceIndex());
 
     // Can I go on line down ?
     if (!_down(true)) {
@@ -183,9 +181,9 @@ void board::newPiece() {
     }
 }
 
-// Draw the board
+// Draw the tetrisGame
 //
-void board::drawBoard() {
+void tetrisGame::drawtetrisGame() {
     uint16_t left, leftFirst(0), top(0), w, h;
     _changeOrigin(true, leftFirst, top, w, h);
 
@@ -202,7 +200,7 @@ void board::drawBoard() {
 
 // anti-clockwise rotation
 //
-bool board::rotateLeft() {
+bool tetrisGame::rotateLeft() {
 
     // Try to rotate
     uint8_t rotIndex = tetraminos_[nextPos_.index_].rotateLeft();
@@ -223,7 +221,7 @@ bool board::rotateLeft() {
 
 // Move left
 //
-bool board::left(){                    
+bool tetrisGame::left(){                    
     // Test position
     if (_canMove(nextPos_.leftPos_ - 1, nextPos_.topPos_)) {
         // Correct
@@ -238,7 +236,7 @@ bool board::left(){
 
 // Move right
 //
-bool board::right(){
+bool tetrisGame::right(){
     // Test position
     if (_canMove(nextPos_.leftPos_ + 1, nextPos_.topPos_)){
         // Correct
@@ -253,7 +251,7 @@ bool board::right(){
 
 // Go down (as many lines as possible)
 //
-void board::fall() {
+void tetrisGame::fall() {
     uint8_t bottom(_minTopPosition());
     uint8_t delta(nextPos_.topPos_ - bottom);
     nextPos_.topPos_ = bottom;
@@ -265,7 +263,7 @@ void board::fall() {
 
 // The position of the piece has just changed
 //
-void board::piecePosChanged() {
+void tetrisGame::piecePosChanged() {
     // Compute the pos ot the shadow ?
     if (parameters_.shadow_) {
         nextPos_.shadowTopPos_ = _minTopPosition();
@@ -302,7 +300,7 @@ void board::piecePosChanged() {
 
 // Can the piece go down ?
 //
-bool board::_down(bool newPiece) {
+bool tetrisGame::_down(bool newPiece) {
     // Test position
     if (_canMove(nextPos_.leftPos_, nextPos_.topPos_ - 1)) {
         // correct
@@ -320,7 +318,7 @@ bool board::_down(bool newPiece) {
 
 // Can the current piece be at the given position ?
 //
-bool board::_canMove(uint8_t leftPos, uint8_t  topPos) {
+bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
 
@@ -352,7 +350,7 @@ bool board::_canMove(uint8_t leftPos, uint8_t  topPos) {
 
 // Get a piece min.pos.index(vertical value)
 //
-uint8_t board::_minTopPosition() {
+uint8_t tetrisGame::_minTopPosition() {
     uint8_t currentTop(nextPos_.topPos_);
 
     // Try to move one line down
@@ -366,7 +364,7 @@ uint8_t board::_minTopPosition() {
 
 // Clear and remove a completed line
 //
-void board::_clearLine(uint8_t index) {
+void tetrisGame::_clearLine(uint8_t index) {
     if (index >= 0 && index < PLAYFIELD_HEIGHT) {
         // Remove the line from the screen
         for (uint8_t line = index; line < (PLAYFIELD_HEIGHT - 1); line++) {
@@ -384,7 +382,7 @@ void board::_clearLine(uint8_t index) {
 
 // Add a randomly generated dirty line at the bottom of the gameplay
 //
-void board::_addDirtyLine(uint8_t line) {
+void tetrisGame::_addDirtyLine(uint8_t line) {
     uint16_t cubes(rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
     uint16_t sBit(1); // 2 ^ 0
 
@@ -403,7 +401,7 @@ void board::_addDirtyLine(uint8_t line) {
  
 // Put the tetramino at the current position
 //
-void board::_putPiece(uint8_t colour) {
+void tetrisGame::_putPiece(uint8_t colour) {
     uint8_t vertPos((COLOUR_ID_SHADOW == colour) ? nextPos_.shadowTopPos_ : nextPos_.topPos_);
     
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
@@ -423,7 +421,7 @@ void board::_putPiece(uint8_t colour) {
                                                
 // The piece is at the lowest possible level
 //
-void board::_reachLowerPos(uint8_t downRowcount){
+void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     // put it
     _putPiece();
 
@@ -490,8 +488,8 @@ void board::_reachLowerPos(uint8_t downRowcount){
             mult += SCORE_NO_SHADOW;
         }
 
-        // self.eventHandler_.incScore(uint32_t(delta * mult / 100.0))
-        //self.eventHandler_.allLinesCompletedRemoved(completedCount, lines() + completedCount)
+        incScore(uint32_t(delta * mult / 100.0));
+        allLinesCompletedRemoved(completedCount, lines() + completedCount);
     }
 
     // Get a new piece
@@ -501,23 +499,23 @@ void board::_reachLowerPos(uint8_t downRowcount){
 // Change the origin and the coordinate system
 //  and returns width and height of a block
 //
-void board::_changeOrigin(bool inBoard,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
+void tetrisGame::_changeOrigin(bool intetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
     
 }
 
 // Draw a tetramino using the given colour
-//   inBoard : True = > draw in the board, False = > draw "next" piece
+//   intetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
 //
-void board::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inBoard, uint8_t colourID) {
+void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame, uint8_t colourID) {
     // First visible row ID
     int8_t rowFirst(0);
-    if (inBoard) {
+    if (intetrisGame) {
         rowFirst = PLAYFIELD_HEIGHT - 1 - cornerY;
         rowFirst = (rowFirst < 0) ? rowFirst * -1 : 0;
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    _changeOrigin(inBoard, xFirst, y, w, h);
+    _changeOrigin(intetrisGame, xFirst, y, w, h);
 
     uint8_t colour; // Current block 's colour id
 
@@ -536,7 +534,7 @@ void board::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY,
 
 // Display the next piece
 //
-void board::_drawNextPiece(uint8_t pieceIndex) {
+void tetrisGame::_drawNextPiece(uint8_t pieceIndex) {
     // Erase the previous piece
     _eraseBlocks(0, 0, 4, 4, COLOUR_ID_BOARD);
 
