@@ -62,11 +62,16 @@ class pieceStatus{
             shadowTopPos_ = -1;
         }
 
+        uint8_t index(uint8_t val) {
+            valid();
+            return (index_ = val);
+        }
+
         // Valid (or initialized) ?
         bool isValid() {
             return valid_;
         }
-        void valid(bool value) {
+        void valid(bool value = true) {
             valid_ = value;
         }
 

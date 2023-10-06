@@ -178,7 +178,7 @@ class tetrisGame {
         }
 
         // Next piece index
-        uint8_t nextPieceIndex() {
+        int8_t nextPieceIndex() {
             return nextIndex_;
         }
         void setNextPieceIndex(uint8_t index) {
@@ -212,11 +212,17 @@ class tetrisGame {
             return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
         }
 
-        // New piece (in the game)
-        void newPiece();
+        // Verifications
+        bool checkEnvironment() {
+            status_ = STATUS_INIT;
+            return true;
+        }
 
         // Let's play
         bool start();
+
+        // New piece (in the game)
+        void newPiece();
 
         //
         // Mouvements

@@ -160,7 +160,7 @@ bool tetrisGame::start() {
 //
 void tetrisGame::newPiece() {
     // Next piece => current
-    nextPos_.index_ = (-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex();
+    nextPos_.index((-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex());
     
     // Next one
     setNextPieceIndex(_newPieceIndex());
@@ -322,9 +322,12 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
 
+    // Min index visible on desk
+    uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ? PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos : PIECE_HEIGHT - 1;
+    
     // Test all the contained blocks starting from bottom
     uint8_t realX(0), realY(0);
-    for (uint8_t y = PIECE_HEIGHT - 1; y >=0; y--){
+    for (int8_t y = maxY; y >=0; y--){
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             if (COLOUR_ID_BOARD != datas[y * PIECE_WIDTH + x]) {
                 // "real" position of the block 
@@ -332,7 +335,7 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
                 realY = topPos - y;
 
                 // out of the gameplay's limits ?
-                if (realX < 0 || realY < 0 || realX >= PLAYFIELD_WIDTH || realY >= PLAYFIELD_HEIGHT) {
+                if (realX < 0 || realY < 0 || realX >= PLAYFIELD_WIDTH) {
                     return false;
                 }
 
@@ -409,9 +412,9 @@ void tetrisGame::_putPiece(uint8_t colour) {
 
     // Copy all the colored blocks in the gameplay
     uint8_t maxY = (PLAYFIELD_HEIGHT - vertPos >= 1) ? 0 : (vertPos - PLAYFIELD_HEIGHT + 1);
-    for (uint8_t y = maxY; y < PLAYFIELD_HEIGHT; y++) {
-        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
-            bColour = datas[y * PLAYFIELD_WIDTH + x];
+    for (uint8_t y = maxY; y < PIECE_HEIGHT; y++) {
+        for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
+            bColour = datas[y * PIECE_WIDTH + x];
             if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
                 playField_[vertPos - y][x + nextPos_.leftPos_] = ((COLOUR_ID_SHADOW == colour) ? colour : bColour);
             }
@@ -453,7 +456,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     }
 
     // Remove lines in reverse order (max -> min)
-    for (uint8_t line = (completedCount-1); line >=0; line--){
+    for (int8_t line = (completedCount-1); line >=0; line--){
         // Animate
         //self.eventHandler_.lineCompleted(line)
 
@@ -500,7 +503,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //  and returns width and height of a block
 //
 void tetrisGame::_changeOrigin(bool intetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
-    
+    width = height = 1;
 }
 
 // Draw a tetramino using the given colour

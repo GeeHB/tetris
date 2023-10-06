@@ -302,11 +302,13 @@ class board(object):
         # Piece's datas
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
+        # Max index visible on desk
+        maxY = (consts.PIECE_HEIGHT - 1 + consts.PLAYFIELD_HEIGHT - topPos) if (topPos >= consts.PLAYFIELD_HEIGHT) else consts.PIECE_HEIGHT - 1
+
         # Test all the contained blocks starting from bottom
-        # ... to optimize a little ...
-        for y in range(piece.PIECE_HEIGHT-1, -1, -1):
+        for y in range(maxY, -1, -1):
             for x in range(piece.PIECE_WIDTH):
-                if not 0 == datas[y][x]:
+                if not consts.COLOUR_ID_BOARD == datas[y][x]:
                     # "real" position of the block 
                     realX = x + leftPos
                     realY = topPos - y 
