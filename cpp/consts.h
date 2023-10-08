@@ -10,7 +10,7 @@
 //--
 //--	Description:
 //--
-//--			Definition of piece & pieceStatus objects : 
+//--			Definition of piece & pieceStatus objects :
 //--                a tetramino and all the informations for its drawing
 //--
 //---------------------------------------------------------------------------
@@ -30,8 +30,8 @@
 
 // Game status
 //
-#define STATUS_CREATED	0
-#define STATUS_INIT		1
+#define STATUS_CREATED	1
+#define STATUS_INIT		STATUS_CREATED
 #define STATUS_RUNNING	2
 #define STATUS_STOPPED	4
 #define STATUS_CANCELED 8

@@ -213,12 +213,6 @@ class tetrisGame {
             return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
         }
 
-        // Verifications
-        bool checkEnvironment() {
-            status_ = STATUS_INIT;
-            return true;
-        }
-
         // Let's play
         bool start();
 

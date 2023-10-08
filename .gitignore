@@ -3,8 +3,10 @@ __pycache__/
 archives/
 Debug/
 Release/
-essai/
-linux/
+x64/
+.vs/
+bin/
+obj/
 *.high
 casioplot.png
 
