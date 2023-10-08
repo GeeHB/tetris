@@ -122,7 +122,7 @@ void piece::clear() {
 }
 
 #ifdef _DEBUG
-// Affichage en mode texte
+// Output to a console
 //
 void piece::print(uint8_t rotIndex) {
     if (rotIndex < maxRotate_) {

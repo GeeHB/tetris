@@ -303,7 +303,7 @@ class board(object):
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
         # Max index visible on desk
-        maxY = (consts.PIECE_HEIGHT - 1 + consts.PLAYFIELD_HEIGHT - topPos) if (topPos >= consts.PLAYFIELD_HEIGHT) else consts.PIECE_HEIGHT - 1
+        maxY = (piece.PIECE_HEIGHT - 1 + consts.PLAYFIELD_HEIGHT - topPos) if (topPos >= consts.PLAYFIELD_HEIGHT) else piece.PIECE_HEIGHT - 1
 
         # Test all the contained blocks starting from bottom
         for y in range(maxY, -1, -1):

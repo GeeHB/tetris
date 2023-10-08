@@ -2,7 +2,7 @@
 //--
 //--	File	: tetrisGame.h
 //--
-//--	Author	: Jerome Henry-Barnaudiere - GeeHB
+//--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
 //--	Project	: jtetris - cpp version
 //--

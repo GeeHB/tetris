@@ -88,8 +88,8 @@ class pieceStatus{
             rotationIndex_ = other.rotationIndex_;
             shadowTopPos_ = other.shadowTopPos_;
 
+            // done
             valid_ = true;
-
             return *this;
         }
 
@@ -97,7 +97,7 @@ class pieceStatus{
         bool operator == (pieceStatus& right){
             return (index_ == right.index_ && leftPos_ == right.leftPos_ && topPos_ == right.topPos_ && rotationIndex_ == right.rotationIndex_);
         }
-
+        // ... or not ?
         bool operator != (pieceStatus& right) {
             return (index_ != right.index_ || leftPos_ != right.leftPos_ || topPos_ != right.topPos_ || rotationIndex_ != right.rotationIndex_);
         }
@@ -109,9 +109,8 @@ class pieceStatus{
         uint8_t index_;             // Index of the piece (-1 = don't draw)
         uint8_t leftPos_;           // Initial pos.
         uint8_t topPos_;
-
         uint8_t rotationIndex_;
-        uint8_t shadowTopPos_;      // yPos of shadow (-1 = no shadow)
+        int8_t shadowTopPos_;       // yPos of shadow (-1 = no shadow)
 };
 
 //---------------------------------------------------------------------------
