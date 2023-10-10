@@ -127,7 +127,7 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     score_ = 0;
     lines_ = 0;
     level_ = parameters_.startLevel_;
-    setNextPieceIndex(-1);
+    nextIndex_ = -1;
 
     // Initialization of tetraminos(no rotation)
     for (uint8_t index = 0; index < TETRAMINOS_COUNT; index++) {
@@ -170,7 +170,7 @@ bool tetrisGame::start() {
     status_ = STATUS_RUNNING;
 
     // First piece
-    newPiece();
+    _newPiece();
     updateDisplay();
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
@@ -193,7 +193,7 @@ bool tetrisGame::start() {
         }
 
         // One line down ...
-        down();
+        _down();
 
         // Accelerate ?
         seqCount += 1;
@@ -203,8 +203,11 @@ bool tetrisGame::start() {
 
             // Change level (if necessary) & accelerate
             if (rLevel >= level_){
-                levelChanged(incLevel());
+                level_ = rLevel;
                 seqDuration = _updateSpeed(seqDuration, level_, 1);
+
+                _drawLevel();
+                updateDisplay();
             }
         }
     }
@@ -214,51 +217,13 @@ bool tetrisGame::start() {
     return true;
 }
 
-// New piece (in the game)
 //
-void tetrisGame::newPiece() {
-    // Next piece => current
-    nextPos_.index((-1 == nextPieceIndex()) ? _newPieceIndex() : nextPieceIndex());
-
-    // Next one
-    setNextPieceIndex(_newPieceIndex());
-
-    // The piece is a the top of the game play, centered horizontally
-    nextPos_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2);
-    nextPos_.topPos_ = PLAYFIELD_HEIGHT + tetraminos_[nextPos_.index_].verticalOffset();
-    nextPos_.shadowTopPos_ = -1;
-    nextPos_.rotationIndex_ = 0;
-    tetraminos_[nextPos_.index_].rotateBack();
-
-    nextPieceIndexChanged(nextPieceIndex());
-
-    // Can I go on line down ?
-    if (!_down(true)) {
-        // No = > the game is over
-        end(false);
-    }
-}
-
-// Draw the tetrisGame
+// "Private" methods
 //
-void tetrisGame::drawtetrisGame() {
-    uint16_t left, leftFirst(0), top(0), w, h;
-    _changeOrigin(true, leftFirst, top, w, h);
-
-    // Draw all the blocks (coloured or not)
-    for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
-        left = leftFirst;
-        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
-            _drawSingleBlock(left, top, w, h, playField_[y][x]);
-            left += w;
-            top -= h;
-        }
-    }
-}
 
 // anti-clockwise rotation
 //
-bool tetrisGame::rotateLeft() {
+bool tetrisGame::_rotateLeft() {
 
     // Try to rotate
     uint8_t rotIndex = tetraminos_[nextPos_.index_].rotateLeft();
@@ -268,7 +233,7 @@ bool tetrisGame::rotateLeft() {
         nextPos_.rotationIndex_ = rotIndex;
 
         // Apply rotation
-        piecePosChanged();
+        _piecePosChanged();
         return true;
      }
 
@@ -279,12 +244,12 @@ bool tetrisGame::rotateLeft() {
 
 // Move left
 //
-bool tetrisGame::left(){
+bool tetrisGame::_left(){
     // Test position
     if (_canMove(nextPos_.leftPos_ - 1, nextPos_.topPos_)) {
         // Correct
         nextPos_.leftPos_ -= 1;
-        piecePosChanged();
+        _piecePosChanged();
         return true;
     }
 
@@ -294,12 +259,12 @@ bool tetrisGame::left(){
 
 // Move right
 //
-bool tetrisGame::right(){
+bool tetrisGame::_right(){
     // Test position
     if (_canMove(nextPos_.leftPos_ + 1, nextPos_.topPos_)){
         // Correct
         nextPos_.leftPos_ += 1;
-        piecePosChanged();
+        _piecePosChanged();
         return true;
     }
 
@@ -309,19 +274,19 @@ bool tetrisGame::right(){
 
 // Go down (as many lines as possible)
 //
-void tetrisGame::fall() {
+void tetrisGame::_fall() {
     uint8_t bottom(_minTopPosition());
     uint8_t delta(nextPos_.topPos_ - bottom);
     nextPos_.topPos_ = bottom;
 
     // updates ...
-    piecePosChanged();
+    _piecePosChanged();
     _reachLowerPos(delta);
 }
 
 // The position of the piece has just changed
 //
-void tetrisGame::piecePosChanged() {
+void tetrisGame::_piecePosChanged() {
     // Compute the pos ot the shadow ?
     if (parameters_.shadow_) {
         nextPos_.shadowTopPos_ = _minTopPosition();
@@ -331,30 +296,26 @@ void tetrisGame::piecePosChanged() {
     if (!currentPos_.isValid() || currentPos_ != nextPos_) {
         // Erase the tetramino(and maybe it's shadow)
         if (currentPos_.isValid()) {
-            _drawSinglePiece(pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.topPos_, true, COLOUR_ID_BOARD);
+            _drawSinglePiece(_pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.topPos_, true, COLOUR_ID_BOARD);
             if (-1 != currentPos_.shadowTopPos_) {
                 // then the shadow
-                _drawSinglePiece(pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.shadowTopPos_, true, COLOUR_ID_BOARD);
+                _drawSinglePiece(_pieceDatas(currentPos_.index_, currentPos_.rotationIndex_), currentPos_.leftPos_, currentPos_.shadowTopPos_, true, COLOUR_ID_BOARD);
             }
         }
 
         // redraw
         if (-1 != nextPos_.shadowTopPos_) {
             // first : the shadow
-            _drawSinglePiece(pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
+            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
 
             // and then the tetramino(can recover the shadow !!!!)
-            _drawSinglePiece(pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
+            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
 
             updateDisplay();
             currentPos_ = nextPos_;
         }
     }
 }
-
-//
-// "Private" methods
-//
 
 // Change the game speed
 //
@@ -378,19 +339,19 @@ void tetrisGame::_handleGameKeys() {
 				end();
 				break;
 			case KEY_RIGHT:
-                right();
+                _right();
 				break;
 			case KEY_LEFT:
-				left();
+				_left();
 				break;
 			case KEY_ROTATE_LEFT:
-				rotateLeft();
+				_rotateLeft();
 				break;
 			case KEY_DOWN:
-				down();
+				_down();
 				break;
             case KEY_FALL:
-                fall();
+                _fall();
                 break;
 			default:
 				break;
@@ -405,7 +366,7 @@ bool tetrisGame::_down(bool newPiece) {
     if (_canMove(nextPos_.leftPos_, nextPos_.topPos_ - 1)) {
         // correct
         nextPos_.topPos_ -= 1;
-        piecePosChanged();
+        _piecePosChanged();
         return true;
     }
 
@@ -463,6 +424,34 @@ uint8_t tetrisGame::_minTopPosition() {
 
     // current pos.is invalid = > go up one line
     return currentTop + 1;
+}
+
+// New piece (in the game)
+//
+void tetrisGame::_newPiece() {
+    // Next piece => current
+    nextPos_.index((-1 == nextIndex_) ? _newPieceIndex() : nextIndex_);
+
+    // Next one
+    nextIndex_ = _newPieceIndex();
+
+    // The piece is a the top of the game play, centered horizontally
+    nextPos_.leftPos_ = int((PLAYFIELD_WIDTH - PIECE_WIDTH) / 2);
+    nextPos_.topPos_ = PLAYFIELD_HEIGHT + tetraminos_[nextPos_.index_].verticalOffset();
+    nextPos_.shadowTopPos_ = -1;
+    nextPos_.rotationIndex_ = 0;
+    tetraminos_[nextPos_.index_].rotateBack();
+
+    // Next piece
+    _drawNextPiece(nextIndex_);
+
+    // Can I go on line down ?
+    if (!_down(true)) {
+        // No = > the game is over
+        end(false);
+    }
+
+    updateDisplay();
 }
 
 // Clear and remove a completed line
@@ -592,12 +581,20 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
             mult += SCORE_NO_SHADOW;
         }
 
-        incScore(uint32_t(delta * mult / 100.0));
-        allLinesCompletedRemoved(completedCount, lines() + completedCount);
+        // Updates
+        score_+=uint32_t(delta * mult / 100.0);
+        lines_+=completedCount;
+
+        _drawScore();
+        _drawLines();
+
+        _drawTetrisGame();
+
+        updateDisplay();
     }
 
     // Get a new piece
-    newPiece();
+    _newPiece();
 }
 
 // Change the origin and the coordinate system
@@ -654,8 +651,25 @@ void tetrisGame::_drawNextPiece(uint8_t pieceIndex) {
 
     // ... and then draw the new one
     if (-1 != pieceIndex) {
-        uint8_t* datas = nextPieceDatas();
+        uint8_t* datas = _nextPieceDatas();
         _drawSinglePiece(datas, 0, 0, false);
+    }
+}
+
+// Draw the tetrisGame
+//
+void tetrisGame::_drawTetrisGame() {
+    uint16_t left, leftFirst(0), top(0), w, h;
+    _changeOrigin(true, leftFirst, top, w, h);
+
+    // Draw all the blocks (coloured or not)
+    for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
+        left = leftFirst;
+        for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
+            _drawSingleBlock(left, top, w, h, playField_[y][x]);
+            left += w;
+            top -= h;
+        }
     }
 }
 
