@@ -17,6 +17,9 @@
 #include "tetrisGame.h"
 
 #include <cmath>
+#include <unistd.h>
+//#include <keyboard.h>
+#include <stdio.h>
 #include <time.h>
 
 #ifdef _DEBUG
@@ -41,7 +44,7 @@ tetrisGame::tetrisGame() {
     score_ = lines_ = 0;
     level_ = 1;
 
-    _emptytetrisGame();
+    _emptyTetrisGame();
 
     // Initialize rand num. generator
     srand((int)time(NULL));
@@ -50,37 +53,52 @@ tetrisGame::tetrisGame() {
     //
 
     // S
-    tetraminos_[0].addPiece(S_0);
-    tetraminos_[0].addPiece(S_1);
+    tetraminos_[0].addRotation(S_0);
+    tetraminos_[0].addRotation(S_1);
 
     // Z
-    tetraminos_[1].addPiece(Z_0);
-    tetraminos_[1].addPiece(Z_1);
+    tetraminos_[1].addRotation(Z_0);
+    tetraminos_[1].addRotation(Z_1);
 
     // I
-    tetraminos_[2].addPiece(I_0);
-    tetraminos_[2].addPiece(I_1);
+    tetraminos_[2].addRotation(I_0);
+    tetraminos_[2].addRotation(I_1);
 
     // O
-    tetraminos_[3].addPiece(O_0);
+    tetraminos_[3].addRotation(O_0);
 
     // L
-    tetraminos_[4].addPiece(L_0);
-    tetraminos_[4].addPiece(L_1);
-    tetraminos_[4].addPiece(L_2);
-    tetraminos_[4].addPiece(L_3);
+    tetraminos_[4].addRotation(L_0);
+    tetraminos_[4].addRotation(L_1);
+    tetraminos_[4].addRotation(L_2);
+    tetraminos_[4].addRotation(L_3);
 
     // J
-    tetraminos_[5].addPiece(J_0);
-    tetraminos_[5].addPiece(J_1);
-    tetraminos_[5].addPiece(J_2);
-    tetraminos_[5].addPiece(J_3);
+    tetraminos_[5].addRotation(J_0);
+    tetraminos_[5].addRotation(J_1);
+    tetraminos_[5].addRotation(J_2);
+    tetraminos_[5].addRotation(J_3);
 
     // T
-    tetraminos_[6].addPiece(T_0);
-    tetraminos_[6].addPiece(T_1);
-    tetraminos_[6].addPiece(T_2);
-    tetraminos_[6].addPiece(T_3);
+    tetraminos_[6].addRotation(T_0);
+    tetraminos_[6].addRotation(T_1);
+    tetraminos_[6].addRotation(T_2);
+    tetraminos_[6].addRotation(T_3);
+
+    // Colours
+    //
+    colours_[COLOUR_ID_BOARD] = COLOUR_WHITE;
+    colours_[1] = COLOUR_RED;           // Pieces (1 to 7)
+    colours_[2] = COLOUR_GREEN;
+    colours_[3] = COLOUR_YELLOW;
+    colours_[4] = COLOUR_BLUE;
+    colours_[5] = COLOUR_PURPLE;
+    colours_[6] = COLOUR_CYAN;
+    colours_[7] = COLOUR_ORANGE;
+    colours_[COLOUR_ID_SHADOW] = COLOUR_LTGREY;
+    colours_[COLOUR_ID_TEXT] = COLOUR_BLACK;
+    colours_[COLOUR_ID_BORDER] = COLOUR_DKGREY;
+    colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
 
     // Just created
     status_ = STATUS_CREATED;
@@ -117,7 +135,7 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     }
 
     // Empty the playset
-    _emptytetrisGame();
+    _emptyTetrisGame();
 
     // Add dirty lines ...
     //
@@ -133,27 +151,67 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     for (uint8_t index = 0; index < parameters_.dirtyLines_; index++) {
         _addDirtyLine(index);
     }
+
+    // Casio specific dims.
+    display_.setVert(parameters_.vertical_);
 }
 
 // Let's play
 //
 bool tetrisGame::start() {
     // Check the object state
-    if (STATUS_INIT == status_ || STATUS_STOPPED == status_) {
-        //Initializations ...
-        currentPos_.valid(false);
-
-        // Drawings
-        reDraw();
-
-        status_ = STATUS_RUNNING;
-        newPiece(); // the first piece
-
-        updateDisplay();    // Redundant ???
-        return true;
+    if (STATUS_INIT != status_ && STATUS_STOPPED != status_) {
+        return false;
     }
 
-    return false;
+    //Initializations ...
+    currentPos_.valid(false);
+    reDraw(false);
+    status_ = STATUS_RUNNING;
+
+    // First piece
+    newPiece();
+    updateDisplay();
+
+    // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
+    uint32_t seqCount(0);
+    long diff, seqDuration(_updateSpeed(INITIAL_SPEED * 1000000, parameters_.startLevel_, parameters_.startLevel_ - 1));
+    struct timespec ts, now;
+
+    // Game main loop
+    while (isRunning()){
+        diff = 0;
+        ts = now;
+
+        // During this short period, the piece can be moved or rotated
+        while (isRunning() && diff < seqDuration){
+            _handleGameKeys();
+            usleep(SLEEP_DURATION);
+
+            clock_gettime(CLOCK_MONOTONIC, &now);
+            diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);
+        }
+
+        // One line down ...
+        down();
+
+        // Accelerate ?
+        seqCount += 1;
+        if (0 == (seqCount % MOVES_UPDATE_LEVEL)){
+            // Real level (based on pieces movements)
+            uint8_t rLevel = (uint8_t)floor(seqCount / MOVES_UPDATE_LEVEL) + 1;
+
+            // Change level (if necessary) & accelerate
+            if (rLevel >= level_){
+                levelChanged(incLevel());
+                seqDuration = _updateSpeed(seqDuration, level_, 1);
+            }
+        }
+    }
+
+    // Game is Over
+
+    return true;
 }
 
 // New piece (in the game)
@@ -297,6 +355,48 @@ void tetrisGame::piecePosChanged() {
 //
 // "Private" methods
 //
+
+// Change the game speed
+//
+long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel){
+        if (level >= MAX_LEVEL_ACCELERATION){
+            // Already at the max speed
+            return currentDuration;
+        }
+
+        // duration = currentDuration * acc ^ incLevel
+        return currentDuration * ((incLevel == 1)? ACCELERATION_STEP : powl(ACCELERATION_STEP, incLevel));
+}
+
+// Handle keyboard events
+//
+void tetrisGame::_handleGameKeys() {
+	char inChar(getchar());
+	if(inChar != EOF) {
+		switch(inChar) {
+			case KEY_QUIT:
+				end();
+				break;
+			case KEY_RIGHT:
+                right();
+				break;
+			case KEY_LEFT:
+				left();
+				break;
+			case KEY_ROTATE_LEFT:
+				rotateLeft();
+				break;
+			case KEY_DOWN:
+				down();
+				break;
+            case KEY_FALL:
+                fall();
+                break;
+			default:
+				break;
+		}
+	}
+}
 
 // Can the piece go down ?
 //
@@ -501,10 +601,20 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 }
 
 // Change the origin and the coordinate system
-//  and returns width and height of a block
+//  returns width and height of a block
 //
-void tetrisGame::_changeOrigin(bool intetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
-    width = height = 1;
+void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
+    if (inTetrisGame){
+        x = display_.playfield_left_ + x * display_.boxWidth_;
+        y = display_.playfield_top_ + (PLAYFIELD_HEIGHT - 1 - y) * display_.boxWidth_;
+        width = height = display_.boxWidth_;
+    }
+    else{
+        // Draw next piece
+        x = display_.NP_left_ + CASIO_INFO_GAP;
+        y = display_.NP_top_ + CASIO_INFO_GAP;
+        width = height = display_.NP_boxWidth_;
+    }
 }
 
 // Draw a tetramino using the given colour

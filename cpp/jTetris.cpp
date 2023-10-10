@@ -17,25 +17,21 @@
 #include <iostream>
 using namespace std;
 
-#include "../tetrisGame.h"
-
-forward parametersScreen;
+#include "splashScreen.h"
+#include "tetrisGame.h"
 
 int main()
 {
     // Get parameters
-    //
     tetrisParameters params;
-    parametersScreen splash(params);
-    if (false == splash.choose()){
+    splashScreen splash;
+    if (false == splash.choose(params)){
         // Canceled
         return 1;
     }
 
 	// Launch the game
-	tetrisGame game;
-	game.setParameters(params);
-
+	tetrisGame game(params);
 	game.start();
     game.end();
 

@@ -106,7 +106,7 @@ class pieceStatus{
     //
     public:
         bool valid_;
-        uint8_t index_;             // Index of the piece (-1 = don't draw)
+        int8_t index_;              // Index of the piece (-1 = don't draw)
         uint8_t leftPos_;           // Initial pos.
         uint8_t topPos_;
         uint8_t rotationIndex_;
@@ -143,7 +143,7 @@ class piece{
 
         // Add from a template
         //
-        bool addPiece(const char* tempPiece);
+        bool addRotation(const char* tempPiece);
 
         // Clear the current piece
         //
@@ -187,11 +187,8 @@ class piece{
 
         // Trigonometric rotation
         uint8_t rotateLeft() {
-            // Rotate
-            rotate_ += 1;
-
             // 360° ?
-            if (rotate_ >= maxRotate_){
+            if ((++rotate_) >= maxRotate_){
                 rotate_ = 0;
             }
 
@@ -219,7 +216,7 @@ class piece{
         }
 
         // Add a rotation to the current piece
-        bool _addPiece(uint8_t* tempPiece);
+        bool _addRotation(uint8_t* tempPiece);
 
         // Is the "line" empty ?
         bool _isLineEmpty(uint8_t pieceIndex, uint8_t lineIndex);
@@ -227,7 +224,7 @@ class piece{
     // Members
     //
     protected:
-        uint8_t** points_;      // Matrix of the piece whith all possible rotations
+        uint8_t** points_;      // Matrix of the piece whith all possible rotations (each rotation is a line)
         uint8_t rotate_;        // rotation index (ie. index of the piece to draw)
         uint8_t maxRotate_;     // max. rotation(s) allowed for the piece ( = 360°)
         uint8_t maxAllocated_;  // Size of points_ in "rotation" count

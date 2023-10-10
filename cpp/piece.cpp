@@ -52,7 +52,7 @@ piece::piece(piece& other) {
 
 // Add a new piece from a template
 //
-bool piece::addPiece(const char* tempPiece) {
+bool piece::addRotation(const char* tempPiece) {
     if (nullptr == tempPiece) {
         return false;
     }
@@ -86,7 +86,7 @@ bool piece::addPiece(const char* tempPiece) {
     }
 
     // Added ?
-    if (false == _addPiece(newRotation)) {
+    if (false == _addRotation(newRotation)) {
         free(newRotation);
         return false;
     }
@@ -139,7 +139,7 @@ void piece::print(uint8_t rotIndex) {
 
 // Add a rotation to the current piece
 //
-bool piece::_addPiece(uint8_t* tempPiece) {
+bool piece::_addRotation(uint8_t* tempPiece) {
     if (nullptr == tempPiece) {
         return false;
     }

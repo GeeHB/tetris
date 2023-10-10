@@ -10,12 +10,7 @@
 //--
 //--	Description:
 //--
-//--	    Definition of :
-//--
-//--            - tetrisGame
-//--
-//--            - tetrisParameters
-//--
+//--	    Definition of tetrisGame
 //---------------------------------------------------------------------------
 
 #ifndef __J_TETRIS_GAME_h__
@@ -24,40 +19,8 @@
 #include "consts.h"
 #include "piece.h"
 #include "templates.h"
+#include "casioScreen.h"
 
-//---------------------------------------------------------------------------
-//--
-//-- tetrisParameters object
-//--
-//--    All the game's parameters
-//--
-//---------------------------------------------------------------------------
-
-class tetrisParameters {
-    public:
-        // Construction
-        //
-        tetrisParameters() {
-            // Set default parameters
-            startLevel_ = 0;
-            dirtyLines_ = 0;
-            shadow_ = false;
-        }
-
-        // recopy
-        void copy(tetrisParameters& other) {
-            startLevel_ = other.startLevel_;
-            dirtyLines_ = other.dirtyLines_;
-            shadow_ = other.shadow_;
-        }
-
-    // Members
-    //
-    public:
-        uint8_t startLevel_;
-        uint8_t dirtyLines_;
-        bool shadow_;
-};
 
 //---------------------------------------------------------------------------
 //--
@@ -73,16 +36,24 @@ class tetrisGame {
     //
     public:
 
-        // Constrcution
+        // Constructions
         tetrisGame();
+        tetrisGame(tetrisParameters& params)
+        :tetrisGame()
+        {
+            setParameters(params);
+        }
 
         // Destruction
         virtual ~tetrisGame() {
 
         }
 
-        // Finish (end of displays)
-        void clear(){}
+        // Game's parameters
+        void setParameters(tetrisParameters & params);
+
+        // Start the game
+        bool start();
 
 #ifdef _DEBUG
         // Test ...
@@ -139,7 +110,7 @@ class tetrisGame {
         void updateDisplay(){}
 
         // Draw all
-        void reDraw() {
+        void reDraw(bool refresh = true) {
             drawBackGround();
             drawtetrisGame();
             drawScore();
@@ -152,6 +123,10 @@ class tetrisGame {
 
         // Game level
         uint8_t level() {
+            return level_;
+        }
+        uint8_t  incLevel(){
+            level_ += 1;
             return level_;
         }
 
@@ -198,9 +173,6 @@ class tetrisGame {
             return lines_;
         }
 
-        // Game's parameters
-        void setParameters(tetrisParameters & params);
-
         //
         // Pieces management
         //
@@ -212,9 +184,6 @@ class tetrisGame {
         uint8_t* pieceDatas(uint8_t index, uint8_t  rotIndex) {
             return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
         }
-
-        // Let's play
-        bool start();
 
         // New piece (in the game)
         void newPiece();
@@ -253,9 +222,18 @@ class tetrisGame {
     protected:
 
         // The tetrisGame is empty ...
-        void _emptytetrisGame() {
+        void _emptyTetrisGame() {
             memset(playField_, COLOUR_ID_BOARD, PLAYFIELD_HEIGHT * PLAYFIELD_WIDTH);
         }
+
+        // Change the game speed
+        long _updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel = 1);
+
+       // Change origin for drawing
+        void _changeOrigin(bool inTetrisGame, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
+
+        // Handle keyboard events
+        void _handleGameKeys();
 
         // Get a new index for the next piece
         uint8_t _newPieceIndex() {
@@ -283,9 +261,6 @@ class tetrisGame {
         // The piece is at the lowest possible level
         void _reachLowerPos(uint8_t downRowcount = 0);
 
-        // Change origin for drawing
-        void _changeOrigin(bool intetrisGame, uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height);
-
         // Drawings
         //
 
@@ -310,7 +285,6 @@ class tetrisGame {
         // Erase a tetramino
         void _eraseBlocks(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){}
 
-
     // Members
     //
     protected:
@@ -322,8 +296,12 @@ class tetrisGame {
 
         tetrisParameters parameters_;
 
+        uint32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
+
+        casioScreen display_;
+
         // Piece and next one
-        int8_t nextIndex_ = -1;
+        int8_t nextIndex_;  // -1 = None
         pieceStatus nextPos_, currentPos_;
 
         // Indicators

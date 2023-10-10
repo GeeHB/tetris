@@ -1,0 +1,29 @@
+# depslib dependency file v1.0
+1696767683 source:/home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/piece.cpp
+	"piece.h"
+	<iostream>
+
+1696843168 /home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/piece.h
+	"consts.h"
+	<malloc.h>
+
+1696930164 /home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/consts.h
+	<cstdint>
+	<cstring>
+	<stdio.h>
+	<stdlib.h>
+
+1696767751 source:/home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/linux/jtetris.cpp
+	<iostream>
+	<stdio.h>
+	"../piece.h"
+	"../templates.h"
+	"../tetrisGame.h"
+
+1696515557 /home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/templates.h
+
+1696929257 /home/jhb/Nextcloud/personnel/JHB/dev/tetris/cpp/tetrisGame.h
+	"consts.h"
+	"piece.h"
+	"templates.h"
+

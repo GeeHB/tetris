@@ -17,8 +17,8 @@ int main()
 	piece mp;
 
 	// Ajout des rotations ...
-	mp.addPiece(I_0);
-	mp.addPiece(I_1);
+	mp.addRotation(I_0);
+	mp.addRotation(I_1);
 
 #ifdef _DEBUG
 	mp.print(0);
@@ -42,7 +42,6 @@ int main()
 
     myBoard.fall();
 
-    myBoard.end();
 
 #ifdef _DEBUG
 	myBoard.print();
