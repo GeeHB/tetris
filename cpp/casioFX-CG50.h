@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: casioScreen.h
+//--	File	: casioFX-CG50.h
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -10,12 +10,12 @@
 //--
 //--	Description:
 //--
-//--			Definition of casioScreen object and consts for casio fx-CG50
+//--			Definition of casioFXCG50 object and consts for casio fx-CG50
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_h__
-#define __J_TETRIS_CASIO_h__    1
+#ifndef __J_TETRIS_CASIO_FXCG50_h__
+#define __J_TETRIS_CASIO_FXCG50_h__    1
 
 #include "consts.h"
 
@@ -52,19 +52,19 @@
 
 //---------------------------------------------------------------------------
 //--
-//-- casioScreen object
+//-- casioFX-CG50 object
 //--
-//--    coordinates, dimensionss for the casio fx-CG50 calculator
+//--    coordinates, dimensions for the casio fx-CG50 calculator
 //--
 //---------------------------------------------------------------------------
 
-class casioScreen{
+class casioFXCG50{
 
     // Public methods
     //
     public:
         // Construction
-        casioScreen(){}
+        casioFXCG50(){}
 
         // Vertical ?
         void setVert(bool vert = true){
@@ -110,6 +110,6 @@ class casioScreen{
         uint16_t    NP_width_;
 };
 
-#endif // __J_TETRIS_CASIO_h__
+#endif // __J_TETRIS_CASIO_FXCG50_h__
 
 // EOF

@@ -19,7 +19,7 @@
 #include "consts.h"
 #include "piece.h"
 #include "templates.h"
-#include "casioScreen.h"
+#include "casioFX-CG50.h"
 
 
 //---------------------------------------------------------------------------
@@ -221,7 +221,7 @@ class tetrisGame {
 
         uint32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
 
-        casioScreen display_;
+        casioFXCG50 casioParams_;
 
         // Piece and next one
         int8_t nextIndex_;  // -1 = None

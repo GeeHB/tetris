@@ -152,8 +152,8 @@ void tetrisGame::setParameters(tetrisParameters& params) {
         _addDirtyLine(index);
     }
 
-    // Casio specific dims.
-    display_.setVert(parameters_.vertical_);
+    // Casio specific datas.
+    casioParams_.setVert(parameters_.vertical_);
 }
 
 // Let's play
@@ -602,15 +602,15 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //
 void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
     if (inTetrisGame){
-        x = display_.playfield_left_ + x * display_.boxWidth_;
-        y = display_.playfield_top_ + (PLAYFIELD_HEIGHT - 1 - y) * display_.boxWidth_;
-        width = height = display_.boxWidth_;
+        x = casioParams_.playfield_left_ + x * casioParams_.boxWidth_;
+        y = casioParams_.playfield_top_ + (PLAYFIELD_HEIGHT - 1 - y) * casioParams_.boxWidth_;
+        width = height = casioParams_.boxWidth_;
     }
     else{
         // Draw next piece
-        x = display_.NP_left_ + CASIO_INFO_GAP;
-        y = display_.NP_top_ + CASIO_INFO_GAP;
-        width = height = display_.NP_boxWidth_;
+        x = casioParams_.NP_left_ + CASIO_INFO_GAP;
+        y = casioParams_.NP_top_ + CASIO_INFO_GAP;
+        width = height = casioParams_.NP_boxWidth_;
     }
 }
 

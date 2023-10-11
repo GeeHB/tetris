@@ -33,7 +33,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../casioScreen.h" />
+		<Unit filename="../casioFX-CG50.h" />
 		<Unit filename="../consts.h" />
 		<Unit filename="../jTetris.cpp" />
 		<Unit filename="../piece.cpp" />
@@ -42,7 +42,6 @@
 		<Unit filename="../templates.h" />
 		<Unit filename="../tetrisGame.cpp" />
 		<Unit filename="../tetrisGame.h" />
-		<Unit filename="jtetris.cpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
