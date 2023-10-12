@@ -333,29 +333,37 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 //
 void tetrisGame::_handleGameKeys() {
 	char inChar(getchar());
+
 	if(inChar != EOF) {
-		switch(inChar) {
-			case KEY_QUIT:
-				end();
-				break;
-			case KEY_RIGHT:
-                _right();
-				break;
-			case KEY_LEFT:
-				_left();
-				break;
-			case KEY_ROTATE_LEFT:
-				_rotateLeft();
-				break;
-			case KEY_DOWN:
-				_down();
-				break;
-            case KEY_FALL:
-                _fall();
-                break;
-			default:
-				break;
-		}
+        if (casioParams_.keyQuit_ == inChar){
+            end();
+            return;
+        }
+
+        if (casioParams_.keyLeft_ == inChar){
+            _left();
+            return;
+        }
+
+        if (casioParams_.keyRight_ == inChar){
+            _right();
+            return;
+        }
+
+        if (casioParams_.keyRotate_ == inChar){
+            _rotateLeft();
+            return;
+        }
+
+        if (casioParams_.keyDown_ == inChar){
+            _down();
+            return;
+        }
+
+        if (casioParams_.keyFall_ == inChar){
+            _fall();
+            return;
+        }
 	}
 }
 
@@ -669,6 +677,37 @@ void tetrisGame::_drawTetrisGame() {
             _drawSingleBlock(left, top, w, h, playField_[y][x]);
             left += w;
             top -= h;
+        }
+    }
+}
+
+// Draw a single coloured rectangke
+//
+//   x,y : top left starting point
+// width, height : dimensions
+//   borderColour : Colour of the border in RGB format or -1 (if no border)
+//   fillColour : Filling colour in RGB format or -1 (if empty)
+//
+void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour, int16_t borderColour){
+    // A border ?
+    if (-1 != borderColour){
+        for (uint16_t px=0 ; px < width; px++){
+            set_pixel(x + px, y, borderColour);
+            set_pixel(x + px, y + height - 1, borderColour);
+        }
+
+        for (uint16_t py=0; py < height-2; py++){
+            set_pixel(x, y + py + 1, borderColour);
+            set_pixel(x + width - 1, y + py + 1, borderColour);
+        }
+    }
+
+    // Filling ?
+    if (-1 != fillColour){
+        for (uint16_t px=0; px < width - 1; px++){
+            for (uint16_t py =0; py < height - 1; py++){
+                set_pixel(x + px, y + py, fillColour);
+            }
         }
     }
 }

@@ -28,7 +28,7 @@
 #define PIECE_WIDTH     4
 #define PIECE_HEIGHT    PIECE_WIDTH
 
-// size in bytes
+// Tetramino size in bytes
 #define PIECE_SIZE      (PIECE_WIDTH * PIECE_HEIGHT)
 
 // Allocation step
@@ -51,8 +51,7 @@ class pieceStatus{
     //
     public:
 
-        // Constructors
-        //
+        // Constructor
         pieceStatus(){
             // Use default values
             valid_ = false;

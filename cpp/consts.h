@@ -17,10 +17,22 @@
 #ifndef __J_TETRIS_CONSTS_h__
 #define __J_TETRIS_CONSTS_h__    1
 
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplucplus
+
+//#define DEST_CASIO_FXCG50        1   // Compile for calculator
+
 #include <cstdint> // <stdint.h>
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef DEST_CASIO_FXCG50
+// Specific includes for calculators
+#include <gint/display.h>
+#include <gint/keyboard.h>
+#endif // #ifdef DEST_CASIO_FXCG50
 
 // Playfield's dimensions (in box unit)
 //
@@ -29,11 +41,13 @@
 
 // Game status
 //
-#define STATUS_CREATED	1
-#define STATUS_INIT		STATUS_CREATED
-#define STATUS_RUNNING	2
-#define STATUS_STOPPED	4
-#define STATUS_CANCELED 8
+enum{
+    STATUS_CREATED	 = 1,
+    STATUS_INIT		 = STATUS_CREATED,
+    STATUS_RUNNING	 = 2,
+    STATUS_STOPPED	 = 4,
+    STATUS_CANCELED  = 8
+};
 
 // Scores valorisation (in %)
 //
@@ -53,59 +67,73 @@
 //
 // Colour IDs
 //
-#define COLOUR_ID_BOARD     0
+enum{
+    COLOUR_ID_BOARD     = 0,
+    // 1 -> 7 : Pieces colours (nCurses ID)
+    COLOUR_ID_SHADOW    = 8,
+    COLOUR_ID_TEXT      = 9,
+    COLOUR_ID_BORDER    = 10,
+    COLOUR_ID_BKGRND    = 11,
+    //#define COLOUR_ID_ANIMATE   12     // animation When line if full
+    LAST_COLOUR_ID		= COLOUR_ID_BKGRND,
+    COLOUR_ID_NONE
+};
 
-// 1 -> 7 : Pieces colours (nCurses ID)
-#define COLOUR_ID_SHADOW    8
-#define COLOUR_ID_TEXT      9
-#define COLOUR_ID_BORDER    10
-#define COLOUR_ID_BKGRND    11
-//#define COLOUR_ID_ANIMATE   12     // animation When line if full
-
-#define LAST_COLOUR_ID		COLOUR_ID_BKGRND
-
-#define COLOUR_ID_NONE		(LAST_COLOUR_ID +1)		// This is not a colour !!!
 
 // A few basic colours
 //
 
-#ifndef RGB
-#define RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
-#define LOBYTE(w)       ((uint8_t)(w))
-#define GetRValue(rgb)  (LOBYTE(rgb))
-#define GetGValue(rgb)  (LOBYTE(((uint16_t)(rgb)) >> 8))
-#define GetBValue(rgb)  (LOBYTE((rgb)>>16))
-#endif // RGB
+#ifndef C_RGB
+// 24 bits RGB
+#define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
+#endif // C_RGB
 
-#define COLOUR_BLACK   RGB(0, 0, 0)
-#define COLOUR_WHITE   RGB(255, 255, 255)
-#define COLOUR_RED     RGB(255, 0, 0)
-#define COLOUR_GREEN   RGB(0, 255, 0)
-#define COLOUR_YELLOW  RGB(255, 255, 0)
-#define COLOUR_BLUE    RGB(0, 0, 255)
-#define COLOUR_PURPLE  RGB(255, 0, 255)
-#define COLOUR_CYAN    RGB(0, 255, 255)
-#define COLOUR_ORANGE  RGB(255, 128, 0)
+enum{
+    COLOUR_BLACK   = C_RGB(0, 0, 0),
+    COLOUR_WHITE   = C_RGB(255, 255, 255),
+    COLOUR_RED     = C_RGB(255, 0, 0),
+    COLOUR_GREEN   = C_RGB(0, 255, 0),
+    COLOUR_YELLOW  = C_RGB(255, 255, 0),
+    COLOUR_BLUE    = C_RGB(0, 0, 255),
+    COLOUR_PURPLE  = C_RGB(255, 0, 255),
+    COLOUR_CYAN    = C_RGB(0, 255, 255),
+    COLOUR_ORANGE  = C_RGB(255, 128, 0),
 
-#define COLOUR_LTGREY  RGB(224, 224, 224)
-#define COLOUR_GREY    RGB(128, 128, 128)
-#define COLOUR_DKGREY  RGB(64, 64, 64)
+    COLOUR_LTGREY  = C_RGB(224, 224, 224),
+    COLOUR_GREY    = C_RGB(128, 128, 128),
+    COLOUR_DKGREY  = C_RGB(64, 64, 64)
+};
 
 // Key codes
 //
-#define KEY_LEFT        '4'
-#define KEY_RIGHT       '5'
-#define KEY_ROTATE_LEFT '3'
-// #define KEY_ROTATE_RIGHT= '0'
-#define KEY_DOWN        '2'
-#define KEY_FALL        ' '
-#define KEY_QUIT        'q'
+#ifdef DEST_CASIO_FXCG50
+enum{
+    KEY_CODE_TOP = KEY_TOP,
+    KEY_CODE_DOWN = KEY_DOWN,
+    KEY_CODE_LEFT = KEY_LEFT,
+    KEY_CODE_RIGHT = KEY_RIGHT,
+    KEY_CODE_FALL = ' ',
+    KEY_CODE_QUIT = 'q',
+    KEY_CODE_ENTER = KEY_EXE,
+};
+#else
+enum{
+    KEY_CODE_LEFT = '4',
+    KEY_CODE_RIGHT = '5',
+    KEY_CODE_UP = '3',
+    KEY_CODE_DOWN = '2',
+    KEY_CODE_FALL = ' ',
+    KEY_CODE_QUIT = 'q',
+    KEY_CODE_ENTER = '\13'
+};
+#endif // #ifdef DEST_CASIO_FXCG50
 
 //---------------------------------------------------------------------------
 //--
 //-- tetrisParameters object
 //--
 //--    All the game's parameters
+//--    could be a simple interface / struct
 //--
 //---------------------------------------------------------------------------
 
@@ -137,6 +165,16 @@ class tetrisParameters {
         bool shadow_;
         bool vertical_;
 };
+
+#ifdef DEST_CASIO_FXCG50
+#define set_pixel(x,y,color) {}
+#else
+#define set_pixel(x,y,color) {}
+#endif // #ifdef DEST_CASIO_FXCG50
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplucplus
 
 #endif // __J_TETRIS_CONSTS_h__
 

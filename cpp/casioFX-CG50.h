@@ -17,6 +17,10 @@
 #ifndef __J_TETRIS_CASIO_FXCG50_h__
 #define __J_TETRIS_CASIO_FXCG50_h__    1
 
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplucplus
+
 #include "consts.h"
 
 //---------------------------------------------------------------------------
@@ -27,10 +31,15 @@
 
 // Screen dimensions in pixels
 //
+#ifdef DEST_CASIO_FXCG50
+#define CASIO_WIDTH     DWIDTH
+#define CASIO_HEIGHT    DHEIGHT
+#else
 #define CASIO_WIDTH     384
 #define CASIO_HEIGHT    192
+#endif // #ifdef DEST_CASIO_FXCG50
 
-// Box dimensions
+// Box dimensions in pixels
 //
 #define CASIO_BOX_WIDTH_V   9       // playfield
 #define CASIO_BOX_WIDTH_H   14
@@ -38,13 +47,13 @@
 #define CASIO_BOX_WIDTH_NP_V   CASIO_BOX_WIDTH_V    // next piece preview
 #define CASIO_BOX_WIDTH_NP_H   8
 
-// Playfield
+// Playfield pos & dims
 //
 #define CASIO_PLAYFIELD_LEFT    100
 #define CASIO_PLAYFIELD_BORDER  3
 #define CASIO_BORDER_GAP        2
 
-// Texts
+// Texts pos & dims
 //
 #define CASIO_INFO_LEFT     250
 #define CASIO_INFO_TOP      10
@@ -64,7 +73,16 @@ class casioFXCG50{
     //
     public:
         // Construction
-        casioFXCG50(){}
+        casioFXCG50(){
+            // Default keys
+            //
+            keyLeft_ = KEY_CODE_LEFT;
+            keyRight_ = KEY_CODE_RIGHT;
+            keyRotate_ = KEY_CODE_UP;
+            keyDown_ = KEY_CODE_DOWN;
+            keyFall_ = KEY_CODE_FALL;
+            keyQuit_ = KEY_CODE_QUIT;
+        }
 
         // Vertical ?
         void setVert(bool vert = true){
@@ -81,6 +99,8 @@ class casioFXCG50{
                 NP_top_ = CASIO_INFO_TOP;
             }
             else {
+                // Horizontal mode
+                //
                 boxWidth_ = CASIO_BOX_WIDTH_H;
 
                 playfield_left_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
@@ -91,6 +111,12 @@ class casioFXCG50{
 
                 NP_left_ = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
                 NP_top_ = CASIO_PLAYFIELD_BORDER;
+
+                // Rotation of the keyboard
+                keyLeft_ = KEY_CODE_UP;
+                keyRight_ = KEY_CODE_DOWN;
+                keyRotate_ = KEY_CODE_RIGHT;
+                keyDown_ = KEY_CODE_LEFT;
             }
         }
 
@@ -101,14 +127,27 @@ class casioFXCG50{
             y = ny;
         }
 
+        //
         // Members
+        //
+
+        // Screen & display parameters
         //
         uint8_t     boxWidth_, NP_boxWidth_;     // Width of a box
         uint16_t    playfield_left_, playfield_top_;
 
         uint16_t    NP_left_, NP_top_;          // Next piece preview
         uint16_t    NP_width_;
+
+        // Keyboard
+        //
+        char        keyLeft_, keyRight_, keyRotate_, keyDown_, keyFall_;
+        char        keyQuit_;
 };
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplucplus
 
 #endif // __J_TETRIS_CASIO_FXCG50_h__
 
