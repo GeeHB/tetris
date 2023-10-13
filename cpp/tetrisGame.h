@@ -21,7 +21,6 @@
 #include "templates.h"
 #include "casioFX-CG50.h"
 
-
 //---------------------------------------------------------------------------
 //--
 //-- tetrisGame object
@@ -96,15 +95,6 @@ class tetrisGame {
         #endif // #ifdef DEST_CASIO_FXCG50
         }
 
-        // Draw all
-        void reDraw(bool refresh = true) {
-            _drawBackGround();
-            _drawTetrisGame();
-            _drawScore();
-            _drawLevel();
-            _drawLines();
-        }
-
     // Internal methods
     //
     protected:
@@ -161,8 +151,8 @@ class tetrisGame {
         // Get a piece min.pos.index (vertical value)
         uint8_t _minTopPosition();
 
-        // Add a randomly generated dirty line at the bottom of the gameplay
-        void _addDirtyLine(uint8_t line);
+        // Add a randomly generated dirty line in the gameplay
+        void _addDirtyLine(uint8_t lineID);
 
         // Clear and remove a completed line
         void _clearLine(uint8_t index);

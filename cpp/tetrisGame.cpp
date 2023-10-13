@@ -166,7 +166,6 @@ bool tetrisGame::start() {
 
     //Initializations ...
     currentPos_.valid(false);
-    reDraw(false);
     status_ = STATUS_RUNNING;
 
     // Clear screen
@@ -174,8 +173,13 @@ bool tetrisGame::start() {
     dclear(colours_[COLOUR_ID_BOARD]);
 #endif // #ifdef DEST_CASIO_FXCG50
 
-    // First piece
+    _drawBackGround();
+    _drawTetrisGame();
+    _drawScore();
+    _drawLevel();
+    _drawLines();
     _newPiece();
+
     updateDisplay();
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
@@ -435,7 +439,7 @@ uint8_t tetrisGame::_minTopPosition() {
         currentTop -= 1;
     }
 
-    // current pos.is invalid = > go up one line
+    // current pos is invalid = > go up one line
     return currentTop + 1;
 }
 
@@ -463,8 +467,6 @@ void tetrisGame::_newPiece() {
         // No = > the game is over
         end(false);
     }
-
-    updateDisplay();
 }
 
 // Clear and remove a completed line
@@ -485,9 +487,9 @@ void tetrisGame::_clearLine(uint8_t index) {
     }
 }
 
-// Add a randomly generated dirty line at the bottom of the gameplay
+// Add a randomly generated dirty line in the gameplay
 //
-void tetrisGame::_addDirtyLine(uint8_t line) {
+void tetrisGame::_addDirtyLine(uint8_t lineID) {
     uint16_t cubes(rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
     uint16_t sBit(1); // 2 ^ 0
 
@@ -496,7 +498,7 @@ void tetrisGame::_addDirtyLine(uint8_t line) {
         // Is the bit set ?
         if ((cubes & sBit) > 0) {
             // yes = > add a colored block
-            playField_[line][col] = 1 + rand() % TETRAMINOS_COUNT;
+            playField_[lineID][col] = 1 + rand() % TETRAMINOS_COUNT;
         }
 
         // next bit value
@@ -602,12 +604,11 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         _drawLines();
 
         _drawTetrisGame();
-
-        updateDisplay();
-    }
+    } // if (completedCount)
 
     // Get a new piece
     _newPiece();
+    updateDisplay();
 }
 
 // Change the origin and the coordinate system
@@ -707,10 +708,10 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
     int16_t xFrom(x), yFrom(y);
     int16_t xTo, yTo;
 
-    // Vertical (ie. normal) display
+    // Horizontal display ?
     if (!casioParams_.vert_){
         casioParams_.rotate(xFrom, yFrom);
-        xTo = From + height- 1;
+        xTo = From + height- 1;     // height should be equivalent to width
         yTo = yFrom + width -1;
     }
     else{
