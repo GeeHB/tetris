@@ -166,12 +166,6 @@ class tetrisParameters {
         bool vertical_;
 };
 
-#ifdef DEST_CASIO_FXCG50
-#define set_pixel(x,y,color) {}
-#else
-#define set_pixel(x,y,color) {}
-#endif // #ifdef DEST_CASIO_FXCG50
-
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplucplus
