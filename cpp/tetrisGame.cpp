@@ -695,76 +695,32 @@ void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, 
     _drawRectangle(left, top, w * width, h * height, colours_[colourID]);
 }
 
-// Draw a single coloured rectangke
+// Draw a single coloured rectangle
 //
-//   x,y : top left starting point
-// width, height : dimensions
-//   borderColour : Colour of the border in RGB format or -1 (if no border)
-//   fillColour : Filling colour in RGB format or -1 (if empty)
+//   @x,@y : top left starting point
+//   @width, @height : dimensions
+//   @borderColour : Colour of the border in RGB format or -1 (if no border)
+//   @fillColour : Filling colour in RGB format or -1 (if empty)
 //
 void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour, int16_t borderColour){
-    // A border ?
-    if (-1 != borderColour){
-        if (casioParams_.vert_){
-            for (uint16_t px=0 ; px < width; px++){
-                set_pixel(x + px, y, borderColour);
-                set_pixel(x + px, y + height - 1, borderColour);
-            }
+#ifdef DEST_CASIO_FXCG50
+    int16_t xFrom(x), yFrom(y);
+    int16_t xTo, yTo;
 
-            for (uint16_t py=0; py < height-2; py++){
-                set_pixel(x, y + py + 1, borderColour);
-                set_pixel(x + width - 1, y + py + 1, borderColour);
-            }
-        }
-        else{
-            uint16_t destX, destY;
-            for (uint16_t px=0; px < width; px++){
-                destX = x+px;
-                destY = y;
-                casioParams_.rotate(destX, destY);
-                set_pixel(destX, destY, borderColour);
-
-                destX = x+px;
-                destY = y + height - 1;
-                casioParams_.rotate(destX, destY);
-                set_pixel(destX, destY, borderColour);
-            }
-
-            for (uint16_t py=0;  py < height-2; py++){
-                destX = x;
-                destY = y + py +1;
-                casioParams_.rotate(destX, destY);
-                set_pixel(destX, destY, borderColour);
-
-                destX = x + width -1;
-                destY = y + py +1;
-                casioParams_.rotate(destX, destY);
-                set_pixel(right[0], right[1], borderColour);
-            }
-        }
+    // Vertical (ie. normal) display
+    if (!casioParams_.vert_){
+        casioParams_.rotate(xFrom, yFrom);
+        xTo = From + height- 1;
+        yTo = yFrom + width -1;
+    }
+    else{
+        xTo = From + width- 1;
+        yTo = yFrom + height -1;
     }
 
-    // Filling ?
-    if (-1 != fillColour){
-        if (casioParams_.vert_){
-            for (uint16_t px=0; px < width - 1; px++){
-                for (uint16_t py =0; py < height - 1; py++){
-                    set_pixel(x + px, y + py, fillColour);
-                }
-            }
-        }
-        else{
-            uint16_t destX, destY;
-            for (uint16_t px=0; px < width - 2; px++){
-                for (uint16_t py=0 ; py  < height - 2; py++){
-                    destX = x + px + 1;
-                    destY = y + py + 1;
-                    casioParams_.rotate(destX, destY);
-                    set_pixel(destX, destY, fillColour);
-                }
-            }
-        }
-    }
+    // Draw the rect
+    drect_border(xFrom, yFrom, xTo, yTo, colours_[fillColour], 1, borderColour ? colours_[borderColour]: NO_COLOR);
+#endif // #ifdef DEST_CASIO_FXCG50
 }
 
 // EOF
