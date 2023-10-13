@@ -74,8 +74,10 @@ class casioFXCG50{
     public:
         // Construction
         casioFXCG50(){
+
+            vert_ = true;
+
             // Default keys
-            //
             keyLeft_ = KEY_CODE_LEFT;
             keyRight_ = KEY_CODE_RIGHT;
             keyRotate_ = KEY_CODE_UP;
@@ -86,6 +88,7 @@ class casioFXCG50{
 
         // Vertical ?
         void setVert(bool vert = true){
+            vert_ = vert;
             if (vert){
                 boxWidth_ = CASIO_BOX_WIDTH_V;
 
@@ -133,7 +136,8 @@ class casioFXCG50{
 
         // Screen & display parameters
         //
-        uint8_t     boxWidth_, NP_boxWidth_;     // Width of a box
+        bool        vert_;                      // Vertical drawing (default) ?
+        uint8_t     boxWidth_, NP_boxWidth_;    // Width of a box
         uint16_t    playfield_left_, playfield_top_;
 
         uint16_t    NP_left_, NP_top_;          // Next piece preview

@@ -169,6 +169,11 @@ bool tetrisGame::start() {
     reDraw(false);
     status_ = STATUS_RUNNING;
 
+    // Clear screen
+#ifdef DEST_CASIO_FXCG50
+    dclear(colours_[COLOUR_ID_BOARD]);
+#endif // #ifdef DEST_CASIO_FXCG50
+
     // First piece
     _newPiece();
     updateDisplay();
@@ -655,7 +660,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
 //
 void tetrisGame::_drawNextPiece(uint8_t pieceIndex) {
     // Erase the previous piece
-    _eraseBlocks(0, 0, 4, 4, COLOUR_ID_BOARD);
+    _eraseNextPiece(0, 0, 4, 4, COLOUR_ID_BOARD);
 
     // ... and then draw the new one
     if (-1 != pieceIndex) {
@@ -681,6 +686,15 @@ void tetrisGame::_drawTetrisGame() {
     }
 }
 
+// Erase the "next piece" tetramino
+//
+void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){
+
+    uint16_t w, h;
+    _changeOrigin(false, left, top, w, h);
+    _drawRectangle(left, top, w * width, h * height, colours_[colourID]);
+}
+
 // Draw a single coloured rectangke
 //
 //   x,y : top left starting point
@@ -691,22 +705,63 @@ void tetrisGame::_drawTetrisGame() {
 void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour, int16_t borderColour){
     // A border ?
     if (-1 != borderColour){
-        for (uint16_t px=0 ; px < width; px++){
-            set_pixel(x + px, y, borderColour);
-            set_pixel(x + px, y + height - 1, borderColour);
-        }
+        if (casioParams_.vert_){
+            for (uint16_t px=0 ; px < width; px++){
+                set_pixel(x + px, y, borderColour);
+                set_pixel(x + px, y + height - 1, borderColour);
+            }
 
-        for (uint16_t py=0; py < height-2; py++){
-            set_pixel(x, y + py + 1, borderColour);
-            set_pixel(x + width - 1, y + py + 1, borderColour);
+            for (uint16_t py=0; py < height-2; py++){
+                set_pixel(x, y + py + 1, borderColour);
+                set_pixel(x + width - 1, y + py + 1, borderColour);
+            }
+        }
+        else{
+            uint16_t destX, destY;
+            for (uint16_t px=0; px < width; px++){
+                destX = x+px;
+                destY = y;
+                casioParams_.rotate(destX, destY);
+                set_pixel(destX, destY, borderColour);
+
+                destX = x+px;
+                destY = y + height - 1;
+                casioParams_.rotate(destX, destY);
+                set_pixel(destX, destY, borderColour);
+            }
+
+            for (uint16_t py=0;  py < height-2; py++){
+                destX = x;
+                destY = y + py +1;
+                casioParams_.rotate(destX, destY);
+                set_pixel(destX, destY, borderColour);
+
+                destX = x + width -1;
+                destY = y + py +1;
+                casioParams_.rotate(destX, destY);
+                set_pixel(right[0], right[1], borderColour);
+            }
         }
     }
 
     // Filling ?
     if (-1 != fillColour){
-        for (uint16_t px=0; px < width - 1; px++){
-            for (uint16_t py =0; py < height - 1; py++){
-                set_pixel(x + px, y + py, fillColour);
+        if (casioParams_.vert_){
+            for (uint16_t px=0; px < width - 1; px++){
+                for (uint16_t py =0; py < height - 1; py++){
+                    set_pixel(x + px, y + py, fillColour);
+                }
+            }
+        }
+        else{
+            uint16_t destX, destY;
+            for (uint16_t px=0; px < width - 2; px++){
+                for (uint16_t py=0 ; py  < height - 2; py++){
+                    destX = x + px + 1;
+                    destY = y + py + 1;
+                    casioParams_.rotate(destX, destY);
+                    set_pixel(destX, destY, fillColour);
+                }
             }
         }
     }

@@ -351,7 +351,7 @@ class pygameTetris(tetrisGame.tetrisGame):
 
     # Erase a block
     #
-    def _eraseBlocks(self, left, top, width, height, colourID):        
+    def _eraseNextPiece(self, left, top, width, height, colourID):        
         x,y,w,h = self._changeOrigin(left, top, False)
         pygame.draw.rect(self.win_, self.colours_[colourID].base_, (x, y, w * width, h * height))
 

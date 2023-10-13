@@ -90,7 +90,11 @@ class tetrisGame {
         }
 
         // Update the display
-        void updateDisplay(){}
+        void updateDisplay(){
+        #ifdef DEST_CASIO_FXCG50
+            dupdate();
+        #endif // #ifdef DEST_CASIO_FXCG50
+        }
 
         // Draw all
         void reDraw(bool refresh = true) {
@@ -172,6 +176,9 @@ class tetrisGame {
         // Display the next piece
         void _drawNextPiece(uint8_t pieceIndex);
 
+        // Erase the "next piece" tetramino
+        void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
+
         // Numeric value
         void _drawNumValue(uint8_t index, uint16_t value){}
 
@@ -188,9 +195,6 @@ class tetrisGame {
         void _drawSingleBlock(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height,uint8_t colourID){
             _drawRectangle(left, top, width, height, colours_[colourID]);
         }
-
-        // Erase a tetramino
-        void _eraseBlocks(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){}
 
         // Draw the tetrisGame
         void _drawTetrisGame();

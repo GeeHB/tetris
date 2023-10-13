@@ -128,9 +128,9 @@ class casioplotTetris(consoleTetris.consoleTetris):
     def _drawSingleBlock(self, left, top, width, height, colourID):
         self._drawRectangle(left, top, width, height, self.colours_[colourID])
 
-    # Erase a tetramino
+    # Erase a "next piece" tetramino
     #
-    def _eraseBlocks(self, left, top, width, height, colourID):
+    def _eraseNextPiece(self, left, top, width, height, colourID):
         x,y,w,h = self._changeOrigin(left, top, False)
         self._drawRectangle(x, y, w * width, h * height, self.colours_[colourID], None)
 

@@ -171,7 +171,7 @@ class cursesTetris(consoleTetris.consoleTetris):
 
     # Erase a block
     #
-    def _eraseBlocks(self, left, top, width, height, colourID):
+    def _eraseNextPiece(self, left, top, width, height, colourID):
         x,y,w,_ = self._changeOrigin(0,0, False)
         for row in range(height):
             self.term_.addstr(y + row, x, ' ' * w * width, curses.color_pair(colourID))
