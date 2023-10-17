@@ -33,15 +33,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../casioFX-CG50.h" />
-		<Unit filename="../consts.h" />
-		<Unit filename="../jTetris.cpp" />
-		<Unit filename="../piece.cpp" />
-		<Unit filename="../piece.h" />
-		<Unit filename="../splashScreen.h" />
-		<Unit filename="../templates.h" />
-		<Unit filename="../tetrisGame.cpp" />
-		<Unit filename="../tetrisGame.h" />
+		<Unit filename="../casio_tetris/src/casioFX-CG50.h" />
+		<Unit filename="../casio_tetris/src/consts.h" />
+		<Unit filename="../casio_tetris/src/jTetris.cpp" />
+		<Unit filename="../casio_tetris/src/piece.cpp" />
+		<Unit filename="../casio_tetris/src/piece.h" />
+		<Unit filename="../casio_tetris/src/splashScreen.h" />
+		<Unit filename="../casio_tetris/src/templates.h" />
+		<Unit filename="../casio_tetris/src/tetrisGame.cpp" />
+		<Unit filename="../casio_tetris/src/tetrisGame.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
