@@ -21,7 +21,7 @@
 extern "C" {
 #endif // #ifdef __cplucplus
 
-//#define DEST_CASIO_FXCG50        1   // Compile for calculator
+#define DEST_CASIO_FXCG50        1   // Compile for calculator
 
 #include <cstdint> // <stdint.h>
 #include <cstring>
@@ -108,7 +108,7 @@ enum{
 //
 #ifdef DEST_CASIO_FXCG50
 enum{
-    KEY_CODE_TOP = KEY_TOP,
+    KEY_CODE_UP = KEY_UP,
     KEY_CODE_DOWN = KEY_DOWN,
     KEY_CODE_LEFT = KEY_LEFT,
     KEY_CODE_RIGHT = KEY_RIGHT,

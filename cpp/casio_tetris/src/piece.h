@@ -19,7 +19,14 @@
 #define __J_TETRIS_PIECE_h__    1
 
 #include "consts.h"
+#ifdef DEST_CASIO_FXCG50
+#include <gint/kmalloc.h>
+#define malloc(bsize)   kmalloc(bsize,NULL)
+#define free(buffer)    kfree(buffer)
+#define realloc(buffer, bsize) krealloc(buffer, bsize)
+#else
 #include <malloc.h>
+#endif // #ifdef DEST_CASIO_FXCG50
 
 // Public consts
 //

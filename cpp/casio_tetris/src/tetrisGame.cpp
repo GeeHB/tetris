@@ -20,6 +20,11 @@
 #include <unistd.h>
 //#include <keyboard.h>
 #include <stdio.h>
+
+#ifdef DEST_CASIO_FXCG50
+#include <gint/clock.h>
+#endif // #ifdef DEST_CASIO_FXCG50
+
 #include <time.h>
 
 #ifdef _DEBUG
@@ -143,11 +148,12 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     if (parameters_.dirtyLines_ > maxLines) {
         parameters_.dirtyLines_ = maxLines;
     }
+    /*
     else
         if (parameters_.dirtyLines_ < 0) {
             parameters_.dirtyLines_ = 0;
         }
-
+    */
     for (uint8_t index = 0; index < parameters_.dirtyLines_; index++) {
         _addDirtyLine(index);
     }
@@ -185,7 +191,14 @@ bool tetrisGame::start() {
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
     uint32_t seqCount(0);
     long diff, seqDuration(_updateSpeed(INITIAL_SPEED * 1000000, parameters_.startLevel_, parameters_.startLevel_ - 1));
+
+#ifdef DEST_CASIO_FXCG50
+    clock_t ts, now;
+    now = clock();
+#else
     struct timespec ts, now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+#endif // #ifdef DEST_CASIO_FXCG50
 
     // Game main loop
     while (isRunning()){
@@ -195,10 +208,15 @@ bool tetrisGame::start() {
         // During this short period, the piece can be moved or rotated
         while (isRunning() && diff < seqDuration){
             _handleGameKeys();
+#ifdef DEST_CASIO_FXCG50
+            sleep_us(SLEEP_DURATION);
+            now = clock();
+            diff = (now - ts) / CLOCKS_PER_SEC * 1000000000;
+#else
             usleep(SLEEP_DURATION);
-
             clock_gettime(CLOCK_MONOTONIC, &now);
             diff = (now.tv_sec - ts.tv_sec) * 1000000000 + (now.tv_nsec - ts.tv_nsec);
+#endif // #ifdef DEST_CASIO_FXCG50
         }
 
         // One line down ...
@@ -222,7 +240,6 @@ bool tetrisGame::start() {
     }
 
     // Game is Over
-
     return true;
 }
 
@@ -404,7 +421,7 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     uint8_t maxY = (topPos >= PLAYFIELD_HEIGHT) ? PIECE_HEIGHT - 1 + PLAYFIELD_HEIGHT - topPos : PIECE_HEIGHT - 1;
 
     // Test all the contained blocks starting from bottom
-    uint8_t realX(0), realY(0);
+    int8_t realX(0), realY(0);
     for (int8_t y = maxY; y >=0; y--){
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             if (COLOUR_ID_BOARD != datas[y * PIECE_WIDTH + x]) {
@@ -472,7 +489,7 @@ void tetrisGame::_newPiece() {
 // Clear and remove a completed line
 //
 void tetrisGame::_clearLine(uint8_t index) {
-    if (index >= 0 && index < PLAYFIELD_HEIGHT) {
+    if (/*index >= 0 && */index < PLAYFIELD_HEIGHT) {
         // Remove the line from the screen
         for (uint8_t line = index; line < (PLAYFIELD_HEIGHT - 1); line++) {
             for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
@@ -659,7 +676,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
 
 // Display the next piece
 //
-void tetrisGame::_drawNextPiece(uint8_t pieceIndex) {
+void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
     // Erase the previous piece
     _eraseNextPiece(0, 0, 4, 4, COLOUR_ID_BOARD);
 
@@ -705,22 +722,22 @@ void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, 
 //
 void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour, int16_t borderColour){
 #ifdef DEST_CASIO_FXCG50
-    int16_t xFrom(x), yFrom(y);
-    int16_t xTo, yTo;
+    uint16_t xFrom(x), yFrom(y);
+    uint16_t xTo, yTo;
 
     // Horizontal display ?
     if (!casioParams_.vert_){
         casioParams_.rotate(xFrom, yFrom);
-        xTo = From + height- 1;     // height should be equivalent to width
+        xTo = xFrom + height- 1;     // height should be equivalent to width
         yTo = yFrom + width -1;
     }
     else{
-        xTo = From + width- 1;
+        xTo = xFrom + width- 1;
         yTo = yFrom + height -1;
     }
 
     // Draw the rect
-    drect_border(xFrom, yFrom, xTo, yTo, colours_[fillColour], 1, -1 == borderColour ? NO_COLOR : colours_[borderColour]);
+    drect_border(xFrom, yFrom, xTo, yTo, colours_[fillColour], 1, -1 == borderColour ? -1 : colours_[borderColour]);
 #endif // #ifdef DEST_CASIO_FXCG50
 }
 

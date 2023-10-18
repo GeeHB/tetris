@@ -4,13 +4,15 @@
 cmake_minimum_required(VERSION 3.15)
 project(MyAddin)
 
-include(GenerateG1A)
+# include(GenerateG1A)
 include(GenerateG3A)
 include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
-  src/main.c
+  src/jTetris.cpp
+  src/piece.cpp
+  src/tetrisGame.cpp
   # ...
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
@@ -36,6 +38,6 @@ if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
   generate_g1a(TARGET myaddin OUTPUT "MyAddin.g1a"
     NAME "MyAddin" ICON assets-fx/icon.png)
 elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
-  generate_g3a(TARGET myaddin OUTPUT "MyAddin.g3a"
-    NAME "MyAddin" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
+  generate_g3a(TARGET myaddin OUTPUT "jtetris.g3a"
+    NAME "jetetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
 endif()

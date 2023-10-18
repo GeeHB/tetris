@@ -121,7 +121,7 @@ class tetrisGame {
         uint8_t* _nextPieceDatas() {
             return ((nextIndex_ < 0 || nextIndex_ >= TETRAMINOS_COUNT) ? nullptr : tetraminos_[nextIndex_].datas(0));
         }
-        uint8_t* _pieceDatas(uint8_t index, uint8_t  rotIndex) {
+        uint8_t* _pieceDatas(int8_t index, uint8_t  rotIndex) {
             return ((index < 0 || index >= TETRAMINOS_COUNT || rotIndex >= tetraminos_[index].maxRotations()) ? nullptr : tetraminos_[index].datas(rotIndex));
         }
 
@@ -164,7 +164,7 @@ class tetrisGame {
         void _reachLowerPos(uint8_t downRowcount = 0);
 
         // Display the next piece
-        void _drawNextPiece(uint8_t pieceIndex);
+        void _drawNextPiece(int8_t pieceIndex);
 
         // Erase the "next piece" tetramino
         void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
