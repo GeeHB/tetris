@@ -16,14 +16,16 @@
 #ifndef __J_TETRIS_GAME_h__
 #define __J_TETRIS_GAME_h__	1
 
-#ifdef __cplusplus
-extern "C" {
-#endif // #ifdef __cplucplus
-
 #include "consts.h"
 #include "piece.h"
 #include "templates.h"
 #include "casioFX-CG50.h"
+
+#include <cstdlib>
+
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cpluscplus
 
 //---------------------------------------------------------------------------
 //--
@@ -236,7 +238,7 @@ class tetrisGame {
 
 #ifdef __cplusplus
 }
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cpluscplus
 
 #endif // __J_TETRIS_GAME_h__
 

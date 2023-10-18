@@ -17,22 +17,23 @@
 #ifndef __J_TETRIS_CONSTS_h__
 #define __J_TETRIS_CONSTS_h__    1
 
-#ifdef __cplusplus
-extern "C" {
-#endif // #ifdef __cplucplus
-
 #define DEST_CASIO_FXCG50        1   // Compile for calculator
-
-#include <cstdint> // <stdint.h>
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
 
 #ifdef DEST_CASIO_FXCG50
 // Specific includes for calculators
 #include <gint/display.h>
 #include <gint/keyboard.h>
+#else
+#include <cstdint> // <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #endif // #ifdef DEST_CASIO_FXCG50
+
+#include <cstring>
+
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplusplus
 
 // Playfield's dimensions (in box unit)
 //
@@ -168,7 +169,7 @@ class tetrisParameters {
 
 #ifdef __cplusplus
 }
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cplusplus
 
 #endif // __J_TETRIS_CONSTS_h__
 

@@ -16,15 +16,14 @@
 
 #include "tetrisGame.h"
 
-#include <cmath>
-#include <unistd.h>
-//#include <keyboard.h>
-#include <stdio.h>
-
 #ifdef DEST_CASIO_FXCG50
 #include <gint/clock.h>
+#else
+#include <unistd.h>
 #endif // #ifdef DEST_CASIO_FXCG50
 
+#include <cstdio>
+#include <cmath>
 #include <time.h>
 
 #ifdef _DEBUG

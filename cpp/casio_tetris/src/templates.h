@@ -26,7 +26,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cplusplus
 
 // Different pieces and their rotations
 //
@@ -137,7 +137,7 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cplusplus
 
 
 #endif // __J_TETRIS_PIECE_TEMPLATE_h__

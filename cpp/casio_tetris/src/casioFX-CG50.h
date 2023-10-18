@@ -17,11 +17,11 @@
 #ifndef __J_TETRIS_CASIO_FXCG50_h__
 #define __J_TETRIS_CASIO_FXCG50_h__    1
 
+#include "consts.h"
+
 #ifdef __cplusplus
 extern "C" {
-#endif // #ifdef __cplucplus
-
-#include "consts.h"
+#endif // #ifdef __cplusplus
 
 //---------------------------------------------------------------------------
 //--
@@ -151,7 +151,7 @@ class casioFXCG50{
 
 #ifdef __cplusplus
 }
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cplusplus
 
 #endif // __J_TETRIS_CASIO_FXCG50_h__
 

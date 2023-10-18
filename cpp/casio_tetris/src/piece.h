@@ -18,19 +18,16 @@
 #ifndef __J_TETRIS_PIECE_h__
 #define __J_TETRIS_PIECE_h__    1
 
-#ifdef __cplusplus
-extern "C" {
-#endif // #ifdef __cplucplus
-
 #include "consts.h"
 #ifdef DEST_CASIO_FXCG50
 #include <gint/kmalloc.h>
-#define malloc(bsize)   kmalloc(bsize,NULL)
-#define free(buffer)    kfree(buffer)
-#define realloc(buffer, bsize) krealloc(buffer, bsize)
 #else
 #include <malloc.h>
 #endif // #ifdef DEST_CASIO_FXCG50
+
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplusplus
 
 // Public consts
 //
@@ -245,7 +242,7 @@ class piece{
 
 #ifdef __cplusplus
 }
-#endif // #ifdef __cplucplus
+#endif // #ifdef __cplusplus
 
 #endif // __J_TETRIS_PIECE_h_
 
