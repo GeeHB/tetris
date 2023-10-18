@@ -179,11 +179,13 @@ bool tetrisGame::start() {
     dclear(colours_[COLOUR_ID_BOARD]);
 #endif // #ifdef DEST_CASIO_FXCG50
 
-    _drawBackGround();
+    //_drawBackGround();
     _drawTetrisGame();
+    /*
     _drawScore();
     _drawLevel();
     _drawLines();
+    */
     _newPiece();
 
     updateDisplay();
@@ -233,7 +235,7 @@ bool tetrisGame::start() {
                 level_ = rLevel;
                 seqDuration = _updateSpeed(seqDuration, level_, 1);
 
-                _drawLevel();
+                //_drawLevel();
                 updateDisplay();
             }
         }
@@ -617,8 +619,8 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         score_+=uint32_t(delta * mult / 100.0);
         lines_+=completedCount;
 
-        _drawScore();
-        _drawLines();
+        //_drawScore();
+        //_drawLines();
 
         _drawTetrisGame();
     } // if (completedCount)

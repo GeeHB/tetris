@@ -19,7 +19,7 @@
 using namespace std;
 #endif // #ifndef DEST_CASIO_FXCG50
 
-#include "splashScreen.h"
+//#include "splashScreen.h"
 #include "tetrisGame.h"
 
 int main()

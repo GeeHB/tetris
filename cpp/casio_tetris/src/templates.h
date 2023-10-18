@@ -16,13 +16,17 @@
 //--
 //--                 A piece is given with all its postions after rotation in trignometric direction
 //--                 Each "rotation", to be precise, is a combination of a rotation and a translation
-//--                 
-//--                 Based on Nintendo for pieces and rotation. 
+//--
+//--                 Based on Nintendo for pieces and rotation.
 //--
 //---------------------------------------------------------------------------
 
 #ifndef __J_TETRIS_PIECE_TEMPLATE_h__
 #define __J_TETRIS_PIECE_TEMPLATE_h__    1
+
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplucplus
 
 // Different pieces and their rotations
 //
@@ -51,7 +55,7 @@
                 ".11."\
                 "...."
 
-// "I" x 2 - Cyan 
+// "I" x 2 - Cyan
 #define I_0     "..6."\
                 "..6."\
                 "..6."\
@@ -73,7 +77,7 @@
                 ".7.."\
                 ".7.."\
                 "...."
-      
+
 #define L_1     "...."\
                 "777."\
                 "7..."\
@@ -99,7 +103,7 @@
                 "444."\
                 "..4."\
                 "...."
-      
+
 #define J_2     ".44."\
                 ".4.."\
                 ".4.."\
@@ -130,6 +134,11 @@
                 "555."\
                 "...."\
                 "...."
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplucplus
+
 
 #endif // __J_TETRIS_PIECE_TEMPLATE_h__
 

@@ -18,6 +18,10 @@
 #ifndef __J_TETRIS_PIECE_h__
 #define __J_TETRIS_PIECE_h__    1
 
+#ifdef __cplusplus
+extern "C" {
+#endif // #ifdef __cplucplus
+
 #include "consts.h"
 #ifdef DEST_CASIO_FXCG50
 #include <gint/kmalloc.h>
@@ -238,6 +242,10 @@ class piece{
         int8_t vertOffset_;     // Initial vert. offset (ie. count of empty lines starting from bottom)
         uint8_t colourIndex_;   // Colour ID (0 = invisible)
 };
+
+#ifdef __cplusplus
+}
+#endif // #ifdef __cplucplus
 
 #endif // __J_TETRIS_PIECE_h_
 
