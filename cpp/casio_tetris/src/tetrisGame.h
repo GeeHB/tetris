@@ -49,18 +49,13 @@ class tetrisGame {
         }
 
         // Destruction
-        virtual ~tetrisGame() {}
+        ~tetrisGame() {}
 
         // Game's parameters
         void setParameters(tetrisParameters & params);
 
         // Start the game
         bool start();
-
-#ifdef _DEBUG
-        // Test ...
-        void print();
-#endif // _DEBUG
 
         // Status
         //
@@ -176,13 +171,13 @@ class tetrisGame {
         void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
 
         // Numeric value
-        //void _drawNumValue(uint8_t index, uint16_t value){}
+        void _drawNumValue(uint8_t index, uint16_t value){}
 
         // Draw a line of text(and erase the prrevious value)
-        //void _drawText(uint8_t index, const char* value){}
+        void _drawText(uint8_t index, const char* value){}
 
         // Draw borders
-        //void _drawBackGround(){}
+        void _drawBackGround(){}
 
         // Draw a tetramino using the given colour
         void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame = true, uint8_t colourID = COLOUR_ID_NONE);
@@ -197,7 +192,6 @@ class tetrisGame {
 
         // Helpers for drawings
         //
-        /*
         void _drawScore() {
             _drawNumValue(0, score_);
         }
@@ -207,8 +201,7 @@ class tetrisGame {
         void _drawLines() {
             _drawNumValue(2, lines_);
         }
-        */
-
+        
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour = -1, int16_t borderColour = -1);
 

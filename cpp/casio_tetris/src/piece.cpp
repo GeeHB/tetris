@@ -17,9 +17,15 @@
 
 #include "piece.h"
 
-#ifdef _DEBUG
-#include <iostream>
-#endif // _DEBUG
+// Memory functions
+#ifndef DEST_CASIO_FXCG50
+#include <malloc.h>
+#else
+#include <gint/kmalloc.h>
+#define malloc(pSize)   kmalloc(pSize, NULL)
+#define realloc(buffer,size) krealloc(buffer,size)
+#define free(buffer)   kfree(buffer)
+#endif // #ifndef DEST_CASIO_FXCG50
 
 //---------------------------------------------------------------------------
 //--
@@ -39,19 +45,9 @@ piece::piece(piece& other) {
     maxAllocated_ = other.maxAllocated_;
 
     // Copy the points
-#ifdef DEST_CASIO_FXCG50
-    points_ = (uint8_t**)kmalloc(rotate_ * sizeof(uint8_t*), NULL);
-#else
-    points_ = (uint8_t**)malloc(rotate_ * sizeof(uint8_t*));
-#endif // #ifdef DEST_CASIO_FXCG50
-    if (points_) {
+    if ((points_ = (uint8_t**)malloc(rotate_ * sizeof(uint8_t*)))) {
         for (uint8_t index(0); index < other.maxRotate_; index++) {
-#ifdef DEST_CASIO_FXCG50
-            points_[index] = (uint8_t*)kmalloc(PIECE_SIZE, NULL);
-#else
-            points_[index] = (uint8_t*)malloc(PIECE_SIZE);
-#endif // #ifdef DEST_CASIO_FXCG50
-            if (NULL != points_[index]) {
+            if (NULL != (points_[index] = (uint8_t*)malloc(PIECE_SIZE))) {
                 memcpy(points_[index], other.points_[index], PIECE_SIZE);
                 maxAllocated_ = other.maxAllocated_;
             }
@@ -62,17 +58,12 @@ piece::piece(piece& other) {
 // Add a new piece from a template
 //
 bool piece::addRotation(const char* tempPiece) {
-    if (nullptr == tempPiece) {
+    if (!tempPiece) {
         return false;
     }
 
     // Create an empty piece
-#ifdef DEST_CASIO_FXCG50
-    uint8_t* newRotation = (uint8_t*)kmalloc(PIECE_SIZE * sizeof(uint8_t), NULL);
-#else
     uint8_t* newRotation = (uint8_t*)malloc(PIECE_SIZE * sizeof(uint8_t));
-#endif // #ifdef DEST_CASIO_FXCG50
-
     if (NULL == newRotation) {
         return false;
     }
@@ -101,11 +92,7 @@ bool piece::addRotation(const char* tempPiece) {
 
     // Added ?
     if (false == _addRotation(newRotation)) {
-#ifdef DEST_CASIO_FXCG50
-        kfree(newRotation);
-#else
         free(newRotation);
-#endif // #ifdef DEST_CASIO_FXCG50
         return false;
     }
 
@@ -116,7 +103,7 @@ bool piece::addRotation(const char* tempPiece) {
             vertOffset_ -= 1;
         }
     }
-
+    
     // Success
     return true;
 }
@@ -127,46 +114,22 @@ void piece::clear() {
     if (points_) {
         // Free the differents pieces (rotations)
         for (uint8_t index(0); index < maxRotate_; index++) {
-#ifdef DEST_CASIO_FXCG50
-            kfree(points_[index]);
-#else
             free(points_[index]);
-#endif // #ifdef DEST_CASIO_FXCG50
         }
 
         // Free the array
-#ifdef DEST_CASIO_FXCG50
-        kfree(points_);
-#else
         free(points_);
-#endif // #ifdef DEST_CASIO_FXCG50
-        points_ = nullptr;
+        points_ = NULL;
     }
 
     // Ensures all datas are initialized
     _init();
 }
 
-#ifdef _DEBUG
-// Output to a console
-//
-void piece::print(uint8_t rotIndex) {
-    if (rotIndex < maxRotate_) {
-        std::cout << std::endl;
-        for (uint8_t li(0); li < PIECE_HEIGHT; li++) {
-            for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
-                std::cout << "  " << int(points_[rotIndex][li * PIECE_WIDTH + col]);
-            }
-            std::cout << std::endl;
-        }
-    }
-}
-#endif // _DEBUG
-
 // Add a rotation to the current piece
 //
 bool piece::_addRotation(uint8_t* tempPiece) {
-    if (nullptr == tempPiece) {
+    if (!tempPiece) {
         return false;
     }
 
@@ -174,11 +137,7 @@ bool piece::_addRotation(uint8_t* tempPiece) {
     if (maxRotate_ >= maxAllocated_) {
         // New size
         maxAllocated_ += ALLOCATE_STEP;
-#ifdef DEST_CASIO_FXCG50
-    points_ = (uint8_t**)krealloc(points_, maxAllocated_ * sizeof(uint8_t*));
-#else
-    points_ = (uint8_t**)realloc(points_, maxAllocated_ * sizeof(uint8_t*));
-#endif // #ifdef DEST_CASIO_FXCG50
+        points_ = (uint8_t**)realloc(points_, maxAllocated_ * sizeof(uint8_t*));
         if (NULL == points_) {
             return false;
         }
@@ -187,6 +146,7 @@ bool piece::_addRotation(uint8_t* tempPiece) {
     // Copy ...
     //return (NULL != memcpy(tempPiece, points_[maxRotate_++], sizeof(uint8_t));
     points_[maxRotate_++] = tempPiece;
+    
     return true;
 }
 
@@ -198,7 +158,6 @@ bool piece::_isLineEmpty(uint8_t pieceIndex, uint8_t lineIndex) {
     }
 
     uint8_t total(0);
-    //uint8_t* piece = points_[pieceIndex];
     for (uint8_t col(0); !total && col < PIECE_WIDTH; col++) {
         total += points_[pieceIndex][lineIndex * PIECE_WIDTH + col];
     }

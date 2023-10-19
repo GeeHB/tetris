@@ -25,8 +25,8 @@
 #include <gint/keyboard.h>
 #else
 #include <cstdint> // <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #endif // #ifdef DEST_CASIO_FXCG50
 
 #include <cstring>
@@ -84,10 +84,10 @@ enum{
 // A few basic colours
 //
 
-#ifndef C_RGB
+#ifndef DEST_CASIO_FXCG50
 // 24 bits RGB
 #define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
-#endif // C_RGB
+#endif // #ifndef DEST_CASIO_FXCG50
 
 enum{
     COLOUR_BLACK   = C_RGB(0, 0, 0),
@@ -115,7 +115,7 @@ enum{
     KEY_CODE_RIGHT = KEY_RIGHT,
     KEY_CODE_FALL = KEY_EXE,
     KEY_CODE_QUIT = KEY_EXIT,
-    KEY_CODE_ENTER = KEY_EXE,
+    KEY_CODE_ENTER = KEY_EXE
 };
 #else
 enum{

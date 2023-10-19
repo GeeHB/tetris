@@ -19,11 +19,6 @@
 #define __J_TETRIS_PIECE_h__    1
 
 #include "consts.h"
-#ifdef DEST_CASIO_FXCG50
-#include <gint/kmalloc.h>
-#else
-#include <malloc.h>
-#endif // #ifdef DEST_CASIO_FXCG50
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,34 +134,28 @@ class piece{
             // Default values for members
             _init();
         }
-
+    
         // recopy (useless ????)
         piece(piece& other);
 
         // Destructor
-        virtual ~piece(){
+        ~piece(){
             clear();
         }
 
         // Add from a template
         //
         bool addRotation(const char* tempPiece);
-
         // Clear the current piece
         //
         void clear();
-
-#ifdef _DEBUG
-        // Test ...
-        void print(uint8_t rotIndex);
-#endif // _DEBUG
-
+    
         // Access
         //
 
         // Piece's datas in the any rotation state (index = rotate_)
         uint8_t* datas(uint8_t index) {
-            return (points_ == nullptr ||  index >= maxRotate_ ? NULL : points_[index]);
+            return (!points_ ||  index >= maxRotate_ ? NULL : points_[index]);
         }
         uint8_t* currentDatas() {
             return datas(rotate_);
@@ -177,7 +166,7 @@ class piece{
         uint8_t verticalOffset() {
             return vertOffset_;
         }
-
+        
         // Rotation(s)
         //
 
@@ -206,7 +195,7 @@ class piece{
         uint8_t rotateRight() {
             return rotate_ = (!maxRotate_?0: (rotate_ == 0 ? maxRotate_ - 1 : rotate_ - 1));
         }
-
+        
     // Private methods
     //
     protected:
@@ -214,7 +203,7 @@ class piece{
         // Initialize members
         void _init(){
 
-            points_ = nullptr;  // No rotation
+            points_ = NULL;  // No rotation
             maxAllocated_ = 0;
 
             rotate_ = 0;

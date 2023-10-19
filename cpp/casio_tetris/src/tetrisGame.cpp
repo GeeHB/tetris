@@ -26,11 +26,6 @@
 #include <cmath>
 #include <time.h>
 
-#ifdef _DEBUG
-#include <iostream>
-using namespace std;
-#endif // _DEBUG
-
 //---------------------------------------------------------------------------
 //--
 //-- tetrisGame object
@@ -108,20 +103,6 @@ tetrisGame::tetrisGame() {
     status_ = STATUS_CREATED;
 }
 
-#ifdef _DEBUG
-// Test ...
-void tetrisGame::print() {
-    cout << endl << "tetrisGame :" << endl;
-    for (uint8_t line = 0; line < PLAYFIELD_HEIGHT; line++) {
-        cout << int(PLAYFIELD_HEIGHT - line - 1) << "- \t";
-        for (uint8_t col = 0; col < PLAYFIELD_WIDTH; col++) {
-            cout << int(playField_[PLAYFIELD_HEIGHT - line -1][col]);
-        }
-        cout << endl;
-    }
-}
-#endif // _DEBUG
-
 // Game's parameters
 //
 void tetrisGame::setParameters(tetrisParameters& params) {
@@ -178,13 +159,12 @@ bool tetrisGame::start() {
     dclear(colours_[COLOUR_ID_BOARD]);
 #endif // #ifdef DEST_CASIO_FXCG50
 
-    //_drawBackGround();
+    _drawBackGround();
     _drawTetrisGame();
-    /*
     _drawScore();
     _drawLevel();
     _drawLines();
-    */
+    
     _newPiece();
 
     updateDisplay();
@@ -618,9 +598,8 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         score_+=uint32_t(delta * mult / 100.0);
         lines_+=completedCount;
 
-        //_drawScore();
-        //_drawLines();
-
+        _drawScore();
+        _drawLines();
         _drawTetrisGame();
     } // if (completedCount)
 
