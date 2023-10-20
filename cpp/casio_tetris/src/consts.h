@@ -17,7 +17,7 @@
 #ifndef __J_TETRIS_CONSTS_h__
 #define __J_TETRIS_CONSTS_h__    1
 
-#define DEST_CASIO_FXCG50        1   // Compile for calculator
+#define DEST_CASIO_FXCG50        1   // Compile for Casio FX CG50 calculator
 
 #ifdef DEST_CASIO_FXCG50
 // Specific includes for calculators
@@ -35,7 +35,7 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
-// Playfield's dimensions (in box unit)
+// Playfield's dimensions (in box units)
 //
 #define PLAYFIELD_WIDTH     10
 #define PLAYFIELD_HEIGHT    20
