@@ -39,5 +39,5 @@ if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
     NAME "MyAddin" ICON assets-fx/icon.png)
 elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
   generate_g3a(TARGET myaddin OUTPUT "jtetris.g3a"
-    NAME "jetetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
+    NAME "jTetris" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
 endif()

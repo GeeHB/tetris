@@ -164,7 +164,7 @@ bool tetrisGame::start() {
     _drawScore();
     _drawLevel();
     _drawLines();
-    
+
     _newPiece();
 
     updateDisplay();
@@ -687,10 +687,25 @@ void tetrisGame::_drawTetrisGame() {
 // Erase the "next piece" tetramino
 //
 void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){
-
     uint16_t w, h;
     _changeOrigin(false, left, top, w, h);
     _drawRectangle(left, top, w * width, h * height, colours_[colourID]);
+}
+
+// Draw entire background
+//
+void tetrisGame::_drawBackGround(){
+    // Border around the playfield
+    _drawRectangle(casioParams_.playfield_left_ + CASIO_BORDER_GAP,
+        casioParams_.playfield_top_ + CASIO_BORDER_GAP,
+        casioParams_.playfield_width, casioParams_.playfield_height,
+        NO_COLOR, colours_[COLOUR_ID_BORDER]);
+
+    // border for 'Next piece'
+    _drawRectangle(casioParams_.NP_left_ + CASIO_BORDER_GAP,
+                casioParams_.NP_top_ + CASIO_BORDER_GAP,
+                casioParams_.NP_width_, casioParams_.NP_width_,
+                NO_COLOR, colours_[COLOUR_ID_BORDER]);
 }
 
 // Draw a single coloured rectangle

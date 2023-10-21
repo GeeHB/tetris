@@ -17,7 +17,9 @@
 #ifndef __J_TETRIS_CONSTS_h__
 #define __J_TETRIS_CONSTS_h__    1
 
+#ifndef LINUX_VER
 #define DEST_CASIO_FXCG50        1   // Compile for Casio FX CG50 calculator
+#endif // #ifndef LINX_VER
 
 #ifdef DEST_CASIO_FXCG50
 // Specific includes for calculators
@@ -102,7 +104,8 @@ enum{
 
     COLOUR_LTGREY  = C_RGB(224, 224, 224),
     COLOUR_GREY    = C_RGB(128, 128, 128),
-    COLOUR_DKGREY  = C_RGB(64, 64, 64)
+    COLOUR_DKGREY  = C_RGB(64, 64, 64),
+    NO_COLOR       = -1
 };
 
 // Key codes

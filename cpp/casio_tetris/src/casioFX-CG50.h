@@ -121,6 +121,10 @@ class casioFXCG50{
                 keyRotate_ = KEY_CODE_RIGHT;
                 keyDown_ = KEY_CODE_LEFT;
             }
+
+            // in any case
+            playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
+            playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
         }
 
         // (anticlockwise) Rotation for vertical drawings
@@ -139,6 +143,7 @@ class casioFXCG50{
         bool        vert_;                      // Vertical drawing (default) ?
         uint8_t     boxWidth_, NP_boxWidth_;    // Width of a box
         uint16_t    playfield_left_, playfield_top_;
+        uint16_t    playfield_width, playfield_height;
 
         uint16_t    NP_left_, NP_top_;          // Next piece preview
         uint16_t    NP_width_;
