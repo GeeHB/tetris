@@ -91,9 +91,9 @@ class tetrisGame {
 
         // Update the display
         void updateDisplay(){
-        #ifdef DEST_CASIO_FXCG50
+#ifdef DEST_CASIO_FXCG50
             dupdate();
-        #endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_FXCG50
         }
 
     // Internal methods
@@ -170,16 +170,23 @@ class tetrisGame {
         // Erase the "next piece" tetramino
         void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
 
-        // Numeric value
-        void _drawNumValue(uint8_t index, uint16_t value){
-            char out[7];
-            _drawText(index, _my_itoa(value, out/*, 10*/));
+        // Draw a value and its name
+        void _drawNumValue(uint8_t index){
+            char out[MAX_VALUE_NAME + 10];
+            if (values_[index].value != values_[index].previous){
+                // Erase previous value
+                _drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
+                values_[index].previous = values_[index].value;
+
+                // New value
+                _drawText(index, __valtoa(values_[index].value, values_[index].name, out), COLOUR_ID_TEXT);
+            }
         }
 
         // Draw a line of text(and erase the prrevious value)
-        void _drawText(uint8_t index, const char* value){
+        void _drawText(uint8_t index, const char* value, uint8_t colourID){
 #ifdef DEST_CASIO_FXCG50
-            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], value);
+            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[colourID], value);
 #endif // #ifdef DEST_CASIO_FXCG50
         }
 
@@ -200,10 +207,10 @@ class tetrisGame {
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour = NO_COLOR, int16_t borderColour = NO_COLOR);
 
-        // Basic func.
+        // Strings manipulations
         //
-        char* _my_itoa(int num, char* str);
-        void _my_strrev(char* str);
+        char* __valtoa(int num, const char* name, char* str);
+        void __strrev(char* str);
 
     // Members
     //
@@ -224,9 +231,8 @@ class tetrisGame {
         int8_t nextIndex_;  // -1 = None
         pieceStatus nextPos_, currentPos_;
 
-        // Indicators
-        uint16_t score_;
-        uint8_t lines_, level_;
+        // Indicators (and associated names)
+        UVALUE  values_[VAL_COUNT];
 };
 
 #ifdef __cplusplus

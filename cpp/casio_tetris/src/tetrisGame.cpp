@@ -40,8 +40,15 @@ tetrisGame::tetrisGame() {
 
     // Default values
     nextIndex_ = -1;
-    score_ = lines_ = 0;
-    level_ = 1;
+
+    strcpy(values_[SCORE_ID].name, SCORE_STR);
+    values_[SCORE_ID].value = 0;
+
+    strcpy(values_[LEVEL_ID].name, LEVEL_STR);
+    values_[LEVEL_ID].value = 1;
+
+    strcpy(values_[COMPLETED_LINES_ID].name, COMPLETED_LINES_STR);
+    values_[COMPLETED_LINES_ID].value = 0;
 
     _emptyTetrisGame();
 
@@ -109,9 +116,9 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     // Copy (and init) parameters
     parameters_.copy(params);
 
-    score_ = 0;
-    lines_ = 0;
-    level_ = parameters_.startLevel_;
+    values_[SCORE_ID].value = 0;
+    values_[LEVEL_ID].value = parameters_.startLevel_;
+    values_[COMPLETED_LINES_ID].value = 0;
     nextIndex_ = -1;
 
     // Initialization of tetraminos(no rotation)
@@ -128,12 +135,6 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     if (parameters_.dirtyLines_ > maxLines) {
         parameters_.dirtyLines_ = maxLines;
     }
-    /*
-    else
-        if (parameters_.dirtyLines_ < 0) {
-            parameters_.dirtyLines_ = 0;
-        }
-    */
     for (uint8_t index = 0; index < parameters_.dirtyLines_; index++) {
         _addDirtyLine(index);
     }
@@ -161,9 +162,9 @@ bool tetrisGame::start() {
 
     _drawBackGround();
     _drawTetrisGame();
-    _drawNumValue(TEXT_SCORE_ID, score_);
-    _drawNumValue(TEXT_LEVEL_ID, level_);
-    _drawNumValue(TEXT_COMPLETED_LINES_ID, lines_);
+    _drawNumValue(SCORE_ID);
+    _drawNumValue(LEVEL_ID);
+    _drawNumValue(COMPLETED_LINES_ID);
 
     _newPiece();
 
@@ -210,11 +211,11 @@ bool tetrisGame::start() {
             uint8_t rLevel = (uint8_t)floor(seqCount / MOVES_UPDATE_LEVEL) + 1;
 
             // Change level (if necessary) & accelerate
-            if (rLevel >= level_){
-                level_ = rLevel;
-                seqDuration = _updateSpeed(seqDuration, level_, 1);
+            if (rLevel >= values_[LEVEL_ID].value){
+                values_[LEVEL_ID].value = rLevel;
+                seqDuration = _updateSpeed(seqDuration, rLevel, 1);
 
-                _drawNumValue(TEXT_LEVEL_ID, level_);
+                _drawNumValue(LEVEL_ID);
                 updateDisplay();
             }
         }
@@ -593,17 +594,17 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
                 break;
         }
 
-        double mult(100. + SCORE_SPEED_GAME * downRowcount + SCORE_DIRTY_LINES * parameters_.dirtyLines_ + SCORE_LEVEL_VALUATION * lines_);
+        double mult(100. + SCORE_SPEED_GAME * downRowcount + SCORE_DIRTY_LINES * parameters_.dirtyLines_ + SCORE_LEVEL_VALUATION * values_[COMPLETED_LINES_ID].value);
         if (!parameters_.shadow_){
             mult += SCORE_NO_SHADOW;
         }
 
         // Updates
-        score_+=uint32_t(delta * mult / 100.0);
-        lines_+=completedCount;
+        values_[SCORE_ID].value+=uint32_t(delta * mult / 100.0);
+        values_[COMPLETED_LINES_ID].value+=completedCount;
 
-        _drawNumValue(TEXT_SCORE_ID, score_);
-        _drawNumValue(TEXT_COMPLETED_LINES_ID, lines_);
+        _drawNumValue(SCORE_ID);
+        _drawNumValue(COMPLETED_LINES_ID);
         _drawTetrisGame();
     } // if (completedCount)
 
@@ -736,30 +737,34 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 #endif // #ifdef DEST_CASIO_FXCG50
 }
 
-// Basic functions redefintions
+// Strings manipulations
 //
-char* tetrisGame::_my_itoa(int num, char* str){
-	int sum ((num < 0)?-1*num:num);
-	int i(0);
+char* tetrisGame::__valtoa(int num, const char* name, char* str){
+    // Insert name
+	strcpy(str, name);
+	char* strVal = str + strlen(str); // Num. value starts here
+
+	// Add num. value
+	int sum ((num < 0)?-1*num:num), i(0);
 	int digit;
 	do{
 		digit = sum % 10;
-		str[i++] = '0' + digit;
+		strVal[i++] = '0' + digit;
 		sum /= 10;
 	}while (sum);
 
-	// sign ?
+	// A sign ?
 	if (num < 0){
-	    str[i++] = '-';
+	    strVal[i++] = '-';
 	}
-	str[i] = '\0';
+	strVal[i] = '\0';
 
-	// Reverse the string
-	_my_strrev(str);
+	// Reverse the string (just the num. value)
+	__strrev(strVal);
 	return str;
 }
 
-void tetrisGame::_my_strrev(char *str)
+void tetrisGame::__strrev(char *str)
 {
 	int i, j;
 	unsigned char a;

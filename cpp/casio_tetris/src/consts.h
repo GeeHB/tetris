@@ -67,6 +67,19 @@ enum{
 #define INITIAL_SPEED           200     // Level 1 speed (larger is slower)
 #define MOVES_UPDATE_LEVEL      250     // Change level criterium (# of pieces going down one step)
 
+// Indicators
+//
+enum{
+    SCORE_ID = 0,
+    LEVEL_ID = 1,
+    COMPLETED_LINES_ID = 2,
+    VAL_COUNT = COMPLETED_LINES_ID + 1
+};
+
+#define SCORE_STR   "Score : "
+#define LEVEL_STR   "Level : "
+#define COMPLETED_LINES_STR "Lines : "
+
 //
 // Colour IDs
 //
@@ -172,17 +185,31 @@ class tetrisParameters {
 
 // For lisibility ...
 //
+
+// Point coordinates
+//
 typedef struct{
     uint16_t    x;
     uint16_t    y;
-} COORD;
+} POINT;
 
-enum{
-    TEXT_SCORE_ID = 0,
-    TEXT_LEVEL_ID = 1,
-    TEXT_COMPLETED_LINES_ID = 2,
-    TEXT_COUNT = TEXT_COMPLETED_LINES_ID + 1
-};
+// A single unsigned value (and its previous val if exists)
+//
+#define MAX_VALUE_NAME  20
+typedef struct __uvalue{
+
+    // Construction
+    __uvalue(){
+        name[0] = 0;
+        value = 0;
+        previous = -1; //  not used
+    }
+
+    char       name[MAX_VALUE_NAME+1];
+    uint16_t   value;
+    int16_t    previous;
+} UVALUE;
+
 
 #ifdef __cplusplus
 }

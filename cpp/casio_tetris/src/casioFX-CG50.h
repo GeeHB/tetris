@@ -99,6 +99,12 @@ class casioFXCG50{
 
                 NP_pos_.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
                 NP_pos_.y = CASIO_INFO_TOP;
+
+                // Texts
+                textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
+                for (int id=0; id <VAL_COUNT; id++){
+                    textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
+                }
             }
             else {
                 // "rotated" mode
@@ -140,15 +146,15 @@ class casioFXCG50{
         // Screen & display parameters
         bool        rotatedDisplay_;    // Rotate all displays (default = False) ?
         uint8_t     boxWidth_;
-        COORD       playfield_pos_;
+        POINT       playfield_pos_;
         uint16_t    playfield_width, playfield_height;
 
         // Next piece
-        COORD       NP_pos_;
+        POINT       NP_pos_;
         uint16_t    NP_width_, NP_boxWidth_;
 
         // Texts
-        COORD       textsPos_[TEXT_COUNT];      // Positions of texts
+        POINT       textsPos_[VAL_COUNT];      // Positions of texts
 
         // Keyboard
         char        keyLeft_, keyRight_, keyRotate_, keyDown_, keyFall_;

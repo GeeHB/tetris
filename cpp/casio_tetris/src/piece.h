@@ -109,6 +109,7 @@ class pieceStatus{
     public:
         bool valid_;
         int8_t index_;              // Index of the piece (-1 = don't draw)
+
         uint8_t leftPos_;           // Initial pos.
         uint8_t topPos_;
         uint8_t rotationIndex_;
@@ -134,7 +135,7 @@ class piece{
             // Default values for members
             _init();
         }
-    
+
         // recopy (useless ????)
         piece(piece& other);
 
@@ -149,7 +150,7 @@ class piece{
         // Clear the current piece
         //
         void clear();
-    
+
         // Access
         //
 
@@ -166,7 +167,7 @@ class piece{
         uint8_t verticalOffset() {
             return vertOffset_;
         }
-        
+
         // Rotation(s)
         //
 
@@ -195,7 +196,7 @@ class piece{
         uint8_t rotateRight() {
             return rotate_ = (!maxRotate_?0: (rotate_ == 0 ? maxRotate_ - 1 : rotate_ - 1));
         }
-        
+
     // Private methods
     //
     protected:
