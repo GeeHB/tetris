@@ -171,10 +171,17 @@ class tetrisGame {
         void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
 
         // Numeric value
-        void _drawNumValue(uint8_t index, uint16_t value){}
+        void _drawNumValue(uint8_t index, uint16_t value){
+            char out[7];
+            _drawText(index, _my_itoa(value, out/*, 10*/));
+        }
 
         // Draw a line of text(and erase the prrevious value)
-        void _drawText(uint8_t index, const char* value){}
+        void _drawText(uint8_t index, const char* value){
+#ifdef DEST_CASIO_FXCG50
+            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], value);
+#endif // #ifdef DEST_CASIO_FXCG50
+        }
 
         // Draw entire background
         void _drawBackGround();
@@ -190,22 +197,13 @@ class tetrisGame {
         // Draw the tetrisGame
         void _drawTetrisGame();
 
-        // Helpers for drawings
-        //
-        /*
-        void _drawScore() {
-            _drawNumValue(TEXT_SCORE_ID, score_);
-        }
-        void _drawLevel() {
-            _drawNumValue(TEXT_LEVEL_ID, level_);
-        }
-        void _drawLines() {
-
-        }
-        */
-
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour = NO_COLOR, int16_t borderColour = NO_COLOR);
+
+        // Basic func.
+        //
+        char* _my_itoa(int num, char* str);
+        void _my_strrev(char* str);
 
     // Members
     //

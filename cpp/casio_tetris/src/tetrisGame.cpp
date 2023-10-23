@@ -339,7 +339,11 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 // Handle keyboard events
 //
 void tetrisGame::_handleGameKeys() {
+#ifdef DEST_CASIO_FXCG50
+    char inChar = getkey().key;
+#else
 	char inChar(getchar());
+#endif // #ifdef DEST_CASIO_FXCG50
 
 	if(inChar != EOF) {
         if (casioParams_.keyQuit_ == inChar){
@@ -730,6 +734,41 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
     // Draw the rect
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
 #endif // #ifdef DEST_CASIO_FXCG50
+}
+
+// Basic functions redefintions
+//
+char* tetrisGame::_my_itoa(int num, char* str){
+	int sum ((num < 0)?-1*num:num);
+	int i(0);
+	int digit;
+	do{
+		digit = sum % 10;
+		str[i++] = '0' + digit;
+		sum /= 10;
+	}while (sum);
+
+	// sign ?
+	if (num < 0){
+	    str[i++] = '-';
+	}
+	str[i] = '\0';
+
+	// Reverse the string
+	_my_strrev(str);
+	return str;
+}
+
+void tetrisGame::_my_strrev(char *str)
+{
+	int i, j;
+	unsigned char a;
+	unsigned len = strlen((const char *)str);
+	for (i = 0, j = len - 1; i < j; i++, j--){
+		a = str[i];
+		str[i] = str[j];
+		str[j] = a;
+	}
 }
 
 // EOF
