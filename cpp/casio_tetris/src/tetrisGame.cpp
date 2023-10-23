@@ -107,7 +107,7 @@ tetrisGame::tetrisGame() {
     colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
 
     // Just created
-    status_ = STATUS_CREATED;
+    status_ = STATUS_INIT;      // Can'at be started !!!
 }
 
 // Game's parameters
@@ -141,13 +141,16 @@ void tetrisGame::setParameters(tetrisParameters& params) {
 
     // Casio specific datas.
     casioParams_.rotatedDisplay(parameters_.rotatedDisplay_);
+
+    // Ready for the game
+    status_ = STATUS_READY;
 }
 
 // Let's play
 //
 bool tetrisGame::start() {
     // Check the object state
-    if (STATUS_INIT != status_ && STATUS_STOPPED != status_) {
+    if (STATUS_READY != status_ && STATUS_PAUSED != status_) {
         return false;
     }
 
@@ -742,11 +745,12 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 char* tetrisGame::__valtoa(int num, const char* name, char* str){
     // Insert name
 	strcpy(str, name);
-	char* strVal = str + strlen(str); // Num. value starts here
+	char* strVal = str + strlen(str); // Num. prt starts here
 
 	// Add num. value
-	int sum ((num < 0)?-1*num:num), i(0);
-	int digit;
+	int sum ((num < 0)?-1*num:num);
+	uint8_t i(0);
+	uint8_t digit;
 	do{
 		digit = sum % 10;
 		strVal[i++] = '0' + digit;
@@ -759,7 +763,7 @@ char* tetrisGame::__valtoa(int num, const char* name, char* str){
 	}
 	strVal[i] = '\0';
 
-	// Reverse the string (just the num. value)
+	// Reverse the string (just the num. part)
 	__strrev(strVal);
 	return str;
 }
@@ -768,7 +772,7 @@ void tetrisGame::__strrev(char *str)
 {
 	int i, j;
 	unsigned char a;
-	unsigned len = strlen((const char *)str);
+	size_t len = strlen((const char *)str);
 	for (i = 0, j = len - 1; i < j; i++, j--){
 		a = str[i];
 		str[i] = str[j];

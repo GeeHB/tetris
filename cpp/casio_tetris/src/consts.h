@@ -45,11 +45,12 @@ extern "C" {
 // Game status
 //
 enum{
-    STATUS_CREATED	 = 1,
-    STATUS_INIT		 = STATUS_CREATED,
+    STATUS_INIT		 = 0,
+    STATUS_READY	 = 1,
     STATUS_RUNNING	 = 2,
-    STATUS_STOPPED	 = 4,
-    STATUS_CANCELED  = 8
+    STATUS_PAUSED    = 4,
+    STATUS_STOPPED	 = 8,
+    STATUS_CANCELED  = 16
 };
 
 // Scores valorisation (in %)

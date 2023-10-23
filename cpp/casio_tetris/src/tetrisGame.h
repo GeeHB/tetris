@@ -175,7 +175,9 @@ class tetrisGame {
             char out[MAX_VALUE_NAME + 10];
             if (values_[index].value != values_[index].previous){
                 // Erase previous value
-                _drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
+                if (-1 != values_[index].previous){
+                    _drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
+                    }
                 values_[index].previous = values_[index].value;
 
                 // New value
