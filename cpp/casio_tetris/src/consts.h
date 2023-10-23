@@ -170,6 +170,20 @@ class tetrisParameters {
         bool rotatedDisplay_;
 };
 
+// For lisibility ...
+//
+typedef struct{
+    uint16_t    x;
+    uint16_t    y;
+} COORD;
+
+enum{
+    TEXT_SCORE_ID = 0,
+    TEXT_LEVEL_ID = 1,
+    TEXT_COMPLETED_LINES_ID = 2,
+    TEXT_COUNT = TEXT_COMPLETED_LINES_ID + 1
+};
+
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus

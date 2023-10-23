@@ -192,15 +192,17 @@ class tetrisGame {
 
         // Helpers for drawings
         //
+        /*
         void _drawScore() {
-            _drawNumValue(0, score_);
+            _drawNumValue(TEXT_SCORE_ID, score_);
         }
         void _drawLevel() {
-            _drawNumValue(1, level_);
+            _drawNumValue(TEXT_LEVEL_ID, level_);
         }
         void _drawLines() {
-            _drawNumValue(2, lines_);
+
         }
+        */
 
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour = NO_COLOR, int16_t borderColour = NO_COLOR);

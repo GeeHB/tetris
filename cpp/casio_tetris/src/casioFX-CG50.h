@@ -91,28 +91,28 @@ class casioFXCG50{
             if (false == (rotatedDisplay_ = doRotate)){
                 boxWidth_ = CASIO_BOX_WIDTH;
 
-                playfield_left_ = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-                playfield_top_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+                playfield_pos_.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+                playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
                 NP_boxWidth_ = CASIO_BOX_WIDTH_NP;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
-                NP_left_ = CASIO_INFO_LEFT + CASIO_INFO_GAP;
-                NP_top_ = CASIO_INFO_TOP;
+                NP_pos_.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
+                NP_pos_.y = CASIO_INFO_TOP;
             }
             else {
                 // "rotated" mode
                 //
                 boxWidth_ = CASIO_BOX_WIDTH_ROTATED;
 
-                playfield_left_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-                playfield_top_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+                playfield_pos_.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
+                playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
                 NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
-                NP_left_ = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
-                NP_top_ = CASIO_PLAYFIELD_BORDER;
+                NP_pos_.x = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
+                NP_pos_.y = CASIO_PLAYFIELD_BORDER;
 
                 // Rotation of the keyboard
                 keyLeft_ = KEY_CODE_UP;
@@ -138,17 +138,19 @@ class casioFXCG50{
         //
 
         // Screen & display parameters
-        //
-        bool        rotatedDisplay_;            // Rotate all displays (default = False) ?
-        uint8_t     boxWidth_, NP_boxWidth_;    // Width of a box
-        uint16_t    playfield_left_, playfield_top_;
+        bool        rotatedDisplay_;    // Rotate all displays (default = False) ?
+        uint8_t     boxWidth_;
+        COORD       playfield_pos_;
         uint16_t    playfield_width, playfield_height;
 
-        uint16_t    NP_left_, NP_top_;          // Next piece preview
-        uint16_t    NP_width_;
+        // Next piece
+        COORD       NP_pos_;
+        uint16_t    NP_width_, NP_boxWidth_;
+
+        // Texts
+        COORD       textsPos_[TEXT_COUNT];      // Positions of texts
 
         // Keyboard
-        //
         char        keyLeft_, keyRight_, keyRotate_, keyDown_, keyFall_;
         char        keyQuit_;
 };

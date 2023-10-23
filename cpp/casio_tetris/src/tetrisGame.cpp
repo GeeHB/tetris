@@ -161,9 +161,9 @@ bool tetrisGame::start() {
 
     _drawBackGround();
     _drawTetrisGame();
-    _drawScore();
-    _drawLevel();
-    _drawLines();
+    _drawNumValue(TEXT_SCORE_ID, score_);
+    _drawNumValue(TEXT_LEVEL_ID, level_);
+    _drawNumValue(TEXT_COMPLETED_LINES_ID, lines_);
 
     _newPiece();
 
@@ -214,7 +214,7 @@ bool tetrisGame::start() {
                 level_ = rLevel;
                 seqDuration = _updateSpeed(seqDuration, level_, 1);
 
-                //_drawLevel();
+                _drawNumValue(TEXT_LEVEL_ID, level_);
                 updateDisplay();
             }
         }
@@ -598,8 +598,8 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         score_+=uint32_t(delta * mult / 100.0);
         lines_+=completedCount;
 
-        _drawScore();
-        _drawLines();
+        _drawNumValue(TEXT_SCORE_ID, score_);
+        _drawNumValue(TEXT_COMPLETED_LINES_ID, lines_);
         _drawTetrisGame();
     } // if (completedCount)
 
@@ -613,14 +613,14 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 //
 void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
     if (inTetrisGame){
-        x = casioParams_.playfield_left_ + x * casioParams_.boxWidth_;
-        y = casioParams_.playfield_top_ + (PLAYFIELD_HEIGHT - 1 - y) * casioParams_.boxWidth_;
+        x = casioParams_.playfield_pos_.x + x * casioParams_.boxWidth_;
+        y = casioParams_.playfield_pos_.y + (PLAYFIELD_HEIGHT - 1 - y) * casioParams_.boxWidth_;
         width = height = casioParams_.boxWidth_;
     }
     else{
         // Draw next piece
-        x = casioParams_.NP_left_ + CASIO_INFO_GAP;
-        y = casioParams_.NP_top_ + CASIO_INFO_GAP;
+        x = casioParams_.NP_pos_.x + CASIO_INFO_GAP;
+        y = casioParams_.NP_pos_.y + CASIO_INFO_GAP;
         width = height = casioParams_.NP_boxWidth_;
     }
 }
@@ -695,14 +695,14 @@ void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, 
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
-    _drawRectangle(casioParams_.playfield_left_ + CASIO_BORDER_GAP,
-        casioParams_.playfield_top_ + CASIO_BORDER_GAP,
+    _drawRectangle(casioParams_.playfield_pos_.x + CASIO_BORDER_GAP,
+        casioParams_.playfield_pos_.y + CASIO_BORDER_GAP,
         casioParams_.playfield_width, casioParams_.playfield_height,
         NO_COLOR, colours_[COLOUR_ID_BORDER]);
 
     // border for 'Next piece'
-    _drawRectangle(casioParams_.NP_left_ + CASIO_BORDER_GAP,
-                casioParams_.NP_top_ + CASIO_BORDER_GAP,
+    _drawRectangle(casioParams_.NP_pos_.x + CASIO_BORDER_GAP,
+                casioParams_.NP_pos_.y + CASIO_BORDER_GAP,
                 casioParams_.NP_width_, casioParams_.NP_width_,
                 NO_COLOR, colours_[COLOUR_ID_BORDER]);
 }
