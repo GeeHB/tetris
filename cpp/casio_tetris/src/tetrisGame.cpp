@@ -165,13 +165,19 @@ bool tetrisGame::start() {
 
     _drawBackGround();
     _drawTetrisGame();
+
+    /*
     _drawNumValue(SCORE_ID);
     _drawNumValue(LEVEL_ID);
     _drawNumValue(COMPLETED_LINES_ID);
+    */
 
-    _newPiece();
+    //_newPiece();
 
     updateDisplay();
+
+    getkey();
+    return false;
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
     uint32_t seqCount(0);
@@ -686,8 +692,8 @@ void tetrisGame::_drawTetrisGame() {
         for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
             _drawSingleBlock(left, top, w, h, playField_[y][x]);
             left += w;
-            top -= h;
         }
+        top -= h;
     }
 }
 
@@ -728,7 +734,7 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
     uint16_t xTo, yTo;
 
     // Horizontal display ?
-    if (!casioParams_.rotatedDisplay_){
+    if (casioParams_.rotatedDisplay_){
         casioParams_.rotate(xFrom, yFrom);
     }
 

@@ -162,7 +162,7 @@ class tetrisParameters {
         tetrisParameters() {
             // Set default parameters
             startLevel_ = 0;
-            dirtyLines_ = 0;
+            dirtyLines_ = 7;
             shadow_ = false;
             rotatedDisplay_ = false;        // by default, no rotation
         }

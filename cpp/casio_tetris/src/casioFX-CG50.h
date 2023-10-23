@@ -49,7 +49,7 @@ extern "C" {
 
 // Playfield pos & dims
 //
-#define CASIO_PLAYFIELD_LEFT    100
+#define CASIO_PLAYFIELD_LEFT    180
 #define CASIO_PLAYFIELD_BORDER  3
 #define CASIO_BORDER_GAP        2
 
