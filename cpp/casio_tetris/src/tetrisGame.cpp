@@ -139,7 +139,7 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     }
 
     // Casio specific datas.
-    casioParams_.setVert(parameters_.vertical_);
+    casioParams_.rotatedDisplay(parameters_.rotatedDisplay_);
 }
 
 // Let's play
@@ -640,7 +640,6 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     _changeOrigin(intetrisGame, xFirst, y, w, h);
 
     uint8_t colour; // Current block 's colour id
-
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
         x = xFirst;
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
@@ -721,18 +720,15 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
     uint16_t xTo, yTo;
 
     // Horizontal display ?
-    if (!casioParams_.vert_){
+    if (!casioParams_.rotatedDisplay_){
         casioParams_.rotate(xFrom, yFrom);
-        xTo = xFrom + height- 1;     // height should be equivalent to width
-        yTo = yFrom + width -1;
-    }
-    else{
-        xTo = xFrom + width- 1;
-        yTo = yFrom + height -1;
     }
 
+    xTo = xFrom + width- 1;
+    yTo = yFrom + height -1;
+
     // Draw the rect
-    drect_border(xFrom, yFrom, xTo, yTo, colours_[fillColour], 1, -1 == borderColour ? -1 : colours_[borderColour]);
+    drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
 #endif // #ifdef DEST_CASIO_FXCG50
 }
 

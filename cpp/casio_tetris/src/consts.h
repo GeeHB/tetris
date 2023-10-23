@@ -150,7 +150,7 @@ class tetrisParameters {
             startLevel_ = 0;
             dirtyLines_ = 0;
             shadow_ = false;
-            vertical_ = true;
+            rotatedDisplay_ = false;        // by default, no rotation
         }
 
         // recopy
@@ -158,7 +158,7 @@ class tetrisParameters {
             startLevel_ = other.startLevel_;
             dirtyLines_ = other.dirtyLines_;
             shadow_ = other.shadow_;
-            vertical_ = other.vertical_;
+            rotatedDisplay_ = other.rotatedDisplay_;
         }
 
     // Members
@@ -167,7 +167,7 @@ class tetrisParameters {
         uint8_t startLevel_;
         uint8_t dirtyLines_;
         bool shadow_;
-        bool vertical_;
+        bool rotatedDisplay_;
 };
 
 #ifdef __cplusplus

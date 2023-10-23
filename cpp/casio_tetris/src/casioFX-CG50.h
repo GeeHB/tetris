@@ -41,11 +41,11 @@ extern "C" {
 
 // Box dimensions in pixels
 //
-#define CASIO_BOX_WIDTH_V   9       // playfield
-#define CASIO_BOX_WIDTH_H   14
+#define CASIO_BOX_WIDTH           9
+#define CASIO_BOX_WIDTH_ROTATED   14
 
-#define CASIO_BOX_WIDTH_NP_V   CASIO_BOX_WIDTH_V    // next piece preview
-#define CASIO_BOX_WIDTH_NP_H   8
+#define CASIO_BOX_WIDTH_NP          CASIO_BOX_WIDTH    // next piece preview
+#define CASIO_BOX_WIDTH_NP_ROTATED  8
 
 // Playfield pos & dims
 //
@@ -75,7 +75,7 @@ class casioFXCG50{
         // Construction
         casioFXCG50(){
 
-            vert_ = true;
+            rotatedDisplay_ = false;
 
             // Default keys
             keyLeft_ = KEY_CODE_LEFT;
@@ -86,30 +86,29 @@ class casioFXCG50{
             keyQuit_ = KEY_CODE_QUIT;
         }
 
-        // Vertical ?
-        void setVert(bool vert = true){
-            vert_ = vert;
-            if (vert){
-                boxWidth_ = CASIO_BOX_WIDTH_V;
+        // Rotate ?
+        void rotatedDisplay(bool doRotate = false){
+            if (false == (rotatedDisplay_ = doRotate)){
+                boxWidth_ = CASIO_BOX_WIDTH;
 
                 playfield_left_ = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
                 playfield_top_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
-                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_V;
+                NP_boxWidth_ = CASIO_BOX_WIDTH_NP;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
                 NP_left_ = CASIO_INFO_LEFT + CASIO_INFO_GAP;
                 NP_top_ = CASIO_INFO_TOP;
             }
             else {
-                // Horizontal mode
+                // "rotated" mode
                 //
-                boxWidth_ = CASIO_BOX_WIDTH_H;
+                boxWidth_ = CASIO_BOX_WIDTH_ROTATED;
 
                 playfield_left_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
                 playfield_top_ = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
-                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_H;
+                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
                 NP_left_ = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
@@ -140,7 +139,7 @@ class casioFXCG50{
 
         // Screen & display parameters
         //
-        bool        vert_;                      // Vertical drawing (default) ?
+        bool        rotatedDisplay_;            // Rotate all displays (default = False) ?
         uint8_t     boxWidth_, NP_boxWidth_;    // Width of a box
         uint16_t    playfield_left_, playfield_top_;
         uint16_t    playfield_width, playfield_height;
