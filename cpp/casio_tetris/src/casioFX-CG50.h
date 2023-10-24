@@ -55,7 +55,7 @@ extern "C" {
 
 // Texts pos & dims
 //
-#define CASIO_INFO_LEFT     250
+#define CASIO_INFO_LEFT     330
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
 

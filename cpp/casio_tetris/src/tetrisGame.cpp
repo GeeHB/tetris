@@ -176,8 +176,10 @@ bool tetrisGame::start() {
 
     updateDisplay();
 
+#ifdef DEST_CASIO_FXCG50
     getkey();
     return false;
+#endif // #ifdef DEST_CASIO_FXCG50
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
     uint32_t seqCount(0);
@@ -640,18 +642,18 @@ void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint1
 }
 
 // Draw a tetramino using the given colour
-//   intetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
+//   inTetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
 //
-void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame, uint8_t colourID) {
+void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame, uint8_t specialColourID) {
     // First visible row ID
     int8_t rowFirst(0);
-    if (intetrisGame) {
+    if (inTetrisGame) {
         rowFirst = PLAYFIELD_HEIGHT - 1 - cornerY;
         rowFirst = (rowFirst < 0) ? rowFirst * -1 : 0;
     }
 
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
-    _changeOrigin(intetrisGame, xFirst, y, w, h);
+    _changeOrigin(inTetrisGame, xFirst, y, w, h);
 
     uint8_t colour; // Current block 's colour id
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
@@ -659,7 +661,8 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
             colour = datas[row * PIECE_WIDTH + col];
             if (colour != COLOUR_ID_BOARD) {
-                _drawSingleBlock(x, y, w, h, (COLOUR_ID_NONE != colourID) ? colourID : colour);     // only non - empty squares
+                //_drawSingleBlock(x, y, w, h, (COLOUR_ID_NONE != specialColourID) ? specialColourID : colour);     // only non - empty squares
+                _drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colour]);
             }
             x += w;
         }
@@ -690,7 +693,11 @@ void tetrisGame::_drawTetrisGame() {
     for (uint8_t y = 0; y < PLAYFIELD_HEIGHT; y++) {
         left = leftFirst;
         for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
-            _drawSingleBlock(left, top, w, h, playField_[y][x]);
+            //_drawSingleBlock(left, top, w, h, playField_[y][x]);
+#ifdef _DEBUG
+            uint8_t colourID = playField_[y][x];
+#endif // #ifdef _DEBUG
+            _drawRectangle(left, top, w, h, colours_[playField_[y][x]]);
             left += w;
         }
         top -= h;
@@ -709,8 +716,8 @@ void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, 
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
-    _drawRectangle(casioParams_.playfield_pos_.x + CASIO_BORDER_GAP,
-        casioParams_.playfield_pos_.y + CASIO_BORDER_GAP,
+    _drawRectangle(casioParams_.playfield_pos_.x - CASIO_BORDER_GAP,
+        casioParams_.playfield_pos_.y - CASIO_BORDER_GAP,
         casioParams_.playfield_width, casioParams_.playfield_height,
         NO_COLOR, colours_[COLOUR_ID_BORDER]);
 

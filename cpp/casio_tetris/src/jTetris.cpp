@@ -22,7 +22,7 @@ int main()
 {
     // Get parameters
     tetrisParameters params;
-    
+
     /*
     splashScreen splash;
     if (false == splash.choose(params)){
@@ -30,14 +30,14 @@ int main()
         return 1;
     }
     */
-    
+
 	// Launch the game
 	tetrisGame game(params);
 	game.start();
     game.end();
 
     // Finished
-    return 0;
+    return 1;
 }
 
 // EOF

@@ -196,12 +196,14 @@ class tetrisGame {
         void _drawBackGround();
 
         // Draw a tetramino using the given colour
-        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool intetrisGame = true, uint8_t colourID = COLOUR_ID_NONE);
+        void _drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame = true, uint8_t specialColourID = COLOUR_ID_NONE);
 
+        /*
         // Draw a single coloured block
         void _drawSingleBlock(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height,uint8_t colourID){
             _drawRectangle(left, top, width, height, colours_[colourID]);
         }
+        */
 
         // Draw the tetrisGame
         void _drawTetrisGame();
