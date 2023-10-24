@@ -77,9 +77,11 @@ enum{
     VAL_COUNT = COMPLETED_LINES_ID + 1
 };
 
-#define SCORE_STR   "Score : "
-#define LEVEL_STR   "Level : "
-#define COMPLETED_LINES_STR "Lines : "
+#define SCORE_STR   "Score"
+#define LEVEL_STR   "Level"
+#define COMPLETED_LINES_STR "Lines"
+
+#define FORMAT_STR  "%s : %d"
 
 //
 // Colour IDs

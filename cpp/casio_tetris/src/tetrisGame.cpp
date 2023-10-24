@@ -107,10 +107,13 @@ tetrisGame::tetrisGame() {
     colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
 
     // Just created
-    status_ = STATUS_INIT;      // Can'at be started !!!
+    status_ = STATUS_INIT;      // Can't be started !!!
 }
 
-// Game's parameters
+// setParameters() : Set game's parameters
+//
+//  @params : Struct. continaining parameters for the game
+//  These parameters are choosen by the user
 //
 void tetrisGame::setParameters(tetrisParameters& params) {
     // Copy (and init) parameters
@@ -146,7 +149,12 @@ void tetrisGame::setParameters(tetrisParameters& params) {
     status_ = STATUS_READY;
 }
 
-// Let's play
+// start() : Start the tetris game
+//
+//  The entore game is handled by this method.
+//  It retuns on error or when the game is over
+//
+//  returns false on error(s)
 //
 bool tetrisGame::start() {
     // Check the object state
@@ -166,11 +174,9 @@ bool tetrisGame::start() {
     _drawBackGround();
     _drawTetrisGame();
 
-    /*
     _drawNumValue(SCORE_ID);
     _drawNumValue(LEVEL_ID);
     _drawNumValue(COMPLETED_LINES_ID);
-    */
 
     _newPiece();
 
@@ -240,7 +246,7 @@ bool tetrisGame::start() {
 // "Private" methods
 //
 
-// anti-clockwise rotation
+// _rotateLeft() : anti-clockwise rotation
 //
 bool tetrisGame::_rotateLeft() {
 
@@ -261,7 +267,7 @@ bool tetrisGame::_rotateLeft() {
     return false;
 }
 
-// Move left
+// _left() : Move left
 //
 bool tetrisGame::_left(){
     // Test position
@@ -276,7 +282,7 @@ bool tetrisGame::_left(){
     return false;
 }
 
-// Move right
+// _right() : Move right
 //
 bool tetrisGame::_right(){
     // Test position
@@ -291,9 +297,9 @@ bool tetrisGame::_right(){
     return false;
 }
 
-// Go down (as many lines as possible)
+// _fall() : Go down (as many lines as possible)
 //
-void tetrisGame::_fall() {
+void tetrisGame::_fall(){
     uint8_t bottom(_minTopPosition());
     uint8_t delta(nextPos_.topPos_ - bottom);
     nextPos_.topPos_ = bottom;
@@ -303,7 +309,9 @@ void tetrisGame::_fall() {
     _reachLowerPos(delta);
 }
 
-// The position of the piece has just changed
+// _piecePosChanged() : The position of the piece has just changed
+//
+//  Called when the screen needs to be updated
 //
 void tetrisGame::_piecePosChanged() {
     // Compute the pos ot the shadow ?
@@ -336,7 +344,18 @@ void tetrisGame::_piecePosChanged() {
     }
 }
 
-// Change the game speed
+// _updateSpeed() : Change the game speed
+//
+//  Between each automatic down movement the system "waits" a given duration.
+//  The greater this value, the lower the 'speed' will be.
+//
+//  This 'speed' is linked to the level in the game
+//
+//  @currentDuration : current 'speed'
+//  @level : current level in the game
+//  @incLevel : value of current increment for the level (1 by default)
+//
+//  Return the new duration in ns.
 //
 long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLevel){
         if (level >= MAX_LEVEL_ACCELERATION){
@@ -348,7 +367,7 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
         return currentDuration * ((incLevel == 1)? ACCELERATION_STEP : powl(ACCELERATION_STEP, incLevel));
 }
 
-// Handle keyboard events
+// _handleGameKeys() : Handle keyboard events
 //
 void tetrisGame::_handleGameKeys() {
 #ifdef DEST_CASIO_FXCG50
@@ -390,7 +409,15 @@ void tetrisGame::_handleGameKeys() {
 	}
 }
 
-// Can the piece go down ?
+// _down() : Can the piece go down ?
+//
+//  Test wether the current piece can go down one row
+//  When the piece has been added newly to the game and going down is
+//  not possible, it means the game is over
+//
+//  @newPiece : The piece has just been added ?
+//
+//  Return true if the piece canmoive one row down
 //
 bool tetrisGame::_down(bool newPiece) {
     // Test position
@@ -408,7 +435,11 @@ bool tetrisGame::_down(bool newPiece) {
     return false;
 }
 
-// Can the current piece be at the given position ?
+// _canMove : Can the current piece be at the given position ?
+//
+//  @leftPos, @topPos : Position to test
+//
+//  Return true if the position is free and can be used by the tetramino
 //
 bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
@@ -443,9 +474,11 @@ bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
     return true;
 }
 
-// Get a piece min.pos.index(vertical value)
+// _minTopPosition() : Get a piece min.pos.index(vertical value)
 //
-uint8_t tetrisGame::_minTopPosition() {
+//  Return the index of the lowest possible position foir the current piece
+//
+uint8_t tetrisGame::_minTopPosition(){
     uint8_t currentTop(nextPos_.topPos_);
 
     // Try to move one line down
@@ -457,7 +490,10 @@ uint8_t tetrisGame::_minTopPosition() {
     return currentTop + 1;
 }
 
-// New piece (in the game)
+// _newPiece() : New piece (in the game)
+//
+//  The piece in the preview area will appear in the playfield
+//  A new "next piece" will be shown in the preview area
 //
 void tetrisGame::_newPiece() {
     // Next piece => current
@@ -483,7 +519,12 @@ void tetrisGame::_newPiece() {
     }
 }
 
-// Clear and remove a completed line
+// _clearLine() : Clear and remove a completed line
+//
+//  When a line is completed (ie. all horizontal boxes are colored)
+//  it disapperas from the game. All lines "below" will move down.
+//
+//  @index : index of the line to clear  in [0 , PLAYFIELD_HEIGHT[
 //
 void tetrisGame::_clearLine(uint8_t index) {
     if (/*index >= 0 && */index < PLAYFIELD_HEIGHT) {
@@ -501,10 +542,12 @@ void tetrisGame::_clearLine(uint8_t index) {
     }
 }
 
-// Add a randomly generated dirty line in the gameplay
+// _addDirtyLine() : Add a randomly generated dirty line in the gameplay
+//
+//  @lineID : Index of the line to fill in [0 , PLAYFIELD_HEIGHT[
 //
 void tetrisGame::_addDirtyLine(uint8_t lineID) {
-    uint16_t cubes(rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
+    uint16_t cubes(1 + rand() % int(pow(2, PLAYFIELD_WIDTH) - 1));
     uint16_t sBit(1); // 2 ^ 0
 
     // Convert 'cubes' bits into coloured blocks
@@ -520,10 +563,16 @@ void tetrisGame::_addDirtyLine(uint8_t lineID) {
     }
 }
 
-// Put the tetramino at the current position
+// _putPiece : Put the tetramino at the current position
 //
-void tetrisGame::_putPiece(uint8_t colour) {
-    uint8_t vertPos((COLOUR_ID_SHADOW == colour) ? nextPos_.shadowTopPos_ : nextPos_.topPos_);
+//  This methods is used to draw a tetramino during the game.
+//  By default the colour of the piece is used but, this method can
+//  draw a shadow of a piece, down the screen using the COLOUR_ID_SHADOW colour ID
+//
+//  @colourID : ID of the colour to use for drawing the piece (if COLOUR_ID_SHADOW)
+//
+void tetrisGame::_putPiece(uint8_t colourID) {
+    uint8_t vertPos((COLOUR_ID_SHADOW == colourID) ? nextPos_.shadowTopPos_ : nextPos_.topPos_);
 
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
     uint8_t bColour(0);
@@ -534,13 +583,15 @@ void tetrisGame::_putPiece(uint8_t colour) {
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             bColour = datas[y * PIECE_WIDTH + x];
             if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
-                playField_[vertPos - y][x + nextPos_.leftPos_] = ((COLOUR_ID_SHADOW == colour) ? colour : bColour);
+                playField_[vertPos - y][x + nextPos_.leftPos_] = ((COLOUR_ID_SHADOW == colourID) ? COLOUR_ID_SHADOW : bColour);
             }
         }
     }
 }
 
-// The piece is at the lowest possible level
+// _reachLowerPos() : Update the datas when a tetramino is down
+//
+//  @downRowCount : count of down'rows
 //
 void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     // put it
@@ -624,8 +675,12 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     updateDisplay();
 }
 
-// Change the origin and the coordinate system
-//  returns width and height of a block
+// _changeOrigin() : Change the origin and the coordinate system
+//
+//  @inTetrisGame : if true coordinates are changed to playfield area.
+//   if false, coordinates are changed to the preview area
+//  @x, @y : coordinates to change
+//  @width, @height : Dimensions in pixels of a single block in the choosen area
 //
 void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint16_t& width, uint16_t& height) {
     if (inTetrisGame){
@@ -641,8 +696,13 @@ void tetrisGame::_changeOrigin(bool inTetrisGame,uint16_t& x, uint16_t& y, uint1
     }
 }
 
-// Draw a tetramino using the given colour
-//   inTetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
+// _drawTetrisGame() : Draw a whole tetramino using the given colour
+//
+//  @datas is the piece'datas in its current rotation state
+//  @cornerX, @cornerY are the coordinates of the upper left corner in blocks coordinates
+//  @inTetrisGame : True = > draw in the tetrisGame, False = > draw "next" piece
+//  @specialColourID is the colour to use for the tetramino.
+//   If set to COLOUR_ID_NONE the tetramini's colour will be used
 //
 void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cornerY, bool inTetrisGame, uint8_t specialColourID) {
     // First visible row ID
@@ -672,7 +732,12 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     }
 }
 
-// Display the next piece
+// _drawTetrisGame() : Display the next piece
+//
+//  The next piece will be drawn in the preview box.
+//  This zone, prior to drawinings, will be erased
+//
+//  @pieceIndex is the index of the piece
 //
 void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
     // Erase the previous piece
@@ -685,7 +750,7 @@ void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
     }
 }
 
-// Draw the tetrisGame
+// _drawTetrisGame() : Draw the tetrisGame
 //
 void tetrisGame::_drawTetrisGame() {
     uint16_t left, leftFirst(0), top(0), w, h;
@@ -706,15 +771,22 @@ void tetrisGame::_drawTetrisGame() {
     }
 }
 
-// Erase the "next piece" tetramino
+// _eraseNextPiece() : Erase the "next piece" tetramino
+//
+//  @left, @top : top left corner of next-piece preview
+//  @width, @height : dimensions of the preview (in box units)
+//  @colourID : ID of the colour to use
 //
 void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){
     uint16_t w, h;
     _changeOrigin(false, left, top, w, h);
-    _drawRectangle(left, top, w * width, h * height, colours_[colourID]);
+    _drawRectangle(left, top, w * width, h * height, colours_[colourID], colours_[colourID]);
 }
 
-// Draw entire background
+// _drawBackGround() : Draw entire background
+//
+//  This methods will redraw all the window except the next piece preview and
+//  the tetris game playfield
 //
 void tetrisGame::_drawBackGround(){
     // Border around the playfield
@@ -730,7 +802,7 @@ void tetrisGame::_drawBackGround(){
                 NO_COLOR, colours_[COLOUR_ID_BORDER]);
 }
 
-// Draw a single coloured rectangle
+// _drawNumValue() : Draw a single coloured rectangle
 //
 //   @x,@y : top left starting point
 //   @width, @height : dimensions
@@ -755,44 +827,26 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 #endif // #ifdef DEST_CASIO_FXCG50
 }
 
-// Strings manipulations
+// _drawNumValue() : Draw a value and its name
 //
-char* tetrisGame::__valtoa(int num, const char* name, char* str){
-    // Insert name
-	strcpy(str, name);
-	char* strVal = str + strlen(str); // Num. prt starts here
+//  @index is the index of the VALUE object to be drawn
+//
+void tetrisGame::_drawNumValue(uint8_t index){
+#ifdef DEST_CASIO_FXCG50
+    if (values_[index].value != values_[index].previous){
+        // Erase previous value ?
+        if (-1 != values_[index].previous){
+            //_drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
+            dprint(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], FORMAT_STR,
+                values_[index].name, values_[index].previous);
+            }
+        values_[index].previous = values_[index].value;
 
-	// Add num. value
-	int sum ((num < 0)?-1*num:num);
-	uint8_t i(0);
-	uint8_t digit;
-	do{
-		digit = sum % 10;
-		strVal[i++] = '0' + digit;
-		sum /= 10;
-	}while (sum);
-
-	// A sign ?
-	if (num < 0){
-	    strVal[i++] = '-';
-	}
-	strVal[i] = '\0';
-
-	// Reverse the string (just the num. part)
-	__strrev(strVal);
-	return str;
-}
-
-void tetrisGame::__strrev(char *str)
-{
-	int i, j;
-	unsigned char a;
-	size_t len = strlen((const char *)str);
-	for (i = 0, j = len - 1; i < j; i++, j--){
-		a = str[i];
-		str[i] = str[j];
-		str[j] = a;
-	}
+        // New value
+        dprint(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], FORMAT_STR,
+                values_[index].name, values_[index].value);
+    }
+#endif // #ifdef DEST_CASIO_FXCG50
 }
 
 // EOF

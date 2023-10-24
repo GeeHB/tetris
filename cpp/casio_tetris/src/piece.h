@@ -216,7 +216,7 @@ class piece{
         bool _addRotation(uint8_t* tempPiece);
 
         // Is the "line" empty ?
-        bool _isLineEmpty(uint8_t pieceIndex, uint8_t lineIndex);
+        bool _isLineEmpty(uint8_t rotIndex, uint8_t lineIndex);
 
     // Members
     //

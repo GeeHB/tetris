@@ -171,26 +171,7 @@ class tetrisGame {
         void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
 
         // Draw a value and its name
-        void _drawNumValue(uint8_t index){
-            char out[MAX_VALUE_NAME + 10];
-            if (values_[index].value != values_[index].previous){
-                // Erase previous value
-                if (-1 != values_[index].previous){
-                    _drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
-                    }
-                values_[index].previous = values_[index].value;
-
-                // New value
-                _drawText(index, __valtoa(values_[index].value, values_[index].name, out), COLOUR_ID_TEXT);
-            }
-        }
-
-        // Draw a line of text(and erase the prrevious value)
-        void _drawText(uint8_t index, const char* value, uint8_t colourID){
-#ifdef DEST_CASIO_FXCG50
-            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[colourID], value);
-#endif // #ifdef DEST_CASIO_FXCG50
-        }
+        void _drawNumValue(uint8_t index);
 
         // Draw entire background
         void _drawBackGround();
@@ -204,11 +185,6 @@ class tetrisGame {
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);
 
-        // Strings manipulations
-        //
-        char* __valtoa(int num, const char* name, char* str);
-        void __strrev(char* str);
-
     // Members
     //
     protected:
@@ -220,11 +196,11 @@ class tetrisGame {
 
         tetrisParameters parameters_;
 
-        uint32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
+        int32_t colours_[LAST_COLOUR_ID+1];     // Colours in rgb
 
         casioFXCG50 casioParams_;
 
-        // Piece and next one
+        // Current iece and next piece
         int8_t nextIndex_;  // -1 = None
         pieceStatus nextPos_, currentPos_;
 

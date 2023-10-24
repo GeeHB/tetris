@@ -11,7 +11,7 @@
 //--	Description:
 //--
 //--			Implementation of piece & pieceStatus objects :
-//--                a tetramino and all the informations for its drawing
+//--            a tetramino and all the informations for its drawing
 //--
 //---------------------------------------------------------------------------
 
@@ -55,7 +55,11 @@ piece::piece(piece& other) {
     }
 }
 
-// Add a new piece from a template
+// addRotation() : Add a new piece from a template
+//
+//  @tempPiece : List a strings defining a tetramino from a template
+//
+//  Return true if the rotation has been successfully added
 //
 bool piece::addRotation(const char* tempPiece) {
     if (!tempPiece) {
@@ -103,12 +107,12 @@ bool piece::addRotation(const char* tempPiece) {
             vertOffset_ -= 1;
         }
     }
-    
+
     // Success
     return true;
 }
 
-// Clear the current piece
+// clear() : Clear the current piece
 //
 void piece::clear() {
     if (points_) {
@@ -126,7 +130,11 @@ void piece::clear() {
     _init();
 }
 
-// Add a rotation to the current piece
+// _addRotation() : Add a rotation to the current piece
+//
+//  @tempPiece : List of blocks
+//
+//  Return true if the rotation is valid and has been successfully added
 //
 bool piece::_addRotation(uint8_t* tempPiece) {
     if (!tempPiece) {
@@ -144,26 +152,29 @@ bool piece::_addRotation(uint8_t* tempPiece) {
     }
 
     // Copy ...
-    //return (NULL != memcpy(tempPiece, points_[maxRotate_++], sizeof(uint8_t));
     points_[maxRotate_++] = tempPiece;
-    
     return true;
 }
 
-// Is the "line" empty ?
+// _isLineEmpty(): Is the "line" empty ?
 //
-bool piece::_isLineEmpty(uint8_t pieceIndex, uint8_t lineIndex) {
-    if (pieceIndex >= maxRotate_ || lineIndex >= PIECE_HEIGHT) {
+//  @rotIndex : Index of the rotation to check
+//  @lineIndex : Index of the line in the tetramino
+//
+//  Returns true if the tested line is empty (ie. no colored block)
+//
+bool piece::_isLineEmpty(uint8_t rotIndex, uint8_t lineIndex) {
+    if (rotIndex >= maxRotate_ || lineIndex >= PIECE_HEIGHT) {
         return false;
     }
 
     uint8_t total(0);
     for (uint8_t col(0); !total && col < PIECE_WIDTH; col++) {
-        total += points_[pieceIndex][lineIndex * PIECE_WIDTH + col];
+        total += points_[rotIndex][lineIndex * PIECE_WIDTH + col];
     }
 
     // Yes !
-    return (!total);
+    return (!total);    // Sum of colors == 0 => empty line
 }
 
 // EOF

@@ -109,7 +109,7 @@ class casioFXCG50{
 
                 // Texts
                 textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
-                for (int id=0; id <VAL_COUNT; id++){
+                for (uint8_t id(0); id <VAL_COUNT; id++){
                     textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
                 }
             }
