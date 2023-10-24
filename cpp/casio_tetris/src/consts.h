@@ -95,7 +95,7 @@ enum{
     COLOUR_ID_BKGRND    = 11,
     //#define COLOUR_ID_ANIMATE   12     // animation When line if full
     LAST_COLOUR_ID		= COLOUR_ID_BKGRND,
-    COLOUR_ID_NONE
+    COLOUR_ID_NONE = 12
 };
 
 

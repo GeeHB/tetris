@@ -583,7 +583,7 @@ void tetrisGame::_putPiece(uint8_t colourID) {
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             bColour = datas[y * PIECE_WIDTH + x];
             if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
-                playField_[vertPos - y][x + nextPos_.leftPos_] = ((COLOUR_ID_SHADOW == colourID) ? COLOUR_ID_SHADOW : bColour);
+                playField_[vertPos - y][x + nextPos_.leftPos_] = ((uint8_t)((uint8_t)COLOUR_ID_SHADOW == colourID) ? (uint8_t)COLOUR_ID_SHADOW : bColour);
             }
         }
     }
