@@ -172,7 +172,7 @@ bool tetrisGame::start() {
     _drawNumValue(COMPLETED_LINES_ID);
     */
 
-    //_newPiece();
+    _newPiece();
 
     updateDisplay();
 
@@ -655,14 +655,16 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
     uint16_t x, xFirst(cornerX), y(cornerY - rowFirst), w, h;
     _changeOrigin(inTetrisGame, xFirst, y, w, h);
 
-    uint8_t colour; // Current block 's colour id
+    uint8_t colourID;
     for (uint8_t row = rowFirst; row < PIECE_HEIGHT; row++) {
         x = xFirst;
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
-            colour = datas[row * PIECE_WIDTH + col];
-            if (colour != COLOUR_ID_BOARD) {
-                //_drawSingleBlock(x, y, w, h, (COLOUR_ID_NONE != specialColourID) ? specialColourID : colour);     // only non - empty squares
-                _drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colour]);
+            colourID = datas[row * PIECE_WIDTH + col];
+            if (colourID != COLOUR_ID_BOARD) {
+#ifdef _DEBUG
+                int colour = colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID];
+#endif // #ifdef _DEBUG
+                _drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
             }
             x += w;
         }
@@ -735,7 +737,7 @@ void tetrisGame::_drawBackGround(){
 //   @borderColour : Colour of the border in RGB format or -1 (if no border)
 //   @fillColour : Filling colour in RGB format or -1 (if empty)
 //
-void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int16_t fillColour, int16_t borderColour){
+void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour, int32_t borderColour){
 #ifdef DEST_CASIO_FXCG50
     uint16_t xFrom(x), yFrom(y);
     uint16_t xTo, yTo;

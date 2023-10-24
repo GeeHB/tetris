@@ -49,13 +49,13 @@ extern "C" {
 
 // Playfield pos & dims
 //
-#define CASIO_PLAYFIELD_LEFT    180
+#define CASIO_PLAYFIELD_LEFT    100
 #define CASIO_PLAYFIELD_BORDER  3
 #define CASIO_BORDER_GAP        2
 
 // Texts pos & dims
 //
-#define CASIO_INFO_LEFT     330
+#define CASIO_INFO_LEFT     250
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
 
@@ -94,10 +94,17 @@ class casioFXCG50{
                 playfield_pos_.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
                 playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
+                playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
+                playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
+
                 NP_boxWidth_ = CASIO_BOX_WIDTH_NP;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
                 NP_pos_.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
+                if (NP_pos_.x <= (playfield_pos_.x + playfield_width)){
+                    NP_pos_.x = playfield_pos_.x + playfield_width + 2 * CASIO_INFO_GAP;
+                }
+
                 NP_pos_.y = CASIO_INFO_TOP;
 
                 // Texts
@@ -114,6 +121,9 @@ class casioFXCG50{
                 playfield_pos_.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
                 playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
 
+                playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
+                playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
+
                 NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
@@ -126,10 +136,6 @@ class casioFXCG50{
                 keyRotate_ = KEY_CODE_RIGHT;
                 keyDown_ = KEY_CODE_LEFT;
             }
-
-            // in any case
-            playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
-            playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
         }
 
         // (anticlockwise) Rotation for vertical drawings

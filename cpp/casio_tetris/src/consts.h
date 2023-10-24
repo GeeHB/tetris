@@ -203,14 +203,13 @@ typedef struct __uvalue{
     __uvalue(){
         name[0] = 0;
         value = 0;
-        previous = -1; //  not used
+        previous = -1; //  value is not (yet) used
     }
 
     char       name[MAX_VALUE_NAME+1];
     uint16_t   value;
     int16_t    previous;
 } UVALUE;
-
 
 #ifdef __cplusplus
 }
