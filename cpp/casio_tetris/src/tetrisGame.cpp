@@ -634,7 +634,7 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
     }
 
     uint8_t currentLineValue(0);
-    for (uint8_t line = nextPos_.topPos_ - PLAYFIELD_HEIGHT + 1; line < maxY; line++){
+    for (uint8_t line = nextPos_.topPos_ - PIECE_HEIGHT + 1; line < maxY; line++){
         currentLineValue = 1;
         for (uint8_t col = 0; col <PLAYFIELD_WIDTH; col++){
             // one empty block and the whole line "value" = 0
