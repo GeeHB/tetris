@@ -339,12 +339,7 @@ class board(object):
     # Put the tetramino at the current position
     #
     def _putPiece(self, colour = None):
-        if None == colour:
-            vertPos = self.currentPiece_.topPos_
-        else:
-            # A shadow
-            vertPos = self.currentPiece_.shadowTopPos_
-
+        vertPos = self.currentPiece_.topPos_
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
         # Copy all the colored blocks in the gameplay

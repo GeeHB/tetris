@@ -133,8 +133,9 @@ enum{
     KEY_CODE_LEFT = KEY_LEFT,
     KEY_CODE_RIGHT = KEY_RIGHT,
     KEY_CODE_FALL = KEY_EXE,
+    KEY_ROTATE_DISPLAY = KEY_XOT,
     KEY_CODE_QUIT = KEY_EXIT,
-    KEY_CODE_ENTER = KEY_EXE
+    KEY_CODE_ENTER = KEY_0
 };
 #else
 enum{
@@ -143,6 +144,7 @@ enum{
     KEY_CODE_UP = '3',
     KEY_CODE_DOWN = '2',
     KEY_CODE_FALL = ' ',
+    KEY_ROTATE_DISPLAY = 'r',
     KEY_CODE_QUIT = 'q',
     KEY_CODE_ENTER = '\13'
 };

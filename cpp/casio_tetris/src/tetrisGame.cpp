@@ -301,6 +301,32 @@ bool tetrisGame::_right(){
     return false;
 }
 
+// _down() : Can the piece go down ?
+//
+//  Test wether the current piece can go down one row
+//  When the piece has been added newly to the game and going down is
+//  not possible, it means the game is over
+//
+//  @newPiece : The piece has just been added ?
+//
+//  Return true if the piece canmoive one row down
+//
+bool tetrisGame::_down(bool newPiece) {
+    // Test position
+    if (_canMove(nextPos_.leftPos_, nextPos_.topPos_ - 1)) {
+        // correct
+        nextPos_.topPos_ -= 1;
+        _piecePosChanged();
+        return true;
+    }
+
+    if (!newPiece) {
+        _reachLowerPos();
+    }
+
+    return false;
+}
+
 // _fall() : Go down (as many lines as possible)
 //
 void tetrisGame::_fall(){
@@ -382,70 +408,54 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 
 // _handleGameKeys() : Handle keyboard events
 //
+//  This methods returns even if no event is in the queue
+//
 void tetrisGame::_handleGameKeys() {
+    char car(0);
 #ifdef DEST_CASIO_FXCG50
-    char inChar = getkey().key;
+    key_event_t evt = pollevent();
+    if (evt.type == KEYEV_DOWN){
+        // A key has been pressed
+        car = evt.key;
+    }
+    else{
+        return;
+    }
 #else
-	char inChar(getchar());
+	car = getchar();
 #endif // #ifdef DEST_CASIO_FXCG50
 
-	if(inChar != EOF) {
-        if (casioParams_.keyQuit_ == inChar){
+	if(car != EOF) {
+        if (casioParams_.keyQuit_ == car){
             end();
             return;
         }
 
-        if (casioParams_.keyLeft_ == inChar){
+        if (casioParams_.keyLeft_ == car){
             _left();
             return;
         }
 
-        if (casioParams_.keyRight_ == inChar){
+        if (casioParams_.keyRight_ == car){
             _right();
             return;
         }
 
-        if (casioParams_.keyRotate_ == inChar){
+        if (casioParams_.keyRotate_ == car){
             _rotateLeft();
             return;
         }
 
-        if (casioParams_.keyDown_ == inChar){
+        if (casioParams_.keyDown_ == car){
             _down();
             return;
         }
 
-        if (casioParams_.keyFall_ == inChar){
+        if (casioParams_.keyFall_ == car){
             _fall();
             return;
         }
 	}
-}
-
-// _down() : Can the piece go down ?
-//
-//  Test wether the current piece can go down one row
-//  When the piece has been added newly to the game and going down is
-//  not possible, it means the game is over
-//
-//  @newPiece : The piece has just been added ?
-//
-//  Return true if the piece canmoive one row down
-//
-bool tetrisGame::_down(bool newPiece) {
-    // Test position
-    if (_canMove(nextPos_.leftPos_, nextPos_.topPos_ - 1)) {
-        // correct
-        nextPos_.topPos_ -= 1;
-        _piecePosChanged();
-        return true;
-    }
-
-    if (!newPiece) {
-        _reachLowerPos();
-    }
-
-    return false;
 }
 
 // _canMove : Can the current piece be at the given position ?
@@ -581,14 +591,11 @@ void tetrisGame::_addDirtyLine(uint8_t lineID) {
 
 // _putPiece : Put the tetramino at the current position
 //
-//  This methods is used to draw a tetramino during the game.
-//  By default the colour of the piece is used but, this method can
-//  draw a shadow of a piece, down the screen using the COLOUR_ID_SHADOW colour ID
+//  This methods is used to put a tetramino on the playing area.
+//  The tetramino is no longer mobile.
 //
-//  @colourID : ID of the colour to use for drawing the piece (if COLOUR_ID_SHADOW)
-//
-void tetrisGame::_putPiece(uint8_t colourID) {
-    uint8_t vertPos((COLOUR_ID_SHADOW == colourID) ? nextPos_.shadowTopPos_ : nextPos_.topPos_);
+void tetrisGame::_putPiece() {
+    uint8_t vertPos(nextPos_.topPos_);
 
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
     uint8_t bColour(0);
@@ -599,7 +606,7 @@ void tetrisGame::_putPiece(uint8_t colourID) {
         for (uint8_t x = 0; x < PIECE_WIDTH; x++) {
             bColour = datas[y * PIECE_WIDTH + x];
             if (COLOUR_ID_BOARD != bColour && (vertPos - y) < PLAYFIELD_HEIGHT) {
-                playField_[vertPos - y][x + nextPos_.leftPos_] = ((uint8_t)((uint8_t)COLOUR_ID_SHADOW == colourID) ? (uint8_t)COLOUR_ID_SHADOW : bColour);
+                playField_[vertPos - y][x + nextPos_.leftPos_] = bColour;
             }
         }
     }
