@@ -147,7 +147,7 @@ class tetrisGame {
         void _fall();
 
         // Can the current piece be at the given position ?
-        bool _canMove(uint8_t leftPos, uint8_t  topPos);
+        bool _canMove(int8_t leftPos, uint8_t  topPos);
 
         // Get a piece min.pos.index (vertical value)
         uint8_t _minTopPosition();
@@ -185,6 +185,10 @@ class tetrisGame {
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);
 
+        // Strings manipulations
+        char* __valtoa(int num, const char* name, char* str);
+        void __strrev(char *str);
+
     // Members
     //
     protected:
@@ -206,6 +210,10 @@ class tetrisGame {
 
         // Indicators (and associated names)
         UVALUE  values_[VAL_COUNT];
+
+#ifdef DEST_CASIO_FXCG50
+        int test;
+#endif // #ifdef DEST_CASIO_FXCG50
 };
 
 #ifdef __cplusplus

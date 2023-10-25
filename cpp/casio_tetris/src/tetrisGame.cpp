@@ -38,6 +38,10 @@
 //
 tetrisGame::tetrisGame() {
 
+#ifdef DEST_CASIO_FXCG50
+    test = 0;
+#endif // #ifdef DEST_CASIO_FXCG50
+
     // Default values
     nextIndex_ = -1;
 
@@ -183,8 +187,8 @@ bool tetrisGame::start() {
     updateDisplay();
 
 #ifdef DEST_CASIO_FXCG50
-    getkey();
-    return false;
+    //getkey();
+    //return false;
 #endif // #ifdef DEST_CASIO_FXCG50
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
@@ -314,7 +318,7 @@ void tetrisGame::_fall(){
 //  Called when the screen needs to be updated
 //
 void tetrisGame::_piecePosChanged() {
-    // Compute the pos ot the shadow ?
+    // Compute the pos or the shadow ?
     if (parameters_.shadow_) {
         nextPos_.shadowTopPos_ = _minTopPosition();
     }
@@ -334,13 +338,22 @@ void tetrisGame::_piecePosChanged() {
         if (-1 != nextPos_.shadowTopPos_) {
             // first : the shadow
             _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
-
-            // and then the tetramino(can recover the shadow !!!!)
-            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
-
-            updateDisplay();
-            currentPos_ = nextPos_;
         }
+
+        // and then the tetramino(can recover the shadow !!!!)
+        _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
+
+#ifdef DEST_CASIO_FXCG50
+        // Erase
+        dprint(250, 1, C_WHITE, "%d", test);
+
+        // Draw
+        test++;
+        dprint(250, 1, C_BLACK, "%d", test);
+#endif // #ifdef DEST_CASIO_FXCG50
+
+        updateDisplay();
+        currentPos_ = nextPos_;
     }
 }
 
@@ -437,11 +450,14 @@ bool tetrisGame::_down(bool newPiece) {
 
 // _canMove : Can the current piece be at the given position ?
 //
+//  Since a tetramino doesn't fill the whole 4x4 matrix,
+//  leftPos can be negative (ie empty spaces are on the left of the screen)
+//
 //  @leftPos, @topPos : Position to test
 //
 //  Return true if the position is free and can be used by the tetramino
 //
-bool tetrisGame::_canMove(uint8_t leftPos, uint8_t  topPos) {
+bool tetrisGame::_canMove(int8_t leftPos, uint8_t  topPos) {
     // Piece's datas (in its current state)
     uint8_t* datas = tetraminos_[nextPos_.index_].currentDatas();
 
@@ -721,9 +737,6 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
         for (uint8_t col = 0; col < PIECE_WIDTH; col++) {
             colourID = datas[row * PIECE_WIDTH + col];
             if (colourID != COLOUR_ID_BOARD) {
-#ifdef _DEBUG
-                int colour = colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID];
-#endif // #ifdef _DEBUG
                 _drawRectangle(x, y, w, h, colours_[(COLOUR_ID_NONE != specialColourID) ? specialColourID : colourID]);
             }
             x += w;
@@ -761,9 +774,6 @@ void tetrisGame::_drawTetrisGame() {
         left = leftFirst;
         for (uint8_t x = 0; x < PLAYFIELD_WIDTH; x++) {
             //_drawSingleBlock(left, top, w, h, playField_[y][x]);
-#ifdef _DEBUG
-            uint8_t colourID = playField_[y][x];
-#endif // #ifdef _DEBUG
             _drawRectangle(left, top, w, h, colours_[playField_[y][x]]);
             left += w;
         }
@@ -847,6 +857,65 @@ void tetrisGame::_drawNumValue(uint8_t index){
                 values_[index].name, values_[index].value);
     }
 #endif // #ifdef DEST_CASIO_FXCG50
+}
+
+// __valtoa() : Transform a numeric value into a string
+//
+//  This specific method create a string composed of the name of the value
+//  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
+//
+//  The base can't be changed a is always equal to 10
+//
+//  This method assumes the output buffer - ie. the str - is large enough to contain
+//  the name and the formated value.
+//
+//  @num : Numeric value to transform
+//  @name : Name of the value
+//  @str : Pointer to output string
+//
+//  Return the formated string
+//
+char* tetrisGame::__valtoa(int num, const char* name, char* str){
+    // Insert name
+	strcpy(str, name);
+	char* strVal = str + strlen(str);
+	strcpy(strVal, " : ");  // strcat
+	strVal+=3;      // Num. prt starts here
+
+	// Add num. value
+	int sum ((num < 0)?-1*num:num);
+	uint8_t i(0);
+	uint8_t digit;
+	do{
+		digit = sum % 10;
+		strVal[i++] = '0' + digit;
+		sum /= 10;
+	}while (sum);
+
+	// A sign ?
+	if (num < 0){
+	    strVal[i++] = '-';
+	}
+	strVal[i] = '\0';
+
+	// Reverse the string (just the num. part)
+	__strrev(strVal);
+	return str;
+}
+
+// __strrev() : Reverse a string
+//
+//  @str : String to reverse
+//
+void tetrisGame::__strrev(char *str){
+	int i, j;
+	unsigned char a;
+	size_t len = strlen((const char *)str);
+	for (i = 0, j = len - 1; i < j; i++, j--){
+		a = str[i];
+		str[i] = str[j];
+		str[j] = a;
+	}
 }
 
 // EOF

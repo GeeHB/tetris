@@ -110,9 +110,9 @@ class pieceStatus{
         bool valid_;
         int8_t index_;              // Index of the piece (-1 = don't draw)
 
-        uint8_t leftPos_;           // Initial pos.
+        int8_t leftPos_;            // Initial pos.
         uint8_t topPos_;
-        uint8_t rotationIndex_;
+        uint8_t rotationIndex_;     // ID of current rotation
         int8_t shadowTopPos_;       // yPos of shadow (-1 = no shadow)
 };
 
