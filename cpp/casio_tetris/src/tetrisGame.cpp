@@ -229,7 +229,7 @@ bool tetrisGame::start() {
 
 // _rotateDisplay() : Rotate the display
 //
-//  @redraw : Redraw the current piece (if any) ?
+//  @first : Game is starting ?
 //
 void tetrisGame::_rotateDisplay(bool first){
 
