@@ -142,9 +142,6 @@ void tetrisGame::setParameters(tetrisParameters& params) {
         _addDirtyLine(index);
     }
 
-    // Casio specific datas.
-    casioParams_.rotatedDisplay(parameters_.rotatedDisplay_);
-
     // Ready for the game
     status_ = STATUS_READY;
 }
@@ -166,26 +163,10 @@ bool tetrisGame::start() {
     currentPos_.valid(false);
     status_ = STATUS_RUNNING;
 
-    // Clear screen
-#ifdef DEST_CASIO_FXCG50
-    dclear(colours_[COLOUR_ID_BOARD]);
-#endif // #ifdef DEST_CASIO_FXCG50
-
-    _drawBackGround();
-    _drawTetrisGame();
-
-    _drawNumValue(SCORE_ID);
-    _drawNumValue(LEVEL_ID);
-    _drawNumValue(COMPLETED_LINES_ID);
-
     _newPiece();
 
-    updateDisplay();
-
-#ifdef DEST_CASIO_FXCG50
-    //getkey();
-    //return false;
-#endif // #ifdef DEST_CASIO_FXCG50
+    // Set display's rotation mode
+    _rotateDisplay(true);
 
     // Initial 'speed' (ie. duration of a 'sequence' before moving down the piece)
     uint32_t seqCount(0);
@@ -246,26 +227,45 @@ bool tetrisGame::start() {
 // "Private" methods
 //
 
-// _rotateLeft() : anti-clockwise rotation
+// _rotateDisplay() : Rotate the display
 //
-bool tetrisGame::_rotateLeft() {
+//  @redraw : Redraw the current piece (if any) ?
+//
+void tetrisGame::_rotateDisplay(bool first){
 
-    // Try to rotate
-    uint8_t rotIndex = tetraminos_[nextPos_.index_].rotateLeft();
+    // (new) rotation mode
+    casioParams_.rotatedDisplay(first?parameters_.rotatedDisplay_:!casioParams_.rotatedDisplay_);
 
-    // Possible ?
-    if (_canMove(nextPos_.leftPos_, nextPos_.topPos_)){
-        nextPos_.rotationIndex_ = rotIndex;
+    // Clear the screen
+#ifdef DEST_CASIO_FXCG50
+    dclear(colours_[COLOUR_ID_BOARD]);
+#endif // #ifdef DEST_CASIO_FXCG50
 
-        // Apply rotation
-        _piecePosChanged();
-        return true;
-     }
+    _drawBackGround();
+    _drawTetrisGame();
 
-    // No = > cancel rotation
-    tetraminos_[nextPos_.index_].rotateRight();
-    return false;
+    _drawNumValue(SCORE_ID);
+    _drawNumValue(LEVEL_ID);
+    _drawNumValue(COMPLETED_LINES_ID);
+
+    if (!first){
+        // Redraw the piece and it's shadow
+        if (-1 != nextPos_.shadowTopPos_) {
+            // first : the shadow
+            _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.shadowTopPos_, true, COLOUR_ID_SHADOW);
+        }
+
+        // and then the tetramino(can recover the shadow !!!!)
+        _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
+    }
+
+    // The next pice
+    _drawNextPiece(nextIndex_);
+
+    // go !!!
+    updateDisplay();
 }
+
 
 // _left() : Move left
 //
@@ -333,6 +333,27 @@ void tetrisGame::_fall(){
     // updates ...
     _piecePosChanged();
     _reachLowerPos(delta);
+}
+
+// _rotateLeft() : anti-clockwise rotation
+//
+bool tetrisGame::_rotateLeft() {
+
+    // Try to rotate
+    uint8_t rotIndex = tetraminos_[nextPos_.index_].rotateLeft();
+
+    // Possible ?
+    if (_canMove(nextPos_.leftPos_, nextPos_.topPos_)){
+        nextPos_.rotationIndex_ = rotIndex;
+
+        // Apply rotation
+        _piecePosChanged();
+        return true;
+     }
+
+    // No = > cancel rotation
+    tetraminos_[nextPos_.index_].rotateRight();
+    return false;
 }
 
 // _piecePosChanged() : The position of the piece has just changed
@@ -418,6 +439,11 @@ void tetrisGame::_handleGameKeys() {
             return;
         }
 
+        if (casioParams_.keyRotateDisplay_ == car){
+            _rotateDisplay();
+            return;
+        }
+
         if (casioParams_.keyLeft_ == car){
             _left();
             return;
@@ -428,7 +454,7 @@ void tetrisGame::_handleGameKeys() {
             return;
         }
 
-        if (casioParams_.keyRotate_ == car){
+        if (casioParams_.keyRotatePiece_ == car){
             _rotateLeft();
             return;
         }
@@ -636,12 +662,8 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
 
     // Remove lines in reverse order (max -> min)
     for (int8_t lineID = (completedCount-1); lineID >=0; lineID--){
-        // Animate
-        uint8_t line(completedLines[lineID]);
-        //self.eventHandler_.lineCompleted(line)
-
         // Update datas
-        _clearLine(line);
+        _clearLine(completedLines[lineID]);
     }
 
     // Update the score
@@ -834,27 +856,24 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 //
 void tetrisGame::_drawNumValue(uint8_t index){
     char valStr[MAX_VALUE_LEN + 1];
-    if (values_[index].value != values_[index].previous){
-        // Erase previous value ?
-        if (-1 != values_[index].previous){
-            __valtoa(values_[index].previous, values_[index].name, valStr);
-#ifdef DEST_CASIO_FXCG50
-            if (!casioParams_.rotatedDisplay_){
-                dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-            }
-#endif // #ifdef DEST_CASIO_FXCG50
-        }
-        values_[index].previous = values_[index].value;
-
-        // New value
-        __valtoa(values_[index].value, values_[index].name, valStr);
+     // Erase previous value ?
+    if (-1 != values_[index].previous){
+        __valtoa(values_[index].previous, values_[index].name, valStr);
 #ifdef DEST_CASIO_FXCG50
         if (!casioParams_.rotatedDisplay_){
-            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
         }
 #endif // #ifdef DEST_CASIO_FXCG50
-
     }
+    values_[index].previous = values_[index].value;
+
+    // New value
+    __valtoa(values_[index].value, values_[index].name, valStr);
+#ifdef DEST_CASIO_FXCG50
+    if (!casioParams_.rotatedDisplay_){
+        dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+    }
+#endif // #ifdef DEST_CASIO_FXCG50
 }
 
 // __valtoa() : Transform a numeric value into a string

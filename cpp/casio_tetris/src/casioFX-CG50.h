@@ -79,11 +79,16 @@ class casioFXCG50{
 
             // Default keys
             keyFall_ = KEY_CODE_FALL;
+            keyPause_ = KEY_CODE_PAUSE;
+            keyRotateDisplay_ = KEY_CODE_ROTATE_DISPLAY;
             keyQuit_ = KEY_CODE_QUIT;
+
+            // set parameters
+            rotatedDisplay(rotatedDisplay_);
         }
 
         // Rotate ?
-        void rotatedDisplay(bool doRotate = false){
+        void rotatedDisplay(bool doRotate){
             if (false == (rotatedDisplay_ = doRotate)){
                 boxWidth_ = CASIO_BOX_WIDTH;
 
@@ -112,7 +117,7 @@ class casioFXCG50{
                 // Keys
                 keyLeft_ = KEY_CODE_LEFT;
                 keyRight_ = KEY_CODE_RIGHT;
-                keyRotate_ = KEY_CODE_UP;
+                keyRotatePiece_ = KEY_CODE_UP;
                 keyDown_ = KEY_CODE_DOWN;
             }
             else {
@@ -136,22 +141,26 @@ class casioFXCG50{
                 // Keys
                 keyLeft_ = KEY_CODE_DOWN;
                 keyRight_ = KEY_CODE_UP;
-                keyRotate_ = KEY_CODE_LEFT;
+                keyRotatePiece_ = KEY_CODE_LEFT;
                 keyDown_ = KEY_CODE_RIGHT;
             }
         }
 
         // (anticlockwise) Rotations for vertical drawings
+        //  for a single point
         void rotate(int16_t& x, int16_t& y){
             int16_t ny(CASIO_HEIGHT - x);
             x = y;
             y = ny;
         }
 
+        // a rect
         void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo){
             rotate(xFrom, yFrom);
             rotate(xTo, yTo);
 
+            // The rect (xFrom, yFrom) -> (xTo, yTo)
+            // turns and becomes (xTo, yFrom, xFrom, yTo)
             int16_t oFrom(xFrom);
             xFrom = xTo;
             xTo = oFrom;
@@ -175,7 +184,8 @@ class casioFXCG50{
         POINT       textsPos_[VAL_COUNT];      // Positions of texts
 
         // Keyboard
-        char        keyLeft_, keyRight_, keyRotate_, keyDown_, keyFall_;
+        char        keyLeft_, keyRight_, keyRotatePiece_, keyDown_, keyFall_;
+        char        keyPause_, keyRotateDisplay_;
         char        keyQuit_;
 };
 

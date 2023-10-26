@@ -148,6 +148,9 @@ class tetrisGame {
         bool _down(bool newPiece = false);
         void _fall();
 
+        // Rotate the display
+        void _rotateDisplay(bool first = false);
+
         // Can the current piece be at the given position ?
         bool _canMove(int8_t leftPos, uint8_t  topPos);
 

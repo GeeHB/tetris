@@ -132,7 +132,8 @@ enum{
     KEY_CODE_LEFT = KEY_LEFT,
     KEY_CODE_RIGHT = KEY_RIGHT,
     KEY_CODE_FALL = KEY_0,
-    KEY_ROTATE_DISPLAY = KEY_XOT,
+    KEY_CODE_PAUSE = KEY_OPTN,
+    KEY_CODE_ROTATE_DISPLAY = KEY_XOT,
     KEY_CODE_QUIT = KEY_EXIT,
     KEY_CODE_ENTER = KEY_EXE
 };
@@ -143,7 +144,8 @@ enum{
     KEY_CODE_UP = '3',
     KEY_CODE_DOWN = '2',
     KEY_CODE_FALL = ' ',
-    KEY_ROTATE_DISPLAY = 'r',
+    KEY_CODE_PAUSE = 'p',
+    KEY_CODE_ROTATE_DISPLAY = 'r',
     KEY_CODE_QUIT = 'q',
     KEY_CODE_ENTER = '\13'
 };
@@ -167,7 +169,7 @@ class tetrisParameters {
             startLevel_ = 1;
             dirtyLines_ = 7;
             shadow_ = true;
-            rotatedDisplay_ = true;        // by default, no screen rotation
+            rotatedDisplay_ = false;        // by default, no screen rotation
         }
 
         // recopy
