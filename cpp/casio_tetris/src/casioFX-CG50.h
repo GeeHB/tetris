@@ -103,7 +103,7 @@ class casioFXCG50{
 
                 NP_pos_.y = CASIO_INFO_TOP;
 
-                // Texts
+                // Values indicators
                 textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
                 for (uint8_t id(0); id <VAL_COUNT; id++){
                     textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
@@ -118,7 +118,7 @@ class casioFXCG50{
             else {
                 // "rotated" mode
                 //
-                boxWidth_ = CASIO_BOX_WIDTH_ROTATED;
+                boxWidth_ = CASIO_BOX_WIDTH_ROTATED;    // Larger box
 
                 playfield_pos_.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
                 playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
@@ -126,11 +126,12 @@ class casioFXCG50{
                 playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
                 playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
 
-                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;
+                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;  // ... but preview is smaller
                 NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
-                NP_pos_.x = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
-                NP_pos_.y = CASIO_PLAYFIELD_BORDER;
+                //NP_pos_.x = CASIO_HEIGHT -2 * CASIO_PLAYFIELD_BORDER - NP_width_;
+                NP_pos_.x = playfield_pos_.x + playfield_width + 3 * CASIO_BORDER_GAP;
+                NP_pos_.y = CASIO_INFO_TOP;
 
                 // Keys
                 keyLeft_ = KEY_CODE_DOWN;
@@ -140,11 +141,20 @@ class casioFXCG50{
             }
         }
 
-        // (anticlockwise) Rotation for vertical drawings
-        void rotate(uint16_t& x, uint16_t& y){
-            uint16_t ny(CASIO_HEIGHT - x);
+        // (anticlockwise) Rotations for vertical drawings
+        void rotate(int16_t& x, int16_t& y){
+            int16_t ny(CASIO_HEIGHT - x);
             x = y;
             y = ny;
+        }
+
+        void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo){
+            rotate(xFrom, yFrom);
+            rotate(xTo, yTo);
+
+            int16_t oFrom(xFrom);
+            xFrom = xTo;
+            xTo = oFrom;
         }
 
         //

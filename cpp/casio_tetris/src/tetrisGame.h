@@ -170,7 +170,7 @@ class tetrisGame {
         void _drawNextPiece(int8_t pieceIndex);
 
         // Erase the "next piece" tetramino
-        void _eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID);
+        void _eraseNextPiece();
 
         // Draw a value and its name
         void _drawNumValue(uint8_t index);

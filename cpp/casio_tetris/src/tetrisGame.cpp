@@ -620,10 +620,10 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         maxY = PLAYFIELD_HEIGHT;
     }
 
-    uint8_t currentLineValue(0);
+    uint32_t currentLineValue(0); // up to 7 pow 10 !
     for (uint8_t line = nextPos_.topPos_ - PIECE_HEIGHT + 1; line < maxY; line++){
         currentLineValue = 1;
-        for (uint8_t col = 0; col <PLAYFIELD_WIDTH; col++){
+        for (uint8_t col = 0; col <PLAYFIELD_WIDTH && currentLineValue; col++){
             // one empty block and the whole line "value" = 0
             currentLineValue *= playField_[line][col];
         }
@@ -748,7 +748,7 @@ void tetrisGame::_drawSinglePiece(uint8_t* datas, uint16_t cornerX, uint16_t cor
 //
 void tetrisGame::_drawNextPiece(int8_t pieceIndex) {
     // Erase the previous piece
-    _eraseNextPiece(0, 0, 4, 4, COLOUR_ID_BOARD);
+    _eraseNextPiece();
 
     // ... and then draw the new one
     if (-1 != pieceIndex) {
@@ -781,10 +781,10 @@ void tetrisGame::_drawTetrisGame() {
 //  @width, @height : dimensions of the preview (in box units)
 //  @colourID : ID of the colour to use
 //
-void tetrisGame::_eraseNextPiece(uint16_t left, uint16_t  top, uint16_t  width, uint16_t  height, uint8_t colourID){
-    uint16_t w, h;
-    _changeOrigin(false, left, top, w, h);
-    _drawRectangle(left, top, w * width, h * height, colours_[colourID], colours_[colourID]);
+void tetrisGame::_eraseNextPiece(){
+    uint16_t x(0), y(0), w, h;
+    _changeOrigin(false, x, y, w, h);
+    _drawRectangle(x, y, w * PIECE_WIDTH, h * PIECE_HEIGHT, colours_[COLOUR_ID_BOARD], colours_[COLOUR_ID_BOARD]);
 }
 
 // _drawBackGround() : Draw entire background
@@ -799,7 +799,7 @@ void tetrisGame::_drawBackGround(){
         casioParams_.playfield_width, casioParams_.playfield_height,
         NO_COLOR, colours_[COLOUR_ID_BORDER]);
 
-    // border for 'Next piece'
+    // Border for 'Next piece'
     _drawRectangle(casioParams_.NP_pos_.x + CASIO_BORDER_GAP,
                 casioParams_.NP_pos_.y + CASIO_BORDER_GAP,
                 casioParams_.NP_width_, casioParams_.NP_width_,
@@ -814,19 +814,16 @@ void tetrisGame::_drawBackGround(){
 //   @fillColour : Filling colour in RGB format or -1 (if empty)
 //
 void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour, int32_t borderColour){
-#ifdef DEST_CASIO_FXCG50
-    uint16_t xFrom(x), yFrom(y);
-    uint16_t xTo, yTo;
+    int16_t xFrom(x), yFrom(y);
+    int16_t xTo(xFrom + width - 1), yTo(yFrom + height - 1);
 
     // Horizontal display ?
     if (casioParams_.rotatedDisplay_){
-        casioParams_.rotate(xFrom, yFrom);
+        casioParams_.rotate(xFrom, yFrom, xTo, yTo);
     }
 
-    xTo = xFrom + width- 1;
-    yTo = yFrom + height -1;
-
     // Draw the rect
+#ifdef DEST_CASIO_FXCG50
     drect_border(xFrom, yFrom, xTo, yTo, fillColour, 1, borderColour);
 #endif // #ifdef DEST_CASIO_FXCG50
 }
