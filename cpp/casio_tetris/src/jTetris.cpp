@@ -33,9 +33,15 @@ int main()
 
 	// Launch the game
 	tetrisGame game(params);
-	game.start();
-    game.end();
+    game.start();
 
+    /*
+    tetrisGame* game = new tetrisGame(params);
+	if (game){
+	    game->start();
+        delete game;
+    }
+    */
     // Finished
     return 1;
 }

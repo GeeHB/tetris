@@ -12,7 +12,7 @@
 //--
 //--                 Definition of the 7 tetraminos templates
 //--
-//--                 The num. value is the colour ID. Colours'IDS are based on nCurses index
+//--                 The num. value is the colour ID. Colours'IDs are based on nCurses index
 //--
 //--                 A piece is given with all its postions after rotation in trignometric direction
 //--                 Each "rotation", to be precise, is a combination of a rotation and a translation

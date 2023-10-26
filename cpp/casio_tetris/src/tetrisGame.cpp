@@ -38,10 +38,6 @@
 //
 tetrisGame::tetrisGame() {
 
-#ifdef DEST_CASIO_FXCG50
-    test = 0;
-#endif // #ifdef DEST_CASIO_FXCG50
-
     // Default values
     nextIndex_ = -1;
 
@@ -369,15 +365,6 @@ void tetrisGame::_piecePosChanged() {
         // and then the tetramino(can recover the shadow !!!!)
         _drawSinglePiece(_pieceDatas(nextPos_.index_, nextPos_.rotationIndex_), nextPos_.leftPos_, nextPos_.topPos_);
 
-#ifdef DEST_CASIO_FXCG50
-        // Erase
-        dprint(250, 1, C_WHITE, "%d", test);
-
-        // Draw
-        test++;
-        dprint(250, 1, C_BLACK, "%d", test);
-#endif // #ifdef DEST_CASIO_FXCG50
-
         updateDisplay();
         currentPos_ = nextPos_;
     }
@@ -408,7 +395,7 @@ long tetrisGame::_updateSpeed(long currentDuration, uint8_t level, uint8_t incLe
 
 // _handleGameKeys() : Handle keyboard events
 //
-//  This methods returns even if no event is in the queue
+//  This methods ends even if no event is in the queue
 //
 void tetrisGame::_handleGameKeys() {
     char car(0);
@@ -849,21 +836,28 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 //  @index is the index of the VALUE object to be drawn
 //
 void tetrisGame::_drawNumValue(uint8_t index){
-#ifdef DEST_CASIO_FXCG50
+    char valStr[MAX_VALUE_LEN + 1];
     if (values_[index].value != values_[index].previous){
         // Erase previous value ?
         if (-1 != values_[index].previous){
-            //_drawText(index, __valtoa(values_[index].previous, values_[index].name, out), COLOUR_ID_BKGRND);
-            dprint(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], FORMAT_STR,
-                values_[index].name, values_[index].previous);
+            __valtoa(values_[index].previous, values_[index].name, valStr);
+#ifdef DEST_CASIO_FXCG50
+            if (!casioParams_.rotatedDisplay_){
+                dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
             }
+#endif // #ifdef DEST_CASIO_FXCG50
+        }
         values_[index].previous = values_[index].value;
 
         // New value
-        dprint(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], FORMAT_STR,
-                values_[index].name, values_[index].value);
-    }
+        __valtoa(values_[index].value, values_[index].name, valStr);
+#ifdef DEST_CASIO_FXCG50
+        if (!casioParams_.rotatedDisplay_){
+            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+        }
 #endif // #ifdef DEST_CASIO_FXCG50
+
+    }
 }
 
 // __valtoa() : Transform a numeric value into a string
@@ -885,17 +879,18 @@ void tetrisGame::_drawNumValue(uint8_t index){
 char* tetrisGame::__valtoa(int num, const char* name, char* str){
     // Insert name
 	strcpy(str, name);
-	char* strVal = str + strlen(str);
-	strcpy(strVal, " : ");  // strcat
-	strVal+=3;      // Num. prt starts here
+	char* strVal(str + strlen(str)); // Num. part starts here
 
 	// Add num. value
 	int sum ((num < 0)?-1*num:num);
-	uint8_t i(0);
-	uint8_t digit;
+	uint8_t i(0), digit, dCount(0);
 	do{
 		digit = sum % 10;
 		strVal[i++] = '0' + digit;
+		if (!(++dCount % 3)){
+		    strVal[i++] = ' ';  // for large numbers lisibility
+		}
+
 		sum /= 10;
 	}while (sum);
 

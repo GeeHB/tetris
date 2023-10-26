@@ -77,11 +77,11 @@ enum{
     VAL_COUNT = COMPLETED_LINES_ID + 1
 };
 
-#define SCORE_STR   "Score"
-#define LEVEL_STR   "Level"
-#define COMPLETED_LINES_STR "Lines"
+#define SCORE_STR   "Score : "
+#define LEVEL_STR   "Level : "
+#define COMPLETED_LINES_STR "Lines : "
 
-#define FORMAT_STR  "%s : %d"
+#define MAX_VALUE_LEN 30
 
 //
 // Colour IDs
@@ -103,24 +103,23 @@ enum{
 //
 
 #ifndef DEST_CASIO_FXCG50
-// 24 bits RGB
+// 24 bits RGB (for tests only)
 #define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
 #endif // #ifndef DEST_CASIO_FXCG50
 
 enum{
     COLOUR_BLACK   = C_RGB(0, 0, 0),
-    COLOUR_WHITE   = C_RGB(255, 255, 255),
-    COLOUR_RED     = C_RGB(255, 0, 0),
-    COLOUR_GREEN   = C_RGB(0, 255, 0),
-    COLOUR_YELLOW  = C_RGB(255, 255, 0),
-    COLOUR_BLUE    = C_RGB(0, 0, 255),
-    COLOUR_PURPLE  = C_RGB(255, 0, 255),
-    COLOUR_CYAN    = C_RGB(0, 255, 255),
-    COLOUR_ORANGE  = C_RGB(255, 128, 0),
-
-    COLOUR_LTGREY  = C_RGB(224, 224, 224),
-    COLOUR_GREY    = C_RGB(128, 128, 128),
-    COLOUR_DKGREY  = C_RGB(64, 64, 64),
+    COLOUR_WHITE   = C_RGB(31, 31, 31),
+    COLOUR_RED     = C_RGB(31, 0, 0),
+    COLOUR_GREEN   = C_RGB(0, 31, 0),
+    COLOUR_YELLOW  = C_RGB(31, 31, 0),
+    COLOUR_BLUE    = C_RGB(0, 0, 31),
+    COLOUR_PURPLE  = C_RGB(31, 0, 31),
+    COLOUR_CYAN    = C_RGB(0, 31, 31),
+    COLOUR_ORANGE  = C_RGB(31, 16, 0),
+    COLOUR_LTGREY  = C_RGB(29, 29, 29),
+    COLOUR_GREY    = C_RGB(16, 16, 16),
+    COLOUR_DKGREY  = C_RGB(8, 8, 8),
     NO_COLOR       = -1
 };
 
@@ -167,8 +166,8 @@ class tetrisParameters {
             // Set default parameters
             startLevel_ = 1;
             dirtyLines_ = 7;
-            shadow_ = false;
-            rotatedDisplay_ = false;        // by default, no rotation
+            shadow_ = true;
+            rotatedDisplay_ = true;        // by default, no screen rotation
         }
 
         // recopy

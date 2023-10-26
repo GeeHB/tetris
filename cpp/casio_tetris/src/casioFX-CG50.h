@@ -78,10 +78,6 @@ class casioFXCG50{
             rotatedDisplay_ = false;
 
             // Default keys
-            keyLeft_ = KEY_CODE_LEFT;
-            keyRight_ = KEY_CODE_RIGHT;
-            keyRotate_ = KEY_CODE_UP;
-            keyDown_ = KEY_CODE_DOWN;
             keyFall_ = KEY_CODE_FALL;
             keyQuit_ = KEY_CODE_QUIT;
         }
@@ -112,6 +108,12 @@ class casioFXCG50{
                 for (uint8_t id(0); id <VAL_COUNT; id++){
                     textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
                 }
+
+                // Keys
+                keyLeft_ = KEY_CODE_LEFT;
+                keyRight_ = KEY_CODE_RIGHT;
+                keyRotate_ = KEY_CODE_UP;
+                keyDown_ = KEY_CODE_DOWN;
             }
             else {
                 // "rotated" mode
@@ -130,11 +132,11 @@ class casioFXCG50{
                 NP_pos_.x = CASIO_HEIGHT -1 * CASIO_PLAYFIELD_BORDER - NP_width_;
                 NP_pos_.y = CASIO_PLAYFIELD_BORDER;
 
-                // Rotation of the keyboard
-                keyLeft_ = KEY_CODE_UP;
-                keyRight_ = KEY_CODE_DOWN;
-                keyRotate_ = KEY_CODE_RIGHT;
-                keyDown_ = KEY_CODE_LEFT;
+                // Keys
+                keyLeft_ = KEY_CODE_DOWN;
+                keyRight_ = KEY_CODE_UP;
+                keyRotate_ = KEY_CODE_LEFT;
+                keyDown_ = KEY_CODE_RIGHT;
             }
         }
 

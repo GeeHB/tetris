@@ -49,7 +49,9 @@ class tetrisGame {
         }
 
         // Destruction
-        ~tetrisGame() {}
+        ~tetrisGame() {
+            end();
+        }
 
         // Game's parameters
         void setParameters(tetrisParameters & params);
@@ -210,10 +212,6 @@ class tetrisGame {
 
         // Indicators (and associated names)
         UVALUE  values_[VAL_COUNT];
-
-#ifdef DEST_CASIO_FXCG50
-        int test;
-#endif // #ifdef DEST_CASIO_FXCG50
 };
 
 #ifdef __cplusplus
