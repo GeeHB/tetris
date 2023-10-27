@@ -59,6 +59,11 @@ extern "C" {
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
 
+#ifdef DEST_CASIO_FXCG50
+// Font for vertical text
+extern font_t font_vertical;
+#endif // #ifdef DEST_CASIO_FXCG50
+
 //---------------------------------------------------------------------------
 //--
 //-- casioFX-CG50 object
@@ -73,80 +78,13 @@ class casioFXCG50{
     //
     public:
         // Construction
-        casioFXCG50(){
-
-            rotatedDisplay_ = false;
-
-            // Default keys
-            keyFall_ = KEY_CODE_FALL;
-            keyPause_ = KEY_CODE_PAUSE;
-            keyRotateDisplay_ = KEY_CODE_ROTATE_DISPLAY;
-            keyQuit_ = KEY_CODE_QUIT;
-
-            // set parameters
-            rotatedDisplay(rotatedDisplay_);
-        }
+        casioFXCG50();
 
         // Update members on rotation
-        void rotatedDisplay(bool doRotate){
-            if (false == (rotatedDisplay_ = doRotate)){
-                boxWidth_ = CASIO_BOX_WIDTH;
+        void rotatedDisplay(bool doRotate);
 
-                playfield_pos_.x = CASIO_PLAYFIELD_LEFT + CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-                playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-
-                playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
-                playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
-
-                NP_boxWidth_ = CASIO_BOX_WIDTH_NP;
-                NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
-
-                NP_pos_.x = CASIO_INFO_LEFT + CASIO_INFO_GAP;
-                if (NP_pos_.x <= (playfield_pos_.x + playfield_width)){
-                    NP_pos_.x = playfield_pos_.x + playfield_width + 2 * CASIO_INFO_GAP;
-                }
-
-                NP_pos_.y = CASIO_INFO_TOP;
-
-                // Values indicators
-                textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
-                for (uint8_t id(0); id <VAL_COUNT; id++){
-                    textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
-                }
-
-                // Keys
-                keyLeft_ = KEY_CODE_LEFT;
-                keyRight_ = KEY_CODE_RIGHT;
-                keyRotatePiece_ = KEY_CODE_UP;
-                keyDown_ = KEY_CODE_DOWN;
-            }
-            else {
-                // "rotated" mode
-                //
-                boxWidth_ = CASIO_BOX_WIDTH_ROTATED;    // Larger box
-
-                playfield_pos_.x = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-                playfield_pos_.y = CASIO_PLAYFIELD_BORDER + CASIO_BORDER_GAP;
-
-                playfield_width = PLAYFIELD_WIDTH * boxWidth_ + 2 * CASIO_BORDER_GAP;
-                playfield_height = PLAYFIELD_HEIGHT * boxWidth_ + 2 * CASIO_BORDER_GAP;
-
-                NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;  // ... but preview is smaller
-                NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
-
-                //NP_pos_.x = CASIO_HEIGHT -2 * CASIO_PLAYFIELD_BORDER - NP_width_;
-                NP_pos_.x = playfield_pos_.x + playfield_width + 3 * CASIO_BORDER_GAP;
-                NP_pos_.y = CASIO_INFO_TOP;
-
-                // Keys
-                keyLeft_ = KEY_CODE_DOWN;
-                keyRight_ = KEY_CODE_UP;
-                keyRotatePiece_ = KEY_CODE_LEFT;
-                keyDown_ = KEY_CODE_RIGHT;
-            }
-        }
-
-        // (anticlockwise) rotations of a single point
+        // (trigonometric) rotations
+        //  ... of a single point
         void rotate(int16_t& x, int16_t& y){
             int16_t ny(CASIO_HEIGHT - x);
             x = y;
@@ -186,6 +124,10 @@ class casioFXCG50{
         char        keyLeft_, keyRight_, keyRotatePiece_, keyDown_, keyFall_;
         char        keyPause_, keyRotateDisplay_;
         char        keyQuit_;
+
+#ifdef DEST_CASIO_FXCG50
+        font_t*     vFont_;     // Font used for vertical texts
+#endif //#ifdef DEST_CASIO_FXCG50
 };
 
 #ifdef __cplusplus

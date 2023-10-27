@@ -860,11 +860,15 @@ void tetrisGame::_drawNumValue(uint8_t index){
      // Erase previous value ?
     if (-1 != values_[index].previous){
         __valtoa(values_[index].previous, values_[index].name, valStr);
-#ifdef DEST_CASIO_FXCG50
+
         if (!casioParams_.rotatedDisplay_){
+#ifdef DEST_CASIO_FXCG50
             dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-        }
 #endif // #ifdef DEST_CASIO_FXCG50
+        }
+        else{
+            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
+        }
     }
     values_[index].previous = values_[index].value;
 
@@ -875,6 +879,48 @@ void tetrisGame::_drawNumValue(uint8_t index){
         dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
     }
 #endif // #ifdef DEST_CASIO_FXCG50
+}
+
+// _dtextV() : Draw a line of text vertically
+//
+//  @x, @y : Anchor point coordinates
+//  @fg : font colour
+//  @test : string to draw
+//
+void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
+    size_t len(strlen(text));
+
+    if (len > 0){
+        int16_t xFrom(x), yFrom(y), xTo, yTo;
+
+        // dimensions of the first char.
+        char* current = (char*)text;
+        int w, h;
+#ifdef DEST_CASIO_FXCG50
+        dnsize(current, 1, casioParams_.vFont_, &w, &h);
+#else
+        w = h = 10; // for debug tests
+#endif // #ifdef DEST_CASIO_FXCG50
+
+        // Get new coordinates of the anchor
+        xTo = xFrom + w;
+        yTo = yFrom + h;
+        casioParams_.rotate(xFrom, yFrom, xTo, yTo);
+
+        // Draw the string (char. by char.)
+        while (current){
+#ifdef DEST_CASIO_FXCG50
+            dtext_opt(xFrom, yFrom,  colours_[COLOUR_ID_BKGRND],  fg, DTEXT_LEFT, DTEXT_BOTTOM, current, 1);
+            dnsize(current, 1, casioParams_.vFont_, &w, &h);
+#endif // #ifdef DEST_CASIO_FXCG50
+
+            // Update anchor pos.
+            yFrom-=h;
+
+            // Next char
+            current++;
+        }
+    }
 }
 
 // __valtoa() : Transform a numeric value into a string

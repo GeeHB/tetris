@@ -34,6 +34,7 @@
 			<Add option="-fexceptions" />
 			<Add option="-DLINUX_VER" />
 		</Compiler>
+		<Unit filename="../casio_tetris/src/casioFX-CG50.cpp" />
 		<Unit filename="../casio_tetris/src/casioFX-CG50.h" />
 		<Unit filename="../casio_tetris/src/consts.h" />
 		<Unit filename="../casio_tetris/src/jTetris.cpp" />

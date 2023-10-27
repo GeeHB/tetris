@@ -190,6 +190,9 @@ class tetrisGame {
         // Draw a coloured rectangle
         void _drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, int32_t fillColour = NO_COLOR, int32_t borderColour = NO_COLOR);
 
+        // Draw a line of text vertically
+        void _dtextV(int x, int y, int fg, const char* text);
+
         // Strings manipulations
         char* __valtoa(int num, const char* name, char* str);
         void __strrev(char *str);

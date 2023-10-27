@@ -1,6 +1,7 @@
 # Build files
 build-cg/
 *.g3a
+*.g3a.*
 
 # g++ and code::blocks files
 Debug/

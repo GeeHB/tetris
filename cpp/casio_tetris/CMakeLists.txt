@@ -12,9 +12,11 @@ set(SOURCES
   src/jTetris.cpp
   src/tetrisGame.cpp
   src/piece.cpp
+  src/casioFX-CG50.cpp
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS
+  assets-cg/font_vertical.png
   # ...
 )
 set(ASSETS_fx
