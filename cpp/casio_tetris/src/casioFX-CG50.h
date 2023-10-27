@@ -87,7 +87,7 @@ class casioFXCG50{
             rotatedDisplay(rotatedDisplay_);
         }
 
-        // Rotate ?
+        // Update members on rotation
         void rotatedDisplay(bool doRotate){
             if (false == (rotatedDisplay_ = doRotate)){
                 boxWidth_ = CASIO_BOX_WIDTH;
@@ -146,15 +146,14 @@ class casioFXCG50{
             }
         }
 
-        // (anticlockwise) Rotations for vertical drawings
-        //  for a single point
+        // (anticlockwise) rotations of a single point
         void rotate(int16_t& x, int16_t& y){
             int16_t ny(CASIO_HEIGHT - x);
             x = y;
             y = ny;
         }
 
-        // a rect
+        // ... of a rect
         void rotate(int16_t& xFrom, int16_t& yFrom, int16_t& xTo, int16_t& yTo){
             rotate(xFrom, yFrom);
             rotate(xTo, yTo);

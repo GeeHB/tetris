@@ -646,16 +646,17 @@ void tetrisGame::_reachLowerPos(uint8_t downRowcount){
         maxY = PLAYFIELD_HEIGHT;
     }
 
-    uint32_t currentLineValue(0); // up to 7 pow 10 !
+    bool foundEmpty(false);
     for (uint8_t line = nextPos_.topPos_ - PIECE_HEIGHT + 1; line < maxY; line++){
-        currentLineValue = 1;
-        for (uint8_t col = 0; col <PLAYFIELD_WIDTH && currentLineValue; col++){
-            // one empty block and the whole line "value" = 0
-            currentLineValue *= playField_[line][col];
+        foundEmpty = false;
+        for (uint8_t col = 0; col <PLAYFIELD_WIDTH && !foundEmpty; col++){
+            if (!playField_[line][col]){
+                foundEmpty = true;
+            }
         }
 
         // The line is complete
-        if (currentLineValue){
+        if (!foundEmpty){
             completedLines[completedCount++] = line;
         }
     }

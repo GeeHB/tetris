@@ -399,12 +399,15 @@ class board(object):
         if maxY > consts.PLAYFIELD_HEIGHT:
             maxY = consts.PLAYFIELD_HEIGHT
         for line in range(self.currentPiece_.topPos_ - piece.PIECE_HEIGHT + 1, maxY):
-            currentLineValue = 1
+            foundEmpty = False
             for col in range(consts.PLAYFIELD_WIDTH):
-                currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
+                # currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
+                if 0 == self.playField_[line][col]:
+                    foundEmpty = True
 
             # The line is complete
-            if not 0 == currentLineValue:
+            #if not 0 == currentLineValue:
+            if not foundEmpty:
                 completedLines.insert(0,line)
                 
         for lineIndex in completedLines:
