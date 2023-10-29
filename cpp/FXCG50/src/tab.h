@@ -17,7 +17,7 @@
 #ifndef __J_TETRIS_CASIO_TAB_h__
 #define __J_TETRIS_CASIO_TAB_h__    1
 
-#include "consts.h"
+#include "casioFX-CG50.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,20 +29,45 @@ extern "C" {
 //--
 //---------------------------------------------------------------------------
 
-#define TAB_HEIGHT      10      # in pixels
+#define TAB_COUNT       6
+
+// Dimensions in pixels
+#define TAB_HEIGHT      18
+#define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
 
 #define TAB_NAME_LEN    10      # max char
 
+// Data handled by a tab
+//
+union TAB_VALUE{
+    bool        bVal;
+    int         iVal;
+    uint16_t    uVal;
+    void*       pVal;
+};
+
+// Position of a tab
+typedef struct __rect{
+    uint16_t    x,y;    // top left
+    uint_16_t   w, h;   // width and height
+} RECT;
+
 //---------------------------------------------------------------------------
 //--
-//-- tab object
+//-- tab object - abstract class
 //--
 //---------------------------------------------------------------------------
 
 class tab{
 public:
-    // ctor and dtor
-    tab(const char* tname){
+    // Construction
+    tab(uint8_t ID, const char* tname, uint_8 height = TAB_HEIGHT){
+        // Tab pos
+        rect_.x =   ID * TAB_WIDTH;
+        rect_. y = CASIO_HEIGHT - height - 1;
+        rect_.w = TAB_WIDTH;
+        rect_.h = height,
+
         // Copy (and truncate) name
         size_t len(strlen(tname));
         if (len>TAB_NAME_LEN){
@@ -51,18 +76,43 @@ public:
         strncpy(tname, name_, len);
         name_[len] = 0;
     }
+
+    // Destruction
     virtual ~tab();
 
     // Draw.
-    virtual void draw(int16_t cornerX, int16_t cornerY, bool selected = false);
+    virtual void draw(bool selected = false){
+        _drawTabName(selected);
+    }
 
-    // access
+    // Access
     const char* name(){
         return name_;
     }
+
+    // Value
+    void setValue(TAB_VALUE& val){
+        // Any ...
+        val_.iVal = val.iVal;
+    }
+    void value(TAB_VALUE& val){
+        val.iVal = val_.iVal;
+    }
+
+    // "private" methods
+protected:
+    void _drawTabName(bool selected);
+    void _clearScreen(){
+#ifdef DEST_CASIO_FXCG50
+        drec(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - rect_.h - 1, C_WHITE)
+#endif // #ifdef DEST_CASIO_FXCG50
+    }
+
 protected:
     // Members
-    char    name_[TAB_NAME_LEN + 1];
+    char        name_[TAB_NAME_LEN + 1];
+    RECT        rect_;
+    TAB_VALUE   val_;
 };
 
 #ifdef __cplusplus

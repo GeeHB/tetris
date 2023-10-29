@@ -943,9 +943,13 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
 //  Return the formated string
 //
 char* tetrisGame::__valtoa(int num, const char* name, char* str){
+    char* strVal(str); // Num. part starts here
+
     // Insert name
-	strcpy(str, name);
-	char* strVal(str + strlen(str)); // Num. part starts here
+	if (name){
+	    strcpy(str, name);
+	    strVal+=strlen(str);
+	}
 
 	// Add num. value
 	int sum ((num < 0)?-1*num:num);

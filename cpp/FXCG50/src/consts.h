@@ -169,7 +169,7 @@ class tetrisParameters {
             startLevel_ = 1;
             dirtyLines_ = 7;
             shadow_ = true;
-            rotatedDisplay_ = true;        // by default, no screen rotation
+            rotatedDisplay_ = false;        // by default, no screen rotation
         }
 
         // recopy
@@ -194,7 +194,12 @@ class tetrisParameters {
 
 // Point coordinates
 //
-typedef struct{
+typedef struct __point {
+    // Construction
+    __point(){
+        x = y = 0;
+    }
+
     uint16_t    x;
     uint16_t    y;
 } POINT;
