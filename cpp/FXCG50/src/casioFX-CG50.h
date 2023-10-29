@@ -97,7 +97,7 @@ class casioFXCG50{
             rotate(xTo, yTo);
 
             // The rect (xFrom, yFrom) -> (xTo, yTo)
-            // turns and becomes (xTo, yFrom, xFrom, yTo)
+            // turns and becomes (xTo, yFrom) -> (xFrom, yTo)
             int16_t oFrom(xFrom);
             xFrom = xTo;
             xTo = oFrom;

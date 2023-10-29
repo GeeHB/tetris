@@ -857,6 +857,7 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 //
 void tetrisGame::_drawNumValue(uint8_t index){
     char valStr[MAX_VALUE_LEN + 1];
+
      // Erase previous value ?
     if (-1 != values_[index].previous){
         __valtoa(values_[index].previous, values_[index].name, valStr);
@@ -874,11 +875,15 @@ void tetrisGame::_drawNumValue(uint8_t index){
 
     // New value
     __valtoa(values_[index].value, values_[index].name, valStr);
-#ifdef DEST_CASIO_FXCG50
+
     if (!casioParams_.rotatedDisplay_){
+#ifdef DEST_CASIO_FXCG50
         dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
-    }
 #endif // #ifdef DEST_CASIO_FXCG50
+    }
+    else{
+        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+    }
 }
 
 // _dtextV() : Draw a line of text vertically
@@ -888,16 +893,14 @@ void tetrisGame::_drawNumValue(uint8_t index){
 //  @test : string to draw
 //
 void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
-    size_t len(strlen(text));
-
-    if (len > 0){
+    if (strlen(text) > 0){
         int16_t xFrom(x), yFrom(y), xTo, yTo;
 
         // dimensions of the first char.
         char* current = (char*)text;
         int w, h;
 #ifdef DEST_CASIO_FXCG50
-        dnsize(current, 1, casioParams_.vFont_, &w, &h);
+        dnsize(current, 1, /*casioParams_.vFont_*/ NULL, &w, &h);
 #else
         w = h = 10; // for debug tests
 #endif // #ifdef DEST_CASIO_FXCG50
@@ -908,10 +911,10 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
         casioParams_.rotate(xFrom, yFrom, xTo, yTo);
 
         // Draw the string (char. by char.)
-        while (current){
+        while (*current){
 #ifdef DEST_CASIO_FXCG50
-            dtext_opt(xFrom, yFrom,  colours_[COLOUR_ID_BKGRND],  fg, DTEXT_LEFT, DTEXT_BOTTOM, current, 1);
-            dnsize(current, 1, casioParams_.vFont_, &w, &h);
+            dtext_opt(xFrom, yFrom,  fg, C_NONE, DTEXT_LEFT, DTEXT_BOTTOM, current, 1);
+            dnsize(current, 1, /*casioParams_.vFont_*/ NULL, &w, &h);
 #endif // #ifdef DEST_CASIO_FXCG50
 
             // Update anchor pos.

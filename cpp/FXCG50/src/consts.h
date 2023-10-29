@@ -44,7 +44,7 @@ extern "C" {
 
 // Game status
 //
-enum{
+enum GAME_STATUS{
     STATUS_INIT		 = 0,
     STATUS_READY	 = 1,
     STATUS_RUNNING	 = 2,
@@ -70,7 +70,7 @@ enum{
 
 // Indicators
 //
-enum{
+enum VALUE_ID{
     SCORE_ID = 0,
     LEVEL_ID = 1,
     COMPLETED_LINES_ID = 2,
@@ -86,7 +86,7 @@ enum{
 //
 // Colour IDs
 //
-enum{
+enum COLOUR_ID{
     COLOUR_ID_BOARD     = 0,
     // 1 -> 7 : Pieces colours (nCurses ID)
     COLOUR_ID_SHADOW    = 8,
@@ -107,7 +107,7 @@ enum{
 #define C_RGB(r,g,b)      ((uint32_t)(((uint8_t)(r)|((uint16_t)((uint8_t)(g))<<8))|(((uint32_t)(uint8_t)(b))<<16)))
 #endif // #ifndef DEST_CASIO_FXCG50
 
-enum{
+enum DEF_COLOUR{
     COLOUR_BLACK   = C_RGB(0, 0, 0),
     COLOUR_WHITE   = C_RGB(31, 31, 31),
     COLOUR_RED     = C_RGB(31, 0, 0),
@@ -126,7 +126,7 @@ enum{
 // Key codes
 //
 #ifdef DEST_CASIO_FXCG50
-enum{
+enum GAME_KEY{
     KEY_CODE_UP = KEY_UP,
     KEY_CODE_DOWN = KEY_DOWN,
     KEY_CODE_LEFT = KEY_LEFT,
@@ -138,7 +138,7 @@ enum{
     KEY_CODE_ENTER = KEY_EXE
 };
 #else
-enum{
+enum GAME_KEY{
     KEY_CODE_LEFT = '4',
     KEY_CODE_RIGHT = '5',
     KEY_CODE_UP = '3',
@@ -169,7 +169,7 @@ class tetrisParameters {
             startLevel_ = 1;
             dirtyLines_ = 7;
             shadow_ = true;
-            rotatedDisplay_ = false;        // by default, no screen rotation
+            rotatedDisplay_ = true;        // by default, no screen rotation
         }
 
         // recopy

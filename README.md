@@ -35,15 +35,15 @@
 ### Samples
 
 Displaying in a simple console using curses :
-![console outputs](captures/console.png)
+![console outputs](assets/console.png)
 
 Display by the PYGame library :
-![PYGame outputs](captures/pyGame.png)
+![PYGame outputs](assets/pyGame.png)
 
 *casioplot* mode on a PC :
-![CasioPlot](captures/casioplotPC.png)
+![CasioPlot](assets/casioplotPC.png)
 
 *casioplotv* mode on a PC :
-![CasioPlot vertically](captures/casioplotvPC.png)
+![CasioPlot vertically](assets/casioplotvPC.png)
 
 

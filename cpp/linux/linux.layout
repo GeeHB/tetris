@@ -2,54 +2,24 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="../casio_tetris/src/consts.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../FXCG50/src/tab.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4698" topLine="160" />
+			<Cursor1 position="1182" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../casio_tetris/src/splashScreen.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../FXCG50/src/consts.h" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1372" topLine="30" />
+			<Cursor1 position="0" topLine="196" />
 		</Cursor>
 	</File>
-	<File name="../casio_tetris/src/templates.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../FXCG50/src/casioFX-CG50.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3075" topLine="107" />
+			<Cursor1 position="3626" topLine="91" />
 		</Cursor>
 	</File>
-	<File name="../casio_tetris/src/tetrisGame.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../FXCG50/src/casioFX-CG50.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="27918" topLine="901" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/casioFX-CG50.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3558" topLine="110" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/tetrisGame.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5493" topLine="143" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/piece.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="540" topLine="48" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/jTetris.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="807" topLine="14" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/piece.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3028" topLine="87" />
-		</Cursor>
-	</File>
-	<File name="../casio_tetris/src/casioFX-CG50.cpp" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3524" topLine="92" />
+			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

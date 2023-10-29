@@ -34,16 +34,17 @@
 			<Add option="-fexceptions" />
 			<Add option="-DLINUX_VER" />
 		</Compiler>
-		<Unit filename="../casio_tetris/src/casioFX-CG50.cpp" />
-		<Unit filename="../casio_tetris/src/casioFX-CG50.h" />
-		<Unit filename="../casio_tetris/src/consts.h" />
-		<Unit filename="../casio_tetris/src/jTetris.cpp" />
-		<Unit filename="../casio_tetris/src/piece.cpp" />
-		<Unit filename="../casio_tetris/src/piece.h" />
-		<Unit filename="../casio_tetris/src/splashScreen.h" />
-		<Unit filename="../casio_tetris/src/templates.h" />
-		<Unit filename="../casio_tetris/src/tetrisGame.cpp" />
-		<Unit filename="../casio_tetris/src/tetrisGame.h" />
+		<Unit filename="../FXCG50/src/casioFX-CG50.cpp" />
+		<Unit filename="../FXCG50/src/casioFX-CG50.h" />
+		<Unit filename="../FXCG50/src/consts.h" />
+		<Unit filename="../FXCG50/src/jTetris.cpp" />
+		<Unit filename="../FXCG50/src/piece.cpp" />
+		<Unit filename="../FXCG50/src/piece.h" />
+		<Unit filename="../FXCG50/src/splashScreen.h" />
+		<Unit filename="../FXCG50/src/tab.h" />
+		<Unit filename="../FXCG50/src/templates.h" />
+		<Unit filename="../FXCG50/src/tetrisGame.cpp" />
+		<Unit filename="../FXCG50/src/tetrisGame.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

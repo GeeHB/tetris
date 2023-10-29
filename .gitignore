@@ -11,6 +11,9 @@ x64/
 bin/
 obj/
 
+# MacOS stuff
+.DS_Store
+
 # Python bytecode
 __pycache__/
 
