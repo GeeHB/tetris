@@ -30,7 +30,7 @@
 //--
 //-- tetrisGame object
 //--
-//--    Handle the gameplay and the game(without display !)
+//--    Handle the gameplay and the game (without display !)
 //--
 //---------------------------------------------------------------------------
 
@@ -829,7 +829,7 @@ void tetrisGame::_drawBackGround(){
                 NO_COLOR, colours_[COLOUR_ID_BORDER]);
 }
 
-// _drawNumValue() : Draw a single coloured rectangle
+// _drawRectangle() : Draw a single coloured rectangle
 //
 //   @x,@y : top left starting point
 //   @width, @height : dimensions
@@ -853,37 +853,52 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 
 // _drawNumValue() : Draw a value and its name
 //
-//  @index is the index of the VALUE object to be drawn
+//  @index of the VALUE object to be drawn
 //
 void tetrisGame::_drawNumValue(uint8_t index){
     char valStr[MAX_VALUE_LEN + 1];
 
-     // Erase previous value ?
-    if (-1 != values_[index].previous){
-        __valtoa(values_[index].previous, values_[index].name, valStr);
+     if (!casioParams_.rotatedDisplay_){
+         // Erase previous value ?
+        if (-1 != values_[index].previous){
+            __valtoa(values_[index].previous, values_[index].name, valStr);
 
-        if (!casioParams_.rotatedDisplay_){
 #ifdef DEST_CASIO_FXCG50
             dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
 #endif // #ifdef DEST_CASIO_FXCG50
         }
-        else{
-            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-        }
-    }
-    values_[index].previous = values_[index].value;
 
-    // New value
-    __valtoa(values_[index].value, values_[index].name, valStr);
+        // print new value
+        __valtoa(values_[index].value, values_[index].name, valStr);
 
-    if (!casioParams_.rotatedDisplay_){
 #ifdef DEST_CASIO_FXCG50
         dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
 #endif // #ifdef DEST_CASIO_FXCG50
     }
     else{
-        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
+        // Erase previous value ?
+        if (-1 != values_[index].previous){
+            __valtoa(values_[index].previous, NULL, valStr);
+
+#ifdef DEST_CASIO_FXCG50
+            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], values_[index].name);
+            _dtextV(casioParams_.textsPos_[index].x + CASIO_VERT_TEXT_OFFSET, casioParams_.textsPos_[index].y + CASIO_VERT_TEXT_OFFSET,
+                    colours_[COLOUR_ID_BKGRND], valStr);
+#endif // #ifdef DEST_CASIO_FXCG50
+        }
+
+        // print new value & name
+        __valtoa(values_[index].value, NULL, valStr);
+
+#ifdef DEST_CASIO_FXCG50
+        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], values_[index].name);
+        _dtextV(casioParams_.textsPos_[index].x + CASIO_VERT_TEXT_OFFSET, casioParams_.textsPos_[index].y + CASIO_VERT_TEXT_OFFSET,
+                colours_[COLOUR_ID_TEXT], valStr);
+#endif // #ifdef DEST_CASIO_FXCG50
     }
+
+    values_[index].previous = values_[index].value;
+
 }
 
 // _dtextV() : Draw a line of text vertically
@@ -937,7 +952,7 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
 //  the name and the formated value.
 //
 //  @num : Numeric value to transform
-//  @name : Name of the value
+//  @name : Name of the value (can be NULL)
 //  @str : Pointer to output string
 //
 //  Return the formated string

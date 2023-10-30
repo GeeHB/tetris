@@ -59,6 +59,8 @@ extern "C" {
 #define CASIO_INFO_TOP      10
 #define CASIO_INFO_GAP      4       // between border and text
 
+#define CASIO_VERT_TEXT_OFFSET  15
+
 #ifdef DEST_CASIO_FXCG50
 // Font for vertical text
 extern font_t font_vertical;

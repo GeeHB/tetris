@@ -75,6 +75,12 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         keyRotatePiece_ = KEY_CODE_UP;
         keyDown_ = KEY_CODE_DOWN;
 
+        // Values indicators
+        textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
+        for (uint8_t id(0); id <VAL_COUNT; id++){
+            textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
+        }
+
         // Use default font
 #ifdef DEST_CASIO_FXCG50
         //dfont(dfont_default());
@@ -104,16 +110,16 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         keyRotatePiece_ = KEY_CODE_LEFT;
         keyDown_ = KEY_CODE_RIGHT;
 
+        // Values indicators
+        textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
+        for (uint8_t id(0); id <VAL_COUNT; id++){
+            textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2* id + 1) + CASIO_VERT_TEXT_OFFSET * id;
+        }
+
         // Install my font
 #ifdef DEST_CASIO_FXCG50
         //dfont((font_t*)&font_vertical);
 #endif // #ifdef DEST_CASIO_FXCG50
-    }
-
-    // Values indicators
-    textsPos_[0].x = textsPos_[1].x = textsPos_[2].x = NP_pos_.x;
-    for (uint8_t id(0); id <VAL_COUNT; id++){
-        textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
     }
 }
 
