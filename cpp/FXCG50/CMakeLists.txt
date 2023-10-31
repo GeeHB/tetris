@@ -16,9 +16,9 @@ set(SOURCES
 )
 # Shared assets, fx-9860G-only assets and fx-CG-50-only assets
 set(ASSETS
-  assets-cg/font_vertical.png
-  # ...
-)
+  assets-cg/font_default.png
+  assets-cg/font_vert.png
+ )
 set(ASSETS_fx
   assets-fx/example.png
   # ...

@@ -16,6 +16,12 @@
 
 #include "casioFX-CG50.h"
 
+// Fonts
+#ifdef DEST_CASIO_FXCG50
+extern font_t font_horz;
+extern font_t font_vert;
+#endif // #ifdef DEST_CASIO_FXCG50
+
 //---------------------------------------------------------------------------
 //--
 //-- casioFX-CG50 object
@@ -32,7 +38,8 @@ casioFXCG50::casioFXCG50(){
 
     // Fonts
 #ifdef DEST_CASIO_FXCG50
-    vFont_ = &font_vertical;
+    hFont_ = &font_horz;
+    vFont_ = &font_vert;
 #endif // #ifdef DEST_CASIO_FXCG50
 
     // Default keys
@@ -47,7 +54,7 @@ casioFXCG50::casioFXCG50(){
 
 // rotatedDisplay() : Update members on rotation
 //
-//  @doRotate : indicatges wether display must rotate or not
+//  @doRotate : indicates wether display must rotate or not
 //
 void casioFXCG50::rotatedDisplay(bool doRotate){
     if (false == (rotatedDisplay_ = doRotate)){
@@ -81,9 +88,9 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
             textsPos_[id].y = NP_pos_.y + NP_width_ + boxWidth_ * ( 2 * id + 1);
         }
 
-        // Use default font
+        // Use "default" font
 #ifdef DEST_CASIO_FXCG50
-        //dfont(dfont_default());
+        dfont((font_t*)&font_horz);
 #endif // #ifdef DEST_CASIO_FXCG50
     }
     else {
@@ -100,7 +107,6 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;  // ... but preview is smaller
         NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
-        //NP_pos_.x = CASIO_HEIGHT -2 * CASIO_PLAYFIELD_BORDER - NP_width_;
         NP_pos_.x = playfield_pos_.x + playfield_width + 3 * CASIO_BORDER_GAP;
         NP_pos_.y = CASIO_INFO_TOP;
 
@@ -118,7 +124,7 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
 
         // Install my font
 #ifdef DEST_CASIO_FXCG50
-        //dfont((font_t*)&font_vertical);
+        dfont((font_t*)&font_vert);
 #endif // #ifdef DEST_CASIO_FXCG50
     }
 }

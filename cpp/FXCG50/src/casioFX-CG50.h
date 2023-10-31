@@ -61,11 +61,6 @@ extern "C" {
 
 #define CASIO_VERT_TEXT_OFFSET  15
 
-#ifdef DEST_CASIO_FXCG50
-// Font for vertical text
-extern font_t font_vertical;
-#endif // #ifdef DEST_CASIO_FXCG50
-
 //---------------------------------------------------------------------------
 //--
 //-- casioFX-CG50 object
@@ -128,7 +123,7 @@ class casioFXCG50{
         char        keyQuit_;
 
 #ifdef DEST_CASIO_FXCG50
-        font_t*     vFont_;     // Font used for vertical texts
+        font_t     *hFont_, *vFont_;     // Fonts
 #endif //#ifdef DEST_CASIO_FXCG50
 };
 
