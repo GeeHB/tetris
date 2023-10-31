@@ -901,7 +901,7 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
         char* current = (char*)text;
         int w, h;
 #ifdef DEST_CASIO_FXCG50
-        dnsize(current, 1, /*casioParams_.vFont_*/ NULL, &w, &h);
+        dnsize(current, 1, casioParams_.vFont_, &w, &h);
 #else
         w = h = 10; // for debug tests
 #endif // #ifdef DEST_CASIO_FXCG50
@@ -914,8 +914,8 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
         // Draw the string (char. by char.)
         while (*current){
 #ifdef DEST_CASIO_FXCG50
-            dtext_opt(xFrom, yFrom,  fg, C_NONE, DTEXT_LEFT, DTEXT_BOTTOM, current, 1);
-            dnsize(current, 1, /*casioParams_.vFont_*/ NULL, &w, &h);
+            dtext_opt(xFrom, yFrom,  fg, C_NONE, DTEXT_RIGHT, DTEXT_BOTTOM, current, 1);
+            dnsize(current, 1, casioParams_.vFont_, &w, &h);
 #endif // #ifdef DEST_CASIO_FXCG50
 
             // Update anchor pos.

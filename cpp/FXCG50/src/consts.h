@@ -37,6 +37,11 @@
 extern "C" {
 #endif // #ifdef __cplusplus
 
+// App. infos
+#define APP_NAME     "jTetris"
+#define APP_VERSION  "0.1 - beta"
+#define APP_AUTHORE "GeeHB"
+
 // Playfield's dimensions (in box units)
 //
 #define PLAYFIELD_WIDTH     10
