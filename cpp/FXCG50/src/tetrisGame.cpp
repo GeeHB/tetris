@@ -858,47 +858,33 @@ void tetrisGame::_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t
 void tetrisGame::_drawNumValue(uint8_t index){
     char valStr[MAX_VALUE_LEN + 1];
 
-     if (!casioParams_.rotatedDisplay_){
-         // Erase previous value ?
-        if (-1 != values_[index].previous){
-            __valtoa(values_[index].previous, values_[index].name, valStr);
+    // Erase previous value ?
+    if (-1 != values_[index].previous){
+        __valtoa(values_[index].previous, values_[index].name, valStr);
 
 #ifdef DEST_CASIO_FXCG50
-            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
-#endif // #ifdef DEST_CASIO_FXCG50
+        if (casioParams_.rotatedDisplay_){
+            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
         }
+        else{
+            dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], valStr);
+        }
+#endif // #ifdef DEST_CASIO_FXCG50
+    }
 
-        // print new value
-        __valtoa(values_[index].value, values_[index].name, valStr);
+    // print new value
+    __valtoa(values_[index].value, values_[index].name, valStr);
 
 #ifdef DEST_CASIO_FXCG50
-        dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
-#endif // #ifdef DEST_CASIO_FXCG50
+    if (casioParams_.rotatedDisplay_){
+        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
     }
     else{
-        // Erase previous value ?
-        if (-1 != values_[index].previous){
-            __valtoa(values_[index].previous, NULL, valStr);
-
-#ifdef DEST_CASIO_FXCG50
-            _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_BKGRND], values_[index].name);
-            _dtextV(casioParams_.textsPos_[index].x + CASIO_VERT_TEXT_OFFSET, casioParams_.textsPos_[index].y + CASIO_VERT_TEXT_OFFSET,
-                    colours_[COLOUR_ID_BKGRND], valStr);
-#endif // #ifdef DEST_CASIO_FXCG50
-        }
-
-        // print new value & name
-        __valtoa(values_[index].value, NULL, valStr);
-
-#ifdef DEST_CASIO_FXCG50
-        _dtextV(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], values_[index].name);
-        _dtextV(casioParams_.textsPos_[index].x + CASIO_VERT_TEXT_OFFSET, casioParams_.textsPos_[index].y + CASIO_VERT_TEXT_OFFSET,
-                colours_[COLOUR_ID_TEXT], valStr);
-#endif // #ifdef DEST_CASIO_FXCG50
+        dtext(casioParams_.textsPos_[index].x, casioParams_.textsPos_[index].y, colours_[COLOUR_ID_TEXT], valStr);
     }
+#endif // #ifdef DEST_CASIO_FXCG50
 
     values_[index].previous = values_[index].value;
-
 }
 
 // _dtextV() : Draw a line of text vertically
