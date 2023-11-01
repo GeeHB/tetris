@@ -18,6 +18,10 @@
 #include "splashScreen.h"
 #include "tetrisGame.h"
 
+#ifdef DEST_CASIO_FXCG50
+#include <gint/gint.h>
+#endif // #ifdef DEST_CASIO_FXCG50
+
 int main()
 {
     // Get parameters
@@ -35,13 +39,10 @@ int main()
 	tetrisGame game(params);
     game.start();
 
-    /*
-    tetrisGame* game = new tetrisGame(params);
-	if (game){
-	    game->start();
-        delete game;
-    }
-    */
+#ifdef DEST_CASIO_FXCG50
+    gint_setrestart(1);
+#endif // #ifdef DEST_CASIO_FXCG50
+
     // Finished
     return 1;
 }

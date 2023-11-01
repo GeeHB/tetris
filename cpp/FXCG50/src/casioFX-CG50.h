@@ -45,7 +45,7 @@ extern "C" {
 #define CASIO_BOX_WIDTH_ROTATED   14
 
 #define CASIO_BOX_WIDTH_NP          CASIO_BOX_WIDTH    // next piece preview
-#define CASIO_BOX_WIDTH_NP_ROTATED  8
+#define CASIO_BOX_WIDTH_NP_ROTATED  7
 
 // Playfield pos & dims
 //
