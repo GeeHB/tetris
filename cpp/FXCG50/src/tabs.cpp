@@ -108,7 +108,7 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
 //
 tabManager::tabManager(){
     // Initialize members
-    memset(tabs_, 0, TAB_COUNT * sizeof(tab*));
+    memset(tabs_, 0, sizeof(tabs_));
     active_ = -1;
 }
 
@@ -143,9 +143,9 @@ bool tabManager::add(tab* ptab, int8_t ID){
 
 // Set active tab
 //
-int tabManager::select(int8_t ID){
+uint8_t tabManager::select(int8_t ID){
     if (ID != active_ && ID < TAB_COUNT){
-        // Deselect
+        // Unselect
         _select(active_, false);
 
         // Select
@@ -157,8 +157,7 @@ int tabManager::select(int8_t ID){
         dupdate();
 #endif // DEST_CASIO_FXCG50
 
-	    // Give control to tab
-	    return tabs_[ID]->activate();
+	    return tabs_[ID]->action();
     }
 
     return ACTION_NONE;
@@ -228,15 +227,17 @@ int8_t tabManager::_findFreeID(){
 // (de)activate a tab
 //
 void tabManager::_select(int8_t ID, bool activate){
-    tab* ptab = tabs_[ID];
+    if (-1 != ID){
+        tab* ptab = tabs_[ID];
 
-    if (ptab){
-        ptab->draw(activate);
-    }
-    else{
-        RECT rect;
-        _ID2Rect(ID, rect);
-        tab::draw(&rect, activate);
+        if (ptab){
+            ptab->draw(activate);
+        }
+        else{
+            RECT rect;
+            _ID2Rect(ID, rect);
+            tab::draw(&rect, activate);
+        }
     }
 }
 

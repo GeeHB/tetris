@@ -14,30 +14,23 @@
 //--
 //---------------------------------------------------------------------------
 
-
-#include "tetrisTabs.h"
+#include "tabs.h"
 #include "tetrisGame.h"
 
 #ifdef DEST_CASIO_FXCG50
 #include <gint/gint.h>
 #endif // #ifdef DEST_CASIO_FXCG50
 
-int main()
-{
+// Program entry point
+//
+int main(){
     // Get parameters
     tetrisParameters params;
 
-    /*
-    splashScreen splash;
-    if (false == splash.choose(params)){
-        // Canceled
-        return 1;
-    }
-    */
     bool useApp(true);
     tabManager tmanager;
 
-    // create tabs
+    // Create tabs
     tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // add tabs ...
@@ -58,26 +51,36 @@ int main()
         else{
             car = 0;;
         }
-    #else
+#else
         car = getchar();
-    #endif // #ifdef DEST_CASIO_FXCG50
+#endif // #ifdef DEST_CASIO_FXCG50
 
         if (car >= KEY_CODE_F1 && car <= (KEY_CODE_F1 + TAB_COUNT -1)){
             sel = car - KEY_CODE_F1;    // "F" key index
 
-            // Update drawings and give control to tab
+            // Update drawings
             action = tmanager.select(sel);
+
+            // Specifics actions
+            switch (sel){
+                // Launch the game
+                case 4 :
+                {
+                    tetrisGame game(params);
+    	            game.start();
+                    break;
+                }
+
+                default:
+                    break;
+            }
 
             // End ?
             useApp = (action != ACTION_QUIT);
         }
     } while (useApp);
 
-
-	// Launch the game
-	//tetrisGame game(params);
-    	//game.start();
-
+    // Free memory
 #ifdef DEST_CASIO_FXCG50
     gint_setrestart(1);
 #endif // #ifdef DEST_CASIO_FXCG50

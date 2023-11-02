@@ -158,6 +158,15 @@ enum GAME_KEY{
 };
 #endif // #ifdef DEST_CASIO_FXCG50
 
+// Tab names
+//
+#define TAB_ABOUT   "Tetris"
+#define TAB_LINES   "Lines"
+#define TAB_LEVEL   "Level"
+#define TAB_SHADOW  "Shadow"
+#define TAB_PLAY    "Play"
+#define TAB_QUIT    "Exit"
+
 //---------------------------------------------------------------------------
 //--
 //-- tetrisParameters object

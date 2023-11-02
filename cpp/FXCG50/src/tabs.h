@@ -74,10 +74,10 @@ public:
     // Destruction
     ~tab(){}
 
-    // Activate
-    virtual int activate(){
+    // Action to perform
+    int action(){
         // Ok
-        return ACTION_NONE;
+        return action_;
     }
 
     // Draw
@@ -137,8 +137,8 @@ public:
     // Destruction
     ~tabValue(){}
 
-    // Activate
-    int activate(){
+    // Action to perform
+    uint8_t action(){
         // Ok
         return action_;
     }
@@ -172,7 +172,7 @@ public:
     bool add(tab* ptab, int8_t ID = -1);
 
     // Set active tab
-    int select(int8_t ID);
+    uint8_t select(int8_t ID);
     int8_t activeTab(){
         return active_;
     }
