@@ -37,33 +37,6 @@ extern "C" {
 #define TAB_PLAY    "Play"
 #define TAB_QUIT    "Exit"
 
-//---------------------------------------------------------------------------
-//--
-//-- tabButton object : Initiate an action
-//--
-//---------------------------------------------------------------------------
-
-class tabButton : public tab{
-public:
-    // Construction
-    tabButton(uint8_t ID, const char* tname, int action = ACTION_NONE, uint8_t height = TAB_HEIGHT)
-    :tab(ID, tname, height){
-        action_ = action;
-    }
-
-    // Destruction
-    ~tabButton(){}
-
-    // Activate
-    int activate(bool setActivate = true){
-        // Ok
-        return action_;
-    }
-
-protected:
-    // Members
-    int     action_;        // What todo when pressed ?
-};
 
 #ifdef __cplusplus
 }

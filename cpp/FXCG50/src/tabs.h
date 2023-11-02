@@ -37,6 +37,7 @@ extern "C" {
 
 #define TAB_NAME_LEN    10      // max char
 
+
 // Data handled by a tab
 //
 union TAB_VALUE{
@@ -68,20 +69,20 @@ enum TAB_ACTIONS{
 class tab{
 public:
     // Construction
-    tab(uint8_t ID, const char* tname, uint8_t height = TAB_HEIGHT);
+    tab(const char* tname, int action = ACTION_NONE);
 
     // Destruction
-    virtual ~tab(){}
+    ~tab(){}
 
     // Activate
-    virtual int activate(bool setActivate = true){
+    virtual int activate(){
         // Ok
         return ACTION_NONE;
     }
 
-    // Draw.
-    virtual void draw(bool selected = false){
-        draw(rect_, selected, name);
+    // Draw
+     void draw(bool selected = false){
+        draw(&rect_, selected, name_);
     }
 
     // Access
@@ -89,27 +90,21 @@ public:
         return name_;
     }
 
-    // Value
-    void setValue(TAB_VALUE& val){
-        // Any ...
-        val_.iVal = val.iVal;
-    }
-    void value(TAB_VALUE& val){
-        val.iVal = val_.iVal;
-    }
-
     // Dimensions & position
     void getRect(RECT& position);
+    void setRect(RECT& position);
 
     // static methods
     //
 
     // clear the whole screen (except tab lane)
+    /*
     static void clearScreen(){
 #ifdef DEST_CASIO_FXCG50
-        drec(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - rect_.h - 1, C_WHITE)
+        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - rect_.height - 1, C_WHITE)
 #endif // #ifdef DEST_CASIO_FXCG50
     }
+    */
 
     // Draw a single tab
     static void draw(const RECT* position, bool selected, const char* name = NULL);
@@ -121,8 +116,45 @@ protected:
 protected:
     // Members
     char        name_[TAB_NAME_LEN + 1];
+    int         action_;        // What todo when pressed ?
     RECT        rect_;
-    TAB_VALUE   val_;
+};
+
+//---------------------------------------------------------------------------
+//--
+//-- tabValue object : A tab with a value / parameter
+//--
+//---------------------------------------------------------------------------
+
+class tabValue : public tab{
+public:
+    // Construction
+    tabValue(const char* tname, int action = ACTION_NONE)
+    :tab(tname, action){
+        value_.iVal = 0;
+    }
+
+    // Destruction
+    ~tabValue(){}
+
+    // Activate
+    int activate(){
+        // Ok
+        return action_;
+    }
+
+    // Value
+    void setValue(TAB_VALUE& val){
+        // Any ...
+        value_.iVal = val.iVal;
+    }
+    void value(TAB_VALUE& val){
+        val.iVal = value_.iVal;
+    }
+
+protected:
+    // Members
+    TAB_VALUE   value_;
 };
 
 //
@@ -137,17 +169,33 @@ public:
     ~tabManager(){}
 
     // Add a tab
-    bool add(const tab* ptab);
+    bool add(tab* ptab, int8_t ID = -1);
 
     // Set active tab
-    void select(int8_t ID);
+    int select(int8_t ID);
+    int8_t activeTab(){
+        return active_;
+    }
 
-private:
+    // Redraw all tabs
+    void update();
+
     // Private methods
+    //
+private:
+    // Set a tab position
+    void _ID2Rect(uint8_t ID, RECT& rect);
+
+    // Search in the tab list
     int8_t _find(const tab* ptab);
+    int8_t _findFreeID();
+
+    // (de)activate a tab
+    void _select(int8_t ID, bool activate);
 
     // Members
     tab*    tabs_[TAB_COUNT];
+    int8_t  active_;    // ID of active tab
 };
 
 #ifdef __cplusplus

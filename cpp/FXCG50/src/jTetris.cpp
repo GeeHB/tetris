@@ -38,16 +38,16 @@ int main()
     tabManager tmanager;
 
     // create tabs
-    tabButton tabExit(5, TAB_QUIT, ACTION_QUIT);
+    tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // add tabs ...
-    tmanager.add(&tabExit);
+    tmanager.add(&tabExit, 5);
 
-    tmanager.select(0); // Select first tab
+    tmanager.update();
 
     // Handle options
     char car(0);
-    int8_t prev(-1), sel(0);
+    int8_t sel(0);
     int action;
     do{
 #ifdef DEST_CASIO_FXCG50
@@ -65,21 +65,8 @@ int main()
         if (car >= KEY_CODE_F1 && car <= (KEY_CODE_F1 + TAB_COUNT -1)){
             sel = car - KEY_CODE_F1;    // "F" key index
 
-            // Update drawings
-            if (sel != prev){
-                tmanager.select(prev, false);
-                tmanager.select(sel);
-                prev = sel;
-            }
-
-            // Action ?
-            switch (car){
-                case 5:
-                    action = ACTION_QUIT;
-                default:
-                    action = ACTION_NONE;
-                    break;
-            }
+            // Update drawings and give control to tab
+            action = tmanager.select(sel);
 
             // End ?
             useApp = (action != ACTION_QUIT);
@@ -88,8 +75,8 @@ int main()
 
 
 	// Launch the game
-	tetrisGame game(params);
-    game.start();
+	//tetrisGame game(params);
+    	//game.start();
 
 #ifdef DEST_CASIO_FXCG50
     gint_setrestart(1);
