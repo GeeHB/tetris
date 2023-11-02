@@ -101,7 +101,7 @@ void casioFXCG50::rotatedDisplay(bool doRotate){
         NP_boxWidth_ = CASIO_BOX_WIDTH_NP_ROTATED;  // ... but preview is smaller
         NP_width_ = 4 * NP_boxWidth_ + 2 * CASIO_INFO_GAP;
 
-        NP_pos_.x = playfield_pos_.x + playfield_width + 2 * CASIO_BORDER_GAP;
+        NP_pos_.x = playfield_pos_.x + playfield_width + CASIO_BORDER_GAP;
         NP_pos_.y = CASIO_INFO_TOP;
 
         // Keys

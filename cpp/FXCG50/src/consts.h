@@ -132,6 +132,7 @@ enum DEF_COLOUR{
 //
 #ifdef DEST_CASIO_FXCG50
 enum GAME_KEY{
+    KEY_CODE_F1 = KEY_F1,
     KEY_CODE_UP = KEY_UP,
     KEY_CODE_DOWN = KEY_DOWN,
     KEY_CODE_LEFT = KEY_LEFT,
@@ -144,6 +145,7 @@ enum GAME_KEY{
 };
 #else
 enum GAME_KEY{
+    KEY_CODE_F1 = '&',
     KEY_CODE_LEFT = '4',
     KEY_CODE_RIGHT = '5',
     KEY_CODE_UP = '3',

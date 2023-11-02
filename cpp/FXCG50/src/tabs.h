@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //--
-//--	File	: tab.h
+//--	File	: tabs.h
 //--
 //--	Author	: Jérôme Henry-Barnaudière - GeeHB
 //--
@@ -10,12 +10,12 @@
 //--
 //--	Description:
 //--
-//--			Definition of tab object
+//--			Definition of tabManager and tab objects
 //--
 //---------------------------------------------------------------------------
 
-#ifndef __J_TETRIS_CASIO_TAB_h__
-#define __J_TETRIS_CASIO_TAB_h__    1
+#ifndef __J_TETRIS_CASIO_TABS_h__
+#define __J_TETRIS_CASIO_TABS_h__    1
 
 #include "casioFX-CG50.h"
 
@@ -35,7 +35,7 @@ extern "C" {
 #define TAB_HEIGHT      18
 #define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
 
-#define TAB_NAME_LEN    10      # max char
+#define TAB_NAME_LEN    10      // max char
 
 // Data handled by a tab
 //
@@ -49,8 +49,15 @@ union TAB_VALUE{
 // Position of a tab
 typedef struct __rect{
     uint16_t    x,y;    // top left
-    uint_16_t   w, h;   // width and height
+    uint16_t    w, h;   // width and height
 } RECT;
+
+// Actions
+//
+enum TAB_ACTIONS{
+    ACTION_NONE	 = 0,
+    ACTION_QUIT
+};
 
 //---------------------------------------------------------------------------
 //--
@@ -61,28 +68,20 @@ typedef struct __rect{
 class tab{
 public:
     // Construction
-    tab(uint8_t ID, const char* tname, uint_8 height = TAB_HEIGHT){
-        // Tab pos
-        rect_.x =   ID * TAB_WIDTH;
-        rect_. y = CASIO_HEIGHT - height - 1;
-        rect_.w = TAB_WIDTH;
-        rect_.h = height,
-
-        // Copy (and truncate) name
-        size_t len(strlen(tname));
-        if (len>TAB_NAME_LEN){
-            len = TAB_NAME_LEN;
-        }
-        strncpy(tname, name_, len);
-        name_[len] = 0;
-    }
+    tab(uint8_t ID, const char* tname, uint8_t height = TAB_HEIGHT);
 
     // Destruction
-    virtual ~tab();
+    virtual ~tab(){}
+
+    // Activate
+    virtual int activate(bool setActivate = true){
+        // Ok
+        return ACTION_NONE;
+    }
 
     // Draw.
     virtual void draw(bool selected = false){
-        _drawTabName(selected);
+        draw(rect_, selected, name);
     }
 
     // Access
@@ -99,14 +98,25 @@ public:
         val.iVal = val_.iVal;
     }
 
-    // "private" methods
-protected:
-    void _drawTabName(bool selected);
-    void _clearScreen(){
+    // Dimensions & position
+    void getRect(RECT& position);
+
+    // static methods
+    //
+
+    // clear the whole screen (except tab lane)
+    static void clearScreen(){
 #ifdef DEST_CASIO_FXCG50
         drec(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - rect_.h - 1, C_WHITE)
 #endif // #ifdef DEST_CASIO_FXCG50
     }
+
+    // Draw a single tab
+    static void draw(const RECT* position, bool selected, const char* name = NULL);
+
+    // "private" methods
+protected:
+
 
 protected:
     // Members
@@ -115,10 +125,35 @@ protected:
     TAB_VALUE   val_;
 };
 
+//
+// tabManager - Manages the 6 possibles tabs
+//
+class tabManager{
+public:
+    // Constructor
+    tabManager();
+
+    // Destructor
+    ~tabManager(){}
+
+    // Add a tab
+    bool add(const tab* ptab);
+
+    // Set active tab
+    void select(int8_t ID);
+
+private:
+    // Private methods
+    int8_t _find(const tab* ptab);
+
+    // Members
+    tab*    tabs_[TAB_COUNT];
+};
+
 #ifdef __cplusplus
 }
 #endif // #ifdef __cplusplus
 
-#endif // __J_TETRIS_CASIO_TAB_h__
+#endif // __J_TETRIS_CASIO_TABS_h__
 
 // EOF

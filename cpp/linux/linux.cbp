@@ -41,10 +41,12 @@
 		<Unit filename="../FXCG50/src/piece.cpp" />
 		<Unit filename="../FXCG50/src/piece.h" />
 		<Unit filename="../FXCG50/src/splashScreen.h" />
-		<Unit filename="../FXCG50/src/tab.h" />
+		<Unit filename="../FXCG50/src/tabs.cpp" />
+		<Unit filename="../FXCG50/src/tabs.h" />
 		<Unit filename="../FXCG50/src/templates.h" />
 		<Unit filename="../FXCG50/src/tetrisGame.cpp" />
 		<Unit filename="../FXCG50/src/tetrisGame.h" />
+		<Unit filename="../FXCG50/src/tetrisTabs.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
