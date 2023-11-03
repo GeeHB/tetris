@@ -22,8 +22,6 @@
 //--
 //---------------------------------------------------------------------------
 
-#define TAB_ROUNDED_DIM     4
-
 #define COLOUR_SELECTED     COLOUR_BLUE
 #define COLOUR_UNSELECTED   COLOUR_GREY
 
@@ -88,9 +86,10 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
 
     // frame
     if (selected){
-        dline(anchor->x, anchor->y, anchor->x, anchor->y + anchor->h - 2, C_BLACK);
-        dline(anchor->x+1, anchor->y + anchor->h - 1, anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, C_BLACK);
-        dline(anchor->x + anchor->w - 1, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, C_BLACK);
+        dline(anchor->x, anchor->y, anchor->x, anchor->y + anchor->h - 2, C_BLACK); // Left
+        dline(anchor->x+1, anchor->y + anchor->h - 1, anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, C_BLACK);  // bottom
+        dline(anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, C_BLACK);  // bottom
+        dline(anchor->x + anchor->w - 1, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, C_BLACK);   // right
     }
     else{
         dline(anchor->x, anchor->y, anchor->x + anchor->w -1, anchor->y, C_BLACK);
@@ -138,35 +137,37 @@ bool tabManager::add(tab* ptab, int8_t ID){
     }
 
     // Ok
+    update();
     return true;
 }
 
 // Set active tab
 //
 uint8_t tabManager::select(int8_t ID){
-    if (ID != active_ && ID < TAB_COUNT){
+    // Valid and different
+    bool valid(false);
+    if (ID != active_ && ID < TAB_COUNT && tabs_[ID]){
         // Unselect
         _select(active_, false);
 
         // Select
         _select(ID, true);
 
+        valid = true;
         active_ = ID;
 
 #ifdef DEST_CASIO_FXCG50
         dupdate();
 #endif // DEST_CASIO_FXCG50
-
-	    return tabs_[ID]->action();
     }
 
-    return ACTION_NONE;
+    // "action" of the tab
+    return (valid ? tabs_[ID]->action():(uint8_t)ACTION_NONE);
 }
 
 // Redraw all tabs
 //
 void tabManager::update(){
-#ifdef DEST_CASIO_FXCG50
     tab* ptab;
     RECT anchor;
     for (uint8_t index(0); index < TAB_COUNT; index++){
@@ -179,7 +180,7 @@ void tabManager::update(){
             tab::draw(&anchor, index==active_);
         }
     }
-
+#ifdef DEST_CASIO_FXCG50
     dupdate();
 #endif // DEST_CASIO_FXCG50
 }

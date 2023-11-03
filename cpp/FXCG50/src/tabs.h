@@ -32,8 +32,10 @@ extern "C" {
 #define TAB_COUNT       6
 
 // Dimensions in pixels
-#define TAB_HEIGHT      18
+#define TAB_HEIGHT      22
 #define TAB_WIDTH       (CASIO_WIDTH / TAB_COUNT)
+
+#define TAB_ROUNDED_DIM     4
 
 #define TAB_NAME_LEN    10      // max char
 
@@ -57,7 +59,8 @@ typedef struct __rect{
 //
 enum TAB_ACTIONS{
     ACTION_NONE	 = 0,
-    ACTION_QUIT
+    ACTION_OWNACTION = 1,         // Tab has some thing to do
+    ACTION_QUIT = 0xFE,
 };
 
 //---------------------------------------------------------------------------
@@ -75,7 +78,7 @@ public:
     ~tab(){}
 
     // Action to perform
-    int action(){
+    uint8_t action(){
         // Ok
         return action_;
     }
@@ -96,15 +99,6 @@ public:
 
     // static methods
     //
-
-    // clear the whole screen (except tab lane)
-    /*
-    static void clearScreen(){
-#ifdef DEST_CASIO_FXCG50
-        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - rect_.height - 1, C_WHITE)
-#endif // #ifdef DEST_CASIO_FXCG50
-    }
-    */
 
     // Draw a single tab
     static void draw(const RECT* position, bool selected, const char* name = NULL);
@@ -136,12 +130,6 @@ public:
 
     // Destruction
     ~tabValue(){}
-
-    // Action to perform
-    uint8_t action(){
-        // Ok
-        return action_;
-    }
 
     // Value
     void setValue(TAB_VALUE& val){
@@ -177,8 +165,15 @@ public:
         return active_;
     }
 
-    // Redraw all tabs
+    // (Re)draw all tabs
     void update();
+
+    // clear the whole screen (except tab lane)
+    void clearScreen(){
+#ifdef DEST_CASIO_FXCG50
+        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - TAB_HEIGHT - 1, C_WHITE);
+#endif // #ifdef DEST_CASIO_FXCG50
+    }
 
     // Private methods
     //

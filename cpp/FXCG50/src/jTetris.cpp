@@ -27,56 +27,72 @@ int main(){
     // Get parameters
     tetrisParameters params;
 
-    bool useApp(true);
     tabManager tmanager;
+    tmanager.clearScreen();
 
     // Create tabs
+    tabValue tabAbout(TAB_ABOUT), tabLines(TAB_LINES);
     tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // add tabs ...
+    tmanager.add(&tabAbout);    // should be 0 !
+    tmanager.add(&tabLines);
     tmanager.add(&tabExit, 5);
 
-    tmanager.update();
-
     // Handle options
-    char car(0);
+    bool useApp(true);
+    uint car(0);
     int8_t sel(0);
-    int action;
+    uint8_t action(ACTION_NONE);
+#ifdef DEST_CASIO_FXCG50
+    key_event_t evt;
+#endif // #ifdef DEST_CASIO_FXCG50
     do{
 #ifdef DEST_CASIO_FXCG50
-        key_event_t evt = pollevent();
+        evt = pollevent();
         if (evt.type == KEYEV_DOWN){
             car = evt.key;
+
+            drect(10, 10, 180, 30, C_WHITE);
+            dprint(10, 10, C_BLACK, "code : %d", car);
+            dupdate();
         }
         else{
-            car = 0;;
+            car = 0;
         }
 #else
         car = getchar();
 #endif // #ifdef DEST_CASIO_FXCG50
 
-        if (car >= KEY_CODE_F1 && car <= (KEY_CODE_F1 + TAB_COUNT -1)){
+        if (car >= KEY_CODE_F1 && car <= KEY_CODE_F6){
             sel = car - KEY_CODE_F1;    // "F" key index
 
             // Update drawings
             action = tmanager.select(sel);
 
             // Specifics actions
-            switch (sel){
-                // Launch the game
-                case 4 :
-                {
-                    tetrisGame game(params);
-    	            game.start();
-                    break;
+            if (ACTION_OWNACTION == action){
+                switch (sel){
+                    // Launch the game
+                    case 4 :
+                    {
+                        tetrisGame game(params);
+                        game.start();
+                        break;
+                    }
+
+                    default:
+                        break;
                 }
-
-                default:
-                    break;
             }
-
-            // End ?
-            useApp = (action != ACTION_QUIT);
+            else{
+                // End ?
+                useApp = (action != ACTION_QUIT);
+            }
+        }else{
+            if (KEY_CODE_QUIT == car){
+                useApp = false;
+            }
         }
     } while (useApp);
 
