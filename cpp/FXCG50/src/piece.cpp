@@ -17,16 +17,6 @@
 
 #include "piece.h"
 
-// Memory functions
-#ifndef DEST_CASIO_FXCG50
-#include <malloc.h>
-#else
-#include <gint/kmalloc.h>
-#define malloc(pSize)   kmalloc(pSize, NULL)
-#define realloc(buffer,size) krealloc(buffer,size)
-#define free(buffer)   kfree(buffer)
-#endif // #ifndef DEST_CASIO_FXCG50
-
 //---------------------------------------------------------------------------
 //--
 //-- piece object

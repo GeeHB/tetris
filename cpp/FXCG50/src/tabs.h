@@ -44,9 +44,11 @@ extern "C" {
 //
 union TAB_VALUE{
     bool        bVal;
+    uint8_t     uVal;
     int         iVal;
-    uint16_t    uVal;
+    /*
     void*       pVal;
+    */
 };
 
 // Position of a tab
@@ -103,6 +105,13 @@ public:
     // Draw a single tab
     static void draw(const RECT* position, bool selected, const char* name = NULL);
 
+    // clear the whole screen (except tab lane)
+    static void clearScreen(){
+#ifdef DEST_CASIO_FXCG50
+        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - TAB_HEIGHT - 1, C_WHITE);
+#endif // #ifdef DEST_CASIO_FXCG50
+    }
+
     // "private" methods
 protected:
 
@@ -126,10 +135,13 @@ public:
     tabValue(const char* tname, int action = ACTION_NONE)
     :tab(tname, action){
         value_.iVal = 0;
+        comment_ = NULL;
     }
 
     // Destruction
-    ~tabValue(){}
+    ~tabValue(){
+        setComment(NULL);   // Free the resource
+    }
 
     // Value
     void setValue(TAB_VALUE& val){
@@ -140,9 +152,73 @@ public:
         val.iVal = value_.iVal;
     }
 
+    // Comment
+    void setComment(const char* comment){
+        // Free current string
+        if (comment_){
+            free(comment_);
+            comment_ = NULL;
+        }
+
+        // Ducplicate comment
+        if (comment){
+            comment_ = strdup(comment);
+        }
+    }
+    const char* comment(){
+        return (const char*)comment_;
+    }
+
+    // Update the current tab
+    void updateComment(bool screenUpdate = true);
+
 protected:
     // Members
     TAB_VALUE   value_;
+    char*       comment_;
+};
+
+//---------------------------------------------------------------------------
+//--
+//-- tabRangedValue object : A tab with a value in a range
+//--
+//---------------------------------------------------------------------------
+
+class tabRangedValue : public tabValue{
+public:
+    // Construction
+    tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal)
+    :tabValue(tname, ACTION_OWNACTION){
+        setRange(minVal, maxVal);
+    }
+
+    // Destruction
+    ~tabRangedValue(){
+        setComment(NULL);   // should be useless with virtual methods ...
+    }
+
+    // Range
+    void setRange(uint8_t minVal, uint8_t maxVal);
+
+    // Change the value
+    int changeValue();
+
+private:
+    // Ensure value is in the range
+    int8_t _inRange(int8_t val){
+        return ((val < minVal_)?minVal_:((value_.uVal > maxVal_)?maxVal_:val));
+    }
+
+    // Draw the range
+    void _drawRange();
+
+    // Select a single value
+    void _selectValue(int8_t value, bool select = true);
+
+protected:
+    uint8_t minVal_, maxVal_;   // Range
+
+    uint16_t xPos_, yPos_;      // Origin
 };
 
 //
@@ -167,13 +243,6 @@ public:
 
     // (Re)draw all tabs
     void update();
-
-    // clear the whole screen (except tab lane)
-    void clearScreen(){
-#ifdef DEST_CASIO_FXCG50
-        drect(0, 0, CASIO_WIDTH - 1, CASIO_HEIGHT - TAB_HEIGHT - 1, C_WHITE);
-#endif // #ifdef DEST_CASIO_FXCG50
-    }
 
     // Private methods
     //

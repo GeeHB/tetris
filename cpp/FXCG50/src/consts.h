@@ -25,13 +25,15 @@
 // Specific includes for calculators
 #include <gint/display.h>
 #include <gint/keyboard.h>
+#include <gint/kmalloc.h>
 #else
+#include <malloc.h>
 #include <cstdint> // <stdint.h>
 #include <cstdio>
-#include <cstdlib>
 #endif // #ifdef DEST_CASIO_FXCG50
 
 #include <cstring>
+#include <cstdlib>
 
 #ifdef __cplusplus
 extern "C" {
@@ -125,6 +127,7 @@ enum DEF_COLOUR{
     COLOUR_LTGREY  = C_RGB(29, 29, 29),
     COLOUR_GREY    = C_RGB(16, 16, 16),
     COLOUR_DKGREY  = C_RGB(8, 8, 8),
+    COLOUR_HILITE  = C_RGB(6, 6, 31),
     NO_COLOR       = -1
 };
 
@@ -141,7 +144,7 @@ enum GAME_KEY{
     KEY_CODE_FALL = KEY_0,
     KEY_CODE_PAUSE = KEY_OPTN,
     KEY_CODE_ROTATE_DISPLAY = KEY_XOT,
-    KEY_CODE_QUIT = KEY_EXIT,
+    KEY_CODE_EXIT = KEY_EXIT,
     KEY_CODE_ENTER = KEY_EXE
 };
 #else
@@ -155,7 +158,7 @@ enum GAME_KEY{
     KEY_CODE_FALL = ' ',
     KEY_CODE_PAUSE = 'p',
     KEY_CODE_ROTATE_DISPLAY = 'r',
-    KEY_CODE_QUIT = 'q',
+    KEY_CODE_EXIT = 'q',
     KEY_CODE_ENTER = '\13'
 };
 #endif // #ifdef DEST_CASIO_FXCG50
@@ -168,6 +171,26 @@ enum GAME_KEY{
 #define TAB_SHADOW  "Shadow"
 #define TAB_PLAY    "Play"
 #define TAB_QUIT    "Exit"
+
+// Comments for tabs
+#define TAB_LEVEL_STR   "Choose starting level"
+#define TAB_DIRTY_STR   "Number of 'dirty' lines when starting game"
+#define TAB_SHADOW_OFF_STR  "No shadows"
+#define TAB_SHADOW_ON_STR   "Shadows will be drawn"
+
+//
+// Min / max values for parameters
+//
+
+#define MIN_LEVEL   1
+#define MAX_LEVEL   9
+
+#define MIN_DIRTY   0
+#define MAX_DIRTY   8
+
+
+#define TAB_RANGE_WIDTH         11
+#define TAB_RANGE_POS_Y         200     // Vertical pos of scale
 
 //---------------------------------------------------------------------------
 //--
@@ -184,8 +207,8 @@ class tetrisParameters {
         //
         tetrisParameters() {
             // Set default parameters
-            startLevel_ = 1;
-            dirtyLines_ = 7;
+            startLevel_ = MIN_LEVEL;
+            dirtyLines_ = MIN_DIRTY;
             shadow_ = true;
             rotatedDisplay_ = false;        // by default, no screen rotation
         }

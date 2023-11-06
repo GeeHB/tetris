@@ -18,6 +18,17 @@
 
 //---------------------------------------------------------------------------
 //--
+//--
+//--
+//---------------------------------------------------------------------------
+
+// Fonts
+#ifdef DEST_CASIO_FXCG50
+extern font_t font_horz;
+#endif // #ifdef DEST_CASIO_FXCG50
+
+//---------------------------------------------------------------------------
+//--
 //-- Constants
 //--
 //---------------------------------------------------------------------------
@@ -67,7 +78,7 @@ void tab::setRect(RECT& rect){
 void tab::draw(const RECT* anchor, bool selected, const char* name){
 #ifdef DEST_CASIO_FXCG50
     // Draw back ground
-    drect(anchor->x, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1, C_WHITE);
+    drect(anchor->x, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1, COLOUR_WHITE);
 
     // Text
     if (name){
@@ -86,18 +97,162 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
 
     // frame
     if (selected){
-        dline(anchor->x, anchor->y, anchor->x, anchor->y + anchor->h - 2, C_BLACK); // Left
-        dline(anchor->x+1, anchor->y + anchor->h - 1, anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, C_BLACK);  // bottom
-        dline(anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, C_BLACK);  // bottom
-        dline(anchor->x + anchor->w - 1, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, C_BLACK);   // right
+        dline(anchor->x, anchor->y, anchor->x, anchor->y + anchor->h - 2, COLOUR_BLACK); // Left
+        dline(anchor->x+1, anchor->y + anchor->h - 1, anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, COLOUR_BLACK);  // bottom
+        dline(anchor->x + anchor->w -1 - TAB_ROUNDED_DIM, anchor->y + anchor->h - 1, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, COLOUR_BLACK);  // bottom
+        dline(anchor->x + anchor->w - 1, anchor->y, anchor->x + anchor->w - 1, anchor->y + anchor->h - 1 - TAB_ROUNDED_DIM, COLOUR_BLACK);   // right
     }
     else{
-        dline(anchor->x, anchor->y, anchor->x + anchor->w -1, anchor->y, C_BLACK);
+        dline(anchor->x, anchor->y, anchor->x + anchor->w -1, anchor->y, COLOUR_BLACK);
     }
 #endif // #ifdef DEST_CASIO_FXCG50
 }
 
+//
+// tabValue: a tab holding a value (a parameter)
+//
 
+// Update the current tab
+//
+void tabValue::updateComment(bool screenUpdate){
+    clearScreen();
+
+#ifdef DEST_CASIO_FXCG50
+    if (comment_){
+        dtext(20, 20, COLOUR_BLACK, comment_);
+    }
+
+    if (screenUpdate){
+        dupdate();
+    }
+#endif // #ifdef DEST_CASIO_FXCG50
+}
+
+//
+// tabRangedValue: A tab with a value in a range
+//
+
+// Range
+//
+void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
+    // Set new values
+    if (minVal < maxVal){
+        minVal_ = minVal;
+        maxVal_ = maxVal;
+    }
+    else{
+        minVal_ = maxVal;
+        maxVal_ = (minVal==maxVal?maxVal+1:minVal);
+    }
+
+    // Position
+    xPos_ = (CASIO_WIDTH - TAB_RANGE_WIDTH * (maxVal_ - minVal_ + 1)) / 2;
+    yPos_ = TAB_RANGE_POS_Y;
+
+    // Current val must be in the range
+    value_.uVal = (uint8_t)_inRange(value_.iVal);
+}
+
+
+// Change the value
+//
+int tabRangedValue::changeValue(){
+
+    int key(0);
+    int8_t oldVal = -1;
+    int8_t newVal = value_.uVal;
+    bool stay(true);
+
+    updateComment(false);
+    _drawRange();
+
+    // Select current val
+    _selectValue(newVal);
+
+#ifdef DEST_CASIO_FXCG50
+    dupdate();
+    key_event_t evt;
+#endif // #ifdef DEST_CASIO_FXCG50
+    do{
+#ifdef DEST_CASIO_FXCG50
+        evt = pollevent();
+        if (evt.type == KEYEV_DOWN){
+            key = evt.key;
+        }
+        else{
+            key = 0;    // ie. no char ...
+        }
+#else
+        key = getchar();
+#endif // #ifdef DEST_CASIO_FXCG50
+
+        // Exit on "Exit" or F{n} key pressed
+        if ((key >= KEY_CODE_F1 && key <= KEY_CODE_F6) || key == KEY_CODE_EXIT){
+            stay = false;
+        }
+        else{
+            // Change selection
+            if (key == KEY_CODE_LEFT){
+                newVal = _inRange(++newVal);
+            }
+            else{
+                if (key == KEY_CODE_RIGHT){
+                    newVal = _inRange(--newVal);
+                }
+            }
+
+            // Any change ?
+            if (newVal != oldVal){
+                _selectValue(oldVal, false);
+                _selectValue(newVal);
+
+#ifdef DEST_CASIO_FXCG50
+                dupdate();
+#endif // #ifdef DEST_CASIO_FXCG50
+
+                oldVal = newVal;
+            }
+        }
+
+    }
+    while (stay);
+
+    // Return key pressed (or 0 if none)
+    return key;
+}
+
+// Draw the range
+void tabRangedValue::_drawRange(){
+    uint8_t max = maxVal_ - minVal_;
+    uint16_t x(xPos_);
+
+    for (uint8_t index=0; index<max; index++){
+#ifdef DEST_CASIO_FXCG50
+        drect_border(x, yPos_, x + TAB_RANGE_WIDTH, yPos_ + TAB_RANGE_WIDTH, NO_COLOR, 1, COLOUR_BLACK);
+        dprint(x + 3, yPos_ + 2, COLOUR_BLACK, "%d", (index+minVal_));
+#endif // #ifdef DEST_CASIO_FXCG50
+        x+=TAB_RANGE_WIDTH;
+    }
+
+#ifdef DEST_CASIO_FXCG50
+    dupdate();
+#endif // #ifdef DEST_CASIO_FXCG50
+}
+
+// Select a single value
+//
+void tabRangedValue::_selectValue(int8_t value, bool select){
+    if (value >= minVal_ && value <= maxVal_){
+        uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_WIDTH + 1);
+
+#ifdef DEST_CASIO_FXCG50
+        drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_HILITE:COLOUR_WHITE);
+        dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
+#else
+        x++;    // for compiler
+#endif // #ifdef DEST_CASIO_FXCG50
+    }
+}
 
 //
 // tabManager - Manages the 6 possibles tabs

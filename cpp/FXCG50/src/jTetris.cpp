@@ -28,19 +28,31 @@ int main(){
     tetrisParameters params;
 
     tabManager tmanager;
-    tmanager.clearScreen();
+    tab::clearScreen();
 
     // Create tabs
-    tabValue tabAbout(TAB_ABOUT), tabLines(TAB_LINES);
+    tabValue tabAbout(TAB_ABOUT), tabShadow(TAB_SHADOW, ACTION_OWNACTION);
+
+    tabRangedValue tabLevel(TAB_LEVEL, MIN_LEVEL, MAX_LEVEL);
+    TAB_VALUE level;
+    level.uVal = params.startLevel_;
+    tabLevel.setValue(level);
+    tabLevel.setComment(TAB_LEVEL_STR);
+
+    TAB_VALUE shadow;
+    shadow.bVal = params.shadow_;
+    tabShadow.setValue(shadow);
+    tabShadow.setComment(params.shadow_?TAB_SHADOW_ON_STR:TAB_SHADOW_OFF_STR);
+
     tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // add tabs ...
     tmanager.add(&tabAbout);    // should be 0 !
-    tmanager.add(&tabLines);
+    tmanager.add(&tabShadow);
     tmanager.add(&tabExit, 5);
 
     // Handle options
-    bool useApp(true);
+    bool useApp(true), readKey(true);
     uint car(0);
     int8_t sel(0);
     uint8_t action(ACTION_NONE);
@@ -48,21 +60,22 @@ int main(){
     key_event_t evt;
 #endif // #ifdef DEST_CASIO_FXCG50
     do{
+        if (readKey){
 #ifdef DEST_CASIO_FXCG50
-        evt = pollevent();
-        if (evt.type == KEYEV_DOWN){
-            car = evt.key;
-
-            drect(10, 10, 180, 30, C_WHITE);
-            dprint(10, 10, C_BLACK, "code : %d", car);
-            dupdate();
+            evt = pollevent();
+            if (evt.type == KEYEV_DOWN){
+                car = evt.key;
+            }
+            else{
+                car = 0;    // ie. no char ...
+            }
+#else
+            car = getchar();
+#endif // #ifdef DEST_CASIO_FXCG50
         }
         else{
-            car = 0;
+            readKey = true; // Next time read keyboard state
         }
-#else
-        car = getchar();
-#endif // #ifdef DEST_CASIO_FXCG50
 
         if (car >= KEY_CODE_F1 && car <= KEY_CODE_F6){
             sel = car - KEY_CODE_F1;    // "F" key index
@@ -73,6 +86,28 @@ int main(){
             // Specifics actions
             if (ACTION_OWNACTION == action){
                 switch (sel){
+                    // Level
+                    case 1:
+                        car = tabLevel.changeValue();
+                        readKey = (car != 0);
+
+                        // Uodate parameter
+                        tabLevel.value(level);
+                        params.startLevel_ = level.uVal;
+                        break;
+
+                    // A shadow ?
+                    case 2:
+                        // change value
+                        shadow.bVal = (params.shadow_ = !params.shadow_);
+                        tabShadow.setValue(shadow);
+                        tabShadow.setComment(params.shadow_?TAB_SHADOW_ON_STR:TAB_SHADOW_OFF_STR);
+
+                        // update
+                        tabShadow.updateComment();
+
+                        break;
+
                     // Launch the game
                     case 4 :
                     {
@@ -90,11 +125,15 @@ int main(){
                 useApp = (action != ACTION_QUIT);
             }
         }else{
-            if (KEY_CODE_QUIT == car){
+            // The "Exit" key
+            if (KEY_CODE_EXIT == car){
                 useApp = false;
             }
         }
     } while (useApp);
+
+    // Return to default state
+    tmanager.select(0);
 
     // Free memory
 #ifdef DEST_CASIO_FXCG50

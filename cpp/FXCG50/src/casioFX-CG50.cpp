@@ -46,7 +46,7 @@ casioFXCG50::casioFXCG50(){
     keyFall_ = KEY_CODE_FALL;
     keyPause_ = KEY_CODE_PAUSE;
     keyRotateDisplay_ = KEY_CODE_ROTATE_DISPLAY;
-    keyQuit_ = KEY_CODE_QUIT;
+    keyQuit_ = KEY_CODE_EXIT;
 
     // set parameters
     rotatedDisplay(rotatedDisplay_);
