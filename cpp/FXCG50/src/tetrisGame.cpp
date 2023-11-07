@@ -101,9 +101,9 @@ tetrisGame::tetrisGame() {
     colours_[5] = COLOUR_PURPLE;
     colours_[6] = COLOUR_CYAN;
     colours_[7] = COLOUR_ORANGE;
-    colours_[COLOUR_ID_SHADOW] = COLOUR_LTGREY;
+    colours_[COLOUR_ID_SHADOW] = COLOUR_LT_GREY;
     colours_[COLOUR_ID_TEXT] = COLOUR_BLACK;
-    colours_[COLOUR_ID_BORDER] = COLOUR_DKGREY;
+    colours_[COLOUR_ID_BORDER] = COLOUR_DK_GREY;
     colours_[COLOUR_ID_BKGRND] = COLOUR_WHITE;  // could be different from board !
 
     // Just created

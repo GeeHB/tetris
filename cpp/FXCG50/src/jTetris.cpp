@@ -89,7 +89,7 @@ int main(){
                     // Level
                     case 1:
                         car = tabLevel.changeValue();
-                        readKey = (car != 0);
+                        readKey = (car == 0);   // Need to get the next key ?
 
                         // Uodate parameter
                         tabLevel.value(level);

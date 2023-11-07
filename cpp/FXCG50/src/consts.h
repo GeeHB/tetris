@@ -121,13 +121,13 @@ enum DEF_COLOUR{
     COLOUR_GREEN   = C_RGB(0, 31, 0),
     COLOUR_YELLOW  = C_RGB(31, 31, 0),
     COLOUR_BLUE    = C_RGB(0, 0, 31),
+    COLOUR_LT_BLUE = C_RGB(6, 6, 31),
     COLOUR_PURPLE  = C_RGB(31, 0, 31),
     COLOUR_CYAN    = C_RGB(0, 31, 31),
     COLOUR_ORANGE  = C_RGB(31, 16, 0),
-    COLOUR_LTGREY  = C_RGB(29, 29, 29),
+    COLOUR_LT_GREY = C_RGB(29, 29, 29),
     COLOUR_GREY    = C_RGB(16, 16, 16),
-    COLOUR_DKGREY  = C_RGB(8, 8, 8),
-    COLOUR_HILITE  = C_RGB(6, 6, 31),
+    COLOUR_DK_GREY = C_RGB(8, 8, 8),
     NO_COLOR       = -1
 };
 

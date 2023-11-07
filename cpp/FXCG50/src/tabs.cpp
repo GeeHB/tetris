@@ -35,6 +35,8 @@ extern font_t font_horz;
 
 #define COLOUR_SELECTED     COLOUR_BLUE
 #define COLOUR_UNSELECTED   COLOUR_GREY
+#define COLOUR_BK_HILITE    COLOUR_LT_BLUE
+
 
 //---------------------------------------------------------------------------
 //--
@@ -246,7 +248,7 @@ void tabRangedValue::_selectValue(int8_t value, bool select){
         uint16_t x(xPos_ + (value - minVal_) * TAB_RANGE_WIDTH + 1);
 
 #ifdef DEST_CASIO_FXCG50
-        drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_HILITE:COLOUR_WHITE);
+        drect(x, yPos_ + 1 , x + TAB_RANGE_WIDTH - 1, yPos_ + TAB_RANGE_WIDTH - 1 , select?COLOUR_BK_HILITE:COLOUR_WHITE);
         dprint(x + 3, yPos_ + 2, select?COLOUR_WHITE:COLOUR_BLACK, "%d", value);
 #else
         x++;    // for compiler
