@@ -39,8 +39,9 @@ extern "C" {
 
 #define TAB_NAME_LEN    10      // max char
 
+#define KEY_NONE        0       // No key pressed
 
-// Data handled by a tab
+// Data handled by a tabValue object
 //
 union TAB_VALUE{
     bool        bVal;
@@ -61,13 +62,26 @@ typedef struct __rect{
 //
 enum TAB_ACTIONS{
     ACTION_NONE	 = 0,
-    ACTION_OWNACTION = 1,         // Tab has some thing to do
-    ACTION_QUIT = 0xFE,
+    ACTION_QUIT = 1            // The app should quit
+    // Other possible actions ???
 };
+
+// Status of a tab
+//
+typedef struct __tabStatus{
+    // Construction
+    __tabStatus(){
+        action = ACTION_NONE;
+        exitKey = KEY_NONE;
+    }
+
+    int action;         // Action to perform
+    int exitKey;        // Code of last keyboard event or KEY_NONE
+}TAB_STATUS;
 
 //---------------------------------------------------------------------------
 //--
-//-- tab object - abstract class
+//-- tab object - base class for tab objects
 //--
 //---------------------------------------------------------------------------
 
@@ -79,11 +93,17 @@ public:
     // Destruction
     ~tab(){}
 
-    // Action to perform
-    uint8_t action(){
-        // Ok
-        return action_;
+    // The current tab is selected (and can take control of the keyboard)
+    virtual void select(TAB_STATUS& status){
+        // Nothing todo
+        status.action = action_;
+        status.exitKey = KEY_NONE;
     }
+
+    /*
+    // Unselect the current tab
+    void unSelect(){}
+    */
 
     // Draw
      void draw(bool selected = false){
@@ -112,10 +132,6 @@ public:
 #endif // #ifdef DEST_CASIO_FXCG50
     }
 
-    // "private" methods
-protected:
-
-
 protected:
     // Members
     char        name_[TAB_NAME_LEN + 1];
@@ -126,6 +142,8 @@ protected:
 //---------------------------------------------------------------------------
 //--
 //-- tabValue object : A tab with a value / parameter
+//--            by default the tabValue works as a 2 state button to
+//--            set ou unset the internal boolean value
 //--
 //---------------------------------------------------------------------------
 
@@ -135,12 +153,12 @@ public:
     tabValue(const char* tname, int action = ACTION_NONE)
     :tab(tname, action){
         value_.iVal = 0;
-        comment_ = NULL;
+        comment_ = ucomment_ = NULL;
     }
 
     // Destruction
-    ~tabValue(){
-        setComment(NULL);   // Free the resource
+    virtual ~tabValue(){
+        setComment(NULL, NULL);   // Free the resource
     }
 
     // Value
@@ -153,29 +171,18 @@ public:
     }
 
     // Comment
-    void setComment(const char* comment){
-        // Free current string
-        if (comment_){
-            free(comment_);
-            comment_ = NULL;
-        }
+    void setComment(const char* comment, const char* ucomment = NULL);
 
-        // Ducplicate comment
-        if (comment){
-            comment_ = strdup(comment);
-        }
-    }
-    const char* comment(){
-        return (const char*)comment_;
-    }
+    // The current tab is selected (and can take control of the keyboard)
+    void select(TAB_STATUS& status);
 
-    // Update the current tab
-    void updateComment(bool screenUpdate = true);
+protected :
+    char* _dup(char* source, const char* value);
 
 protected:
     // Members
     TAB_VALUE   value_;
-    char*       comment_;
+    char       *comment_, *ucomment_;
 };
 
 //---------------------------------------------------------------------------
@@ -188,7 +195,7 @@ class tabRangedValue : public tabValue{
 public:
     // Construction
     tabRangedValue(const char* tname, uint8_t minVal, uint8_t maxVal)
-    :tabValue(tname, ACTION_OWNACTION){
+    :tabValue(tname, ACTION_NONE){
         setRange(minVal, maxVal);
     }
 
@@ -200,8 +207,8 @@ public:
     // Range
     void setRange(uint8_t minVal, uint8_t maxVal);
 
-    // Change the value
-    int changeValue();
+    // The current tab is selected (and can take control of the keyboard)
+    void select(TAB_STATUS& status);
 
 private:
     // Ensure value is in the range
@@ -217,8 +224,7 @@ private:
 
 protected:
     uint8_t minVal_, maxVal_;   // Range
-
-    uint16_t xPos_, yPos_;      // Origin
+    uint16_t xPos_, yPos_;      // Origin for range
 };
 
 //
@@ -236,7 +242,7 @@ public:
     bool add(tab* ptab, int8_t ID = -1);
 
     // Set active tab
-    uint8_t select(int8_t ID);
+    tab* select(int8_t ID);
     int8_t activeTab(){
         return active_;
     }

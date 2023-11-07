@@ -37,7 +37,6 @@ extern font_t font_horz;
 #define COLOUR_UNSELECTED   COLOUR_GREY
 #define COLOUR_BK_HILITE    COLOUR_LT_BLUE
 
-
 //---------------------------------------------------------------------------
 //--
 //-- tab object - A simple basic tab - abstract class
@@ -114,20 +113,45 @@ void tab::draw(const RECT* anchor, bool selected, const char* name){
 // tabValue: a tab holding a value (a parameter)
 //
 
-// Update the current tab
+// Set or change comment
 //
-void tabValue::updateComment(bool screenUpdate){
+void tabValue::setComment(const char* comment, const char* ucomment){
+    comment_ = _dup(comment_, comment);
+    ucomment_ = _dup(ucomment_, ucomment);
+}
+
+// Duplicate a comment
+//
+char* tabValue::_dup(char* source, const char* val){
+    // Free current string
+    if (source){
+        free(source);
+    }
+
+    // Duplicate comment
+    return (val?strdup(val):NULL);
+}
+
+// The current tab is selected (and can take control of the keyboard)
+//
+void tabValue::select(TAB_STATUS& status){
+
+    // Change the value
+    value_.bVal = !value_.bVal;
+
+    // update comment
     clearScreen();
 
 #ifdef DEST_CASIO_FXCG50
     if (comment_){
-        dtext(20, 20, COLOUR_BLACK, comment_);
+        dtext(20, 20, COLOUR_BLACK, value_.bVal?comment_:(ucomment_?ucomment_:comment_));
     }
 
-    if (screenUpdate){
-        dupdate();
-    }
+    dupdate();
 #endif // #ifdef DEST_CASIO_FXCG50
+
+    // Nothing special to do
+    tab::select(status);
 }
 
 //
@@ -158,14 +182,14 @@ void tabRangedValue::setRange(uint8_t minVal, uint8_t maxVal){
 
 // Change the value
 //
-int tabRangedValue::changeValue(){
+void tabRangedValue::select(TAB_STATUS& status){
 
     int key(0);
     int8_t oldVal = -1;
     int8_t newVal = value_.uVal;
     bool stay(true);
 
-    updateComment(false);
+    // Draw all possible numbers
     _drawRange();
 
     // Select current val
@@ -195,11 +219,11 @@ int tabRangedValue::changeValue(){
         else{
             // Change selection
             if (key == KEY_CODE_LEFT){
-                newVal = _inRange(++newVal);
+                newVal = _inRange(--newVal);
             }
             else{
                 if (key == KEY_CODE_RIGHT){
-                    newVal = _inRange(--newVal);
+                    newVal = _inRange(++newVal);
                 }
             }
 
@@ -219,8 +243,9 @@ int tabRangedValue::changeValue(){
     }
     while (stay);
 
-    // Return key pressed (or 0 if none)
-    return key;
+    // "return" key pressed (or 0 if none)
+    status.action = ACTION_NONE;
+    status.exitKey = key;
 }
 
 // Draw the range
@@ -300,9 +325,8 @@ bool tabManager::add(tab* ptab, int8_t ID){
 
 // Set active tab
 //
-uint8_t tabManager::select(int8_t ID){
+tab* tabManager::select(int8_t ID){
     // Valid and different
-    bool valid(false);
     if (ID != active_ && ID < TAB_COUNT && tabs_[ID]){
         // Unselect
         _select(active_, false);
@@ -310,16 +334,17 @@ uint8_t tabManager::select(int8_t ID){
         // Select
         _select(ID, true);
 
-        valid = true;
         active_ = ID;
 
 #ifdef DEST_CASIO_FXCG50
         dupdate();
 #endif // DEST_CASIO_FXCG50
+
+        return tabs_[ID];
     }
 
-    // "action" of the tab
-    return (valid ? tabs_[ID]->action():(uint8_t)ACTION_NONE);
+    // Not a valid tab
+    return NULL;
 }
 
 // Redraw all tabs

@@ -65,7 +65,7 @@ extern "C" {
 //--
 //-- casioFX-CG50 object
 //--
-//--    coordinates, dimensions for the casio fx-CG50 calculator
+//--    Coordinates, dimensions for the casio fx-CG50 calculator
 //--
 //---------------------------------------------------------------------------
 
