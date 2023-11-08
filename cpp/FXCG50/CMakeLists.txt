@@ -11,6 +11,7 @@ find_package(Gint 2.9 REQUIRED)
 set(SOURCES
   src/jTetris.cpp
   src/tabs.cpp
+  src/tetrisTab.cpp
   src/tetrisGame.cpp
   src/piece.cpp
   src/casioFX-CG50.cpp

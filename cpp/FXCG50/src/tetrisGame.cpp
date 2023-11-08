@@ -115,7 +115,7 @@ tetrisGame::tetrisGame() {
 //  @params : Struct. continaining parameters for the game
 //  These parameters are choosen by the user
 //
-void tetrisGame::setParameters(tetrisParameters& params) {
+void tetrisGame::setParameters(tetrisParameters* params) {
     // Copy (and init) parameters
     parameters_.copy(params);
 
@@ -929,10 +929,10 @@ void tetrisGame::_dtextV(int x, int y, int fg, const char* text){
 
 // __valtoa() : Transform a numeric value into a string
 //
-//  This specific method create a string composed of the name of the value
+//  This specific method creates a string composed of the name of the value
 //  and the value it self. It is equivalent to a sprintf(out, "%s : %d", name, value)
 //
-//  The base can't be changed a is always equal to 10
+//  The base can't be changed it is always equal to 10
 //
 //  This method assumes the output buffer - ie. the str - is large enough to contain
 //  the name and the formated value.

@@ -43,7 +43,7 @@ class tetrisGame {
 
         // Constructions
         tetrisGame();
-        tetrisGame(tetrisParameters& params)
+        tetrisGame(tetrisParameters* params)
         :tetrisGame(){
             setParameters(params);
         }
@@ -54,7 +54,7 @@ class tetrisGame {
         }
 
         // Game's parameters
-        void setParameters(tetrisParameters & params);
+        void setParameters(tetrisParameters* params);
 
         // Start the game
         bool start();
@@ -96,6 +96,11 @@ class tetrisGame {
 #ifdef DEST_CASIO_FXCG50
             dupdate();
 #endif // #ifdef DEST_CASIO_FXCG50
+        }
+
+        // Current score
+        int32_t score(){
+            return values_[SCORE_ID].value;
         }
 
     // Internal methods

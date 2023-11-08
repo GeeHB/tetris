@@ -14,7 +14,7 @@
 //--
 //--                 The num. value is the colour ID. Colours'IDs are based on nCurses index
 //--
-//--                 A piece is given with all its postions after rotation in trignometric direction
+//--                 A piece is given with all its postions after rotations in trignometric direction
 //--                 Each "rotation", to be precise, is a combination of a rotation and a translation
 //--
 //--                 Based on Nintendo for pieces and rotation.

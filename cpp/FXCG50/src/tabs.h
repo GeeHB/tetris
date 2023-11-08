@@ -62,7 +62,8 @@ typedef struct __rect{
 //
 enum TAB_ACTIONS{
     ACTION_NONE	 = 0,
-    ACTION_QUIT = 1            // The app should quit
+    ACTION_REDRAW_TABS = 1,
+    ACTION_QUIT = 2            // The app should quit
     // Other possible actions ???
 };
 

@@ -1,10 +1,10 @@
 # coding=UTF-8
 #
-#   File     :   rotare.py
+#   File     :   rotate.py
 #
 #   Author     :   GeeHB
 #
-#   Description :   Simple script for rotating chars in a png def. file
+#   Description :   Simple script for rotating chars in a png font file
 #                   
 #   Comment    :   Python 3.xx
 #

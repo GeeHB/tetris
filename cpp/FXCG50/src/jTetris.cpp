@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------
 
 #include "tabs.h"
-#include "tetrisGame.h"
+#include "tetrisTab.h"
 
 #ifdef DEST_CASIO_FXCG50
 #include <gint/gint.h>
@@ -24,36 +24,50 @@
 // Program entry point
 //
 int main(){
-    // Get parameters
     tetrisParameters params;
-
-    tabManager tmanager;
-    tab::clearScreen();
+    TAB_VALUE value;
 
     // Create tabs
     //
     tabValue tabAbout(TAB_ABOUT), tabShadow(TAB_SHADOW);
 
+    // starting level
     tabRangedValue tabLevel(TAB_LEVEL, MIN_LEVEL, MAX_LEVEL);
-    TAB_VALUE value;
     value.uVal = params.startLevel_;
     tabLevel.setValue(value);
     tabLevel.setComment(TAB_LEVEL_STR);
 
+    // # of dirty lines
+    tabRangedValue tabLines(TAB_LINES, MIN_DIRTY_LINES, MAX_DIRTY_LINES);
+    value.uVal = params.dirtyLines_;
+    tabLevel.setValue(value);
+    tabLevel.setComment(TAB_DIRTY_LINES_STR);
+
+    // display shadows ?
     value.bVal = params.shadow_;
     tabShadow.setValue(value);
     tabShadow.setComment(TAB_SHADOW_ON_STR, TAB_SHADOW_OFF_STR);
+
+    // the game
+    tetrisTab tabTetris(TAB_PLAY);
+    tabTetris.setParameters(&params);
 
     tab tabExit(TAB_QUIT, ACTION_QUIT);
 
     // Add tabs ...
     //
-    tmanager.add(&tabAbout);    // should be 0 !
+    tabManager tmanager;
+    tab::clearScreen();
+
+    tmanager.add(&tabAbout, 0);
+    tmanager.add(&tabLevel);    // should be 1
+    tmanager.add(&tabLines);
     tmanager.add(&tabShadow);
+    tmanager.add(&tabTetris, 4);
     tmanager.add(&tabExit, 5);
 
     // Handle options
-    bool useApp(true), readKey(true);
+    bool quitApp(false), getNextKey(true);
     uint car(0);
     int8_t sel(0);
     tab* currentTab;
@@ -63,7 +77,7 @@ int main(){
     key_event_t evt;
 #endif // #ifdef DEST_CASIO_FXCG50
     do{
-        if (readKey){
+        if (getNextKey){
 #ifdef DEST_CASIO_FXCG50
             evt = pollevent();
             if (evt.type == KEYEV_DOWN){
@@ -77,7 +91,7 @@ int main(){
 #endif // #ifdef DEST_CASIO_FXCG50
         }
         else{
-            readKey = true; // Next time, read the keyboard state
+            getNextKey = true; // Next time, read the keyboard state
         }
 
         if (car >= KEY_CODE_F1 && car <= KEY_CODE_F6){
@@ -96,8 +110,14 @@ int main(){
                         params.startLevel_ = value.uVal;
                         break;
 
-                    // A shadow ?
+                    // Dirty lines
                     case 2:
+                        tabLines.value(value);
+                        params.dirtyLines_ = value.uVal;
+                        break;
+
+                    // A shadow ?
+                    case 3:
                         tabShadow.value(value);
                         params.shadow_ = value.bVal;
                         break;
@@ -105,52 +125,28 @@ int main(){
 
                 // An exit char ?
                 car = tStatus.exitKey;
-                readKey = (car != KEY_NONE);
+                getNextKey = (car != KEY_NONE);
 
-                // End ?
-                useApp = (tStatus.action != ACTION_QUIT);
-            }
-        /*
-            // Specifics actions
-            if (ACTION_OWNACTION == action){
-                switch (sel){
-                    // Level
-                    case 1:
-                        car = tabLevel.changeValue();
-                        readKey = (car == 0);   // Need to get the next key ?
-
-                        // Update parameter
-                        tabLevel.value(level);
-                        params.startLevel_ = level.uVal;
+                // What's next ?
+                //
+                switch (tStatus.action){
+                    case ACTION_REDRAW_TABS:
+                        tmanager.update();
                         break;
-
-                    // A shadow ?
-                    case 2:
-                        // change value
-                        shadow.bVal = (params.shadow_ = !params.shadow_);
-                        tabShadow.setValue(shadow);
-                        tabShadow.setComment(params.shadow_?TAB_SHADOW_ON_STR:TAB_SHADOW_OFF_STR);
-
+                    case ACTION_QUIT:
+                        quitApp = true;
                         break;
-
-                    // Launch the game
-                    case 4 :
-                    {
-                        tetrisGame game(params);
-                        game.start();
-                        break;
-                    }
-
                     default:
                         break;
-                }*/
+                }
+            }
         }else{
             // The "Exit" key
             if (KEY_CODE_EXIT == car){
-                useApp = false;
+                quitApp = false;
             }
         }
-    } while (useApp);
+    } while (!quitApp);
 
     // Return to default state
     tmanager.select(0);

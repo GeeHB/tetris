@@ -174,7 +174,7 @@ enum GAME_KEY{
 
 // Comments for tabs
 #define TAB_LEVEL_STR   "Choose starting level"
-#define TAB_DIRTY_STR   "Number of 'dirty' lines when starting game"
+#define TAB_DIRTY_LINES_STR   "Number of 'dirty' lines when starting game"
 #define TAB_SHADOW_OFF_STR  "No shadows"
 #define TAB_SHADOW_ON_STR   "Shadows will be drawn"
 
@@ -185,8 +185,8 @@ enum GAME_KEY{
 #define MIN_LEVEL   1
 #define MAX_LEVEL   9
 
-#define MIN_DIRTY   0
-#define MAX_DIRTY   8
+#define MIN_DIRTY_LINES   0
+#define MAX_DIRTY_LINES   8
 
 
 #define TAB_RANGE_WIDTH         11
@@ -208,17 +208,19 @@ class tetrisParameters {
         tetrisParameters() {
             // Set default parameters
             startLevel_ = MIN_LEVEL;
-            dirtyLines_ = MIN_DIRTY;
+            dirtyLines_ = MIN_DIRTY_LINES;
             shadow_ = true;
             rotatedDisplay_ = false;        // by default, no screen rotation
         }
 
         // recopy
-        void copy(tetrisParameters& other) {
-            startLevel_ = other.startLevel_;
-            dirtyLines_ = other.dirtyLines_;
-            shadow_ = other.shadow_;
-            rotatedDisplay_ = other.rotatedDisplay_;
+        void copy(tetrisParameters* other) {
+            if (other){
+                startLevel_ = other->startLevel_;
+                dirtyLines_ = other->dirtyLines_;
+                shadow_ = other->shadow_;
+                rotatedDisplay_ = other->rotatedDisplay_;
+            }
         }
 
     // Members
@@ -258,8 +260,8 @@ typedef struct __uvalue{
     }
 
     char       name[MAX_VALUE_NAME+1];
-    uint16_t   value;
-    int16_t    previous;
+    uint32_t   value;
+    int32_t    previous;
 } UVALUE;
 
 #ifdef __cplusplus
