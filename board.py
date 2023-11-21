@@ -52,16 +52,11 @@ class board(object):
     # Members
     #
     tetraminos_ = []    # Tetraminos (all diff. rotation states)
-
     playField_  = []
-    
     parameters_ = None
-
     score_, lines_, level_ = 0, 0, 1
-    
     currentPiece_ = piece.pieceStatus()   
     nextIndex_ = -1       # next piece index
-
     eventHandler_ = None  # Events handler
 
     # Methods
@@ -358,7 +353,7 @@ class board(object):
             # Remove the line from the screen
             self.playField_.pop(index)
 
-            # Add a ne empty line 
+            # Add a new empty line 
             self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
     # Add a randomly generated dirty line at the bottom of the gameplay
@@ -402,7 +397,7 @@ class board(object):
             foundEmpty = False
             for col in range(consts.PLAYFIELD_WIDTH):
                 # currentLineValue *= self.playField_[line][col]  # one empty block and the whole line "value" = 0
-                if 0 == self.playField_[line][col]:
+                if consts.COLOUR_ID_BOARD == self.playField_[line][col]:
                     foundEmpty = True
 
             # The line is complete

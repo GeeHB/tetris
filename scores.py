@@ -65,8 +65,8 @@ class scores(object):
         # Hall of fame
         if self.user_:
             # Search for user's previous scores in the global table
-            parse = True
             index = 0
+            parse = True if index < len(self.scores_) else False
             while parse:
                 score = self.scores_[index]
 
