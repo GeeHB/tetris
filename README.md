@@ -9,8 +9,8 @@
 
 | Dépôt | https://github.com/GeeHB/dCleaner |
 |-------|-------------------------------------|
-| **Date** | 29 sept. 2023 |
-| **Version stable** | **0\.9.1 - branche** `dev` |
+| **Date** | 15 mars 2024 |
+| **Version stable** | **0\.9.2 - branche** `dev` |
 | **Dépendances** | Python 3.xx |
 | **Tested on** | *Linux (Fedora 37-38) - kernel 6.2.15* |
 || *MacOS Ventura* |

@@ -75,9 +75,9 @@ COLOUR_PURPLE = (255, 0, 255)
 COLOUR_CYAN = (0, 255, 255)
 COLOUR_ORANGE = (255, 128, 0)
 
-COLOUR_LTGREY = ( 224, 224, 224)
-COLOUR_GREY = ( 128, 128, 128)
-COLOUR_DKGREY = ( 64, 64, 64)
+COLOUR_LTGREY = (224, 224, 224)
+COLOUR_GREY = (128, 128, 128)
+COLOUR_DKGREY = (64, 64, 64)
 
 #
 # Command line options
@@ -114,7 +114,7 @@ COMMENT_MODE    = "Choose display mode"
 MODE_AUTO = "auto"              # Search for the best GUI mode (default mode)
 MODE_CONSOLE = "console"        # Console mode using nCurses
 MODE_CASIOPLOT = "casioplot"    # GUI using casioplot library 
-MODE_CASIOPLOTV = "casioplotv"    # GUI using casioplot library vertically
+MODE_CASIOPLOTV = "casioplotv"  # GUI using casioplot library vertically
 MODE_PYGAME = "pygame"          # Use PYGame library
 
 # EOF
