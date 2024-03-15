@@ -63,6 +63,8 @@ class piece(object):
             self.vertOffset_ = 3
             while self.points_[0][self.vertOffset_] == [0,0,0,0] and self.vertOffset_ >= 0:
                 self.vertOffset_-=1 # One line up
+            
+            # value = self.verticalOffset
         else:
             # By default the piece is empty
             self.points_ = self._new()

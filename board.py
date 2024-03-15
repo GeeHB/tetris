@@ -333,7 +333,7 @@ class board(object):
 
     # Put the tetramino at the current position
     #
-    def _putPiece(self, colour = None):
+    def _putPiece(self):
         vertPos = self.currentPiece_.topPos_
         datas = self.tetraminos_[self.currentPiece_.index_].datas()
 
@@ -344,7 +344,7 @@ class board(object):
             for x in range(piece.PIECE_WIDTH):
                 bColour = datas[y][x]
                 if not consts.COLOUR_ID_BOARD ==  bColour and (vertPos - y) < consts.PLAYFIELD_HEIGHT:
-                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = bColour if colour is None else colour
+                    self.playField_[vertPos - y][x + self.currentPiece_.leftPos_] = bColour
 
     # Clear and remove a line (completed)
     #
