@@ -6,7 +6,7 @@
 #
 #   Author     :   JHB
 #
-#   Description :  The "tetris" game 
+#   Description :  The "tetris" game
 #
 #   Comment    :   Need Python 3.xx or higher
 #
@@ -20,14 +20,11 @@ from scores import scores
 #
 
 # tetris object
-#   Handles game and scores 
+#   Handles game and scores
 #
 class tetris(object):
     # Members
     #
-    gameData_       = None        # Game's datas
-    displayMgr_     = None        # Display manager
-
     params_ = tetrisParameters()
 
     # Construction
@@ -49,7 +46,7 @@ class tetris(object):
                 return True
         except ModuleNotFoundError:
             return False
-                
+
     # Can we start the game ?
     #
     #   return tuple(ok?, error message)
@@ -59,11 +56,13 @@ class tetris(object):
         # Display mode
         #
         displayMgr = display.display()
-        self.displayMgr_ = displayMgr.create(self.params_.mode_)
-        
+        myDM = displayMgr.create(self.params_.mode_)
+
         # No display ?
-        if self.displayMgr_ is None:
-            return False, f"Error - no display handler found for '{self.mode_}'. Ending the game"
+        if myDM is None:
+            return False, f"Error - no display handler found for '{self.params_.mode_}'. Ending the game"
+
+        self.displayMgr_ = myDM
 
         # Check display manager
         if False == self.params_.showScores_:
@@ -103,17 +102,17 @@ class tetris(object):
         # start !
         self.gameData_.setParameters(self.params_)
         self.displayMgr_.start()
-            
+
         # Cancel the game ?
         cont = True
         while cont :
             evt = self.displayMgr_.waitForEvent()
             if evt[0] == self.displayMgr_.EVT_QUIT or (evt[0] == self.displayMgr_.EVT_KEYDOWN and evt[1] == self.displayMgr_.KEY_QUIT):
-                exit(1) 
+                exit(1)
 
             if evt[1] == self.displayMgr_.KEY_START:
                 cont = False
-        
+
         if not self.displayMgr_.resizable:
             time.sleep(1)
             self.displayMgr_.reDraw()
@@ -130,7 +129,7 @@ class tetris(object):
             while self.displayMgr_.isRunning() and diff < seqDuration :
                 self._handleGameKeys()
                 time.sleep(uWait) # usleep(5000)
-        
+
                 now = time.monotonic_ns()
                 diff = now - ts
 
@@ -142,12 +141,12 @@ class tetris(object):
             if 0 == (seqCount % consts.MOVES_UPDATE_LEVEL):
                 # Real level (based on pieces movements)
                 rLevel = math.floor(seqCount / consts.MOVES_UPDATE_LEVEL) + 1
-                
+
                 # Change level (if necessary) & accelerate
                 if rLevel >= self.gameData_.level:
                     self.displayMgr_.levelChanged(self.gameData_.incLevel())
                     seqDuration = self._updateSpeed(seqDuration, self.gameData_.level, 1)
-        
+
         # the game is over
         # wait for gamer to exit
         cont = True
@@ -165,11 +164,11 @@ class tetris(object):
             myScore = self.gameData_.score
             if False != myScore:
                 self.displayMgr_.showScores(self.params_.user_, myScore, bestScores.add(myScore))
-    
+
     #
     # Private methods
-    #   
-    
+    #
+
     # Handle keyboard inputs
     #
     def _handleGameKeys(self):
@@ -191,7 +190,7 @@ class tetris(object):
     def _updateSpeed(self, currentDuration, level, incLevel = 1):
         if level >= consts.MAX_LEVEL_ACCELERATION :
             return currentDuration
-        
+
         # duration = currentDuration * acc ^ incLevel
         duration = currentDuration
         acc = (1.0 - consts.ACCELERATION_STEP)
@@ -206,14 +205,14 @@ if "__main__" == __name__:
     ver = sys.version_info
     if ver.major < consts.PYTHON_MIN_MAJOR or (ver.major == consts.PYTHON_MIN_MAJOR and ver.minor < consts.PYTHON_MIN_MINOR):
         print(f"Error - Minimum expected Python version {str(consts.PYTHON_MIN_MAJOR)}.{str(consts.PYTHON_MIN_MINOR)}")
-        exit(1) 
+        exit(1)
 
     params = tetrisParameters()
-    
+
     #
     # the game ...
     #
-    myTetris = tetris(params) 
+    myTetris = tetris(params)
     if myTetris.parseCmdLine():
         # Just show scores ?
         if myTetris.params_.showScores_ :
@@ -222,9 +221,9 @@ if "__main__" == __name__:
             myGame.showScores(myTetris.params_.user_, None, bestScores.add(None))
         else:
             ret, message = myTetris.isReady()
-            if ret:    
+            if ret:
                 myTetris.start()
                 myTetris.end()
             else:
                 print(message)
-#EOF 
+#EOF

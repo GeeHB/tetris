@@ -30,20 +30,24 @@ class display(object):
             obj = self._pygameTetrisObject()
             if obj is None:
                 obj =  self._cursesTetrisObject()
+                """
                 if obj is None:
                     obj =  self._casioplotTetrisObject()
+                """
         else:
             if consts.MODE_CONSOLE == mode:
                 return self._cursesTetrisObject()
             else:
+                """
                 if consts.MODE_CASIOPLOT == mode:
                     return self._casioplotTetrisObject()
                 else:
                     if consts.MODE_CASIOPLOTV == mode:
                         return self._casioplotVTetrisObject()
                     else:
-                        if consts.MODE_PYGAME == mode:
-                            return self._pygameTetrisObject()
+                """
+                if consts.MODE_PYGAME == mode:
+                    return self._pygameTetrisObject()
         # ???
         return obj
 
@@ -61,7 +65,7 @@ class display(object):
             return pygameTetris()
         except ModuleNotFoundError:
             return None
-    
+
     #   Create a cursesTetris object
     #
     #   return the object or None
@@ -72,18 +76,19 @@ class display(object):
             return cursesTetris()
         except ModuleNotFoundError:
             return None
-    
+
     #   Create a casioplotTetris object
     #
     #   return the object or None
     #
+    """
     def _casioplotTetrisObject(self):
         try:
             from casioplotTetris import casioplotTetris
             return casioplotTetris()
         except ModuleNotFoundError:
             return None
-        
+
     #   Create a casioplotVTetris object
     #
     #   return the object or None
@@ -94,5 +99,5 @@ class display(object):
             return casioplotVTetris()
         except ModuleNotFoundError:
             return None
-        
+"""
 # EOF

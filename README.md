@@ -9,8 +9,8 @@
 
 | Dépôt | https://github.com/GeeHB/dCleaner |
 |-------|-------------------------------------|
-| **Date** | 15 mars 2024 |
-| **Version stable** | **0\.9.2 - branche** `dev` |
+| **Date** | 22 juillet 2024 |
+| **Version stable** | **0\.10.1 - branche** `dev` |
 | **Dépendances** | Python 3.xx |
 | **Tested on** | *Linux (Fedora 37-38) - kernel 6.2.15* |
 || *MacOS Ventura* |
@@ -26,8 +26,8 @@
 |  |  |  | = *auto* (default value) : The system choose the best possible GUI. |
 |  |  |  | = *pygame* : Use pyGame library |
 |  |  |  | = *console* : Display the game in the calling console using nCurses library |
-|  |  |  | = *casioplot* : Use casioplot library to display on casio computers| 
-|  |  |  | = *casioplotv* : Use casioplot library to display on casio computers vertically| 
+|  |  |  | = *casioplot* : Use casioplot library to display on casio computers|
+|  |  |  | = *casioplotv* : Use casioplot library to display on casio computers vertically|
 | *\-d {#lines}* | *\--dirty {#lines}* | 0 | Count of dirty lines present at startup |
 | *\-l* {#level}| *\--level {#level}* |  1 | Starting game level|
 | *\-s* | *\--shadow* |   | Display piece shadow|
@@ -45,5 +45,3 @@ Display by the PYGame library :
 
 *casioplotv* mode on a PC :
 ![CasioPlot vertically](assets/casioplotvPC.png)
-
-

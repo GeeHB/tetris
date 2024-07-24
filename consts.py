@@ -12,8 +12,8 @@
 
 APP_NAME = "tetris.py"
 APP_TITLE = "jTetris"
-APP_CURRENT_VERSION = "0.9.2"
-APP_RELEASE_DATE = "15 mar. 2024"
+APP_CURRENT_VERSION = "0.10.1"
+APP_RELEASE_DATE = "24 juillet 2024"
 APP_AUTHOR_SHORT = "GeeHB"
 APP_AUTHOR = f"{APP_AUTHOR_SHORT} (j.henrybarnaudiere@gmail.com)"
 
@@ -113,8 +113,10 @@ COMMENT_MODE    = "Choose display mode"
 
 MODE_AUTO = "auto"              # Search for the best GUI mode (default mode)
 MODE_CONSOLE = "console"        # Console mode using nCurses
-MODE_CASIOPLOT = "casioplot"    # GUI using casioplot library 
+"""
+MODE_CASIOPLOT = "casioplot"    # GUI using casioplot library
 MODE_CASIOPLOTV = "casioplotv"  # GUI using casioplot library vertically
+"""
 MODE_PYGAME = "pygame"          # Use PYGame library
 
 # EOF

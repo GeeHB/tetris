@@ -35,9 +35,9 @@ class tetrisParameters:
     # Constructor
     #
     def __init__(self, other = None):
-        if None != other:
+        if other is not None:
             # Check input parameters
-            self.startLevel_ = other.startLevel_ 
+            self.startLevel_ = other.startLevel_
             self.dirtyLines_ = other.dirtyLines_
             self.shadow_ = other.shadow_
             self.useGUI_ = other.useGUI_
@@ -53,22 +53,22 @@ class board(object):
     #
     tetraminos_ = []    # Tetraminos (all diff. rotation states)
     playField_  = []
-    parameters_ = None
+    parameters_ = tetrisParameters()
     score_, lines_, level_ = 0, 0, 1
-    currentPiece_ = piece.pieceStatus()   
+    currentPiece_ = piece.pieceStatus()
     nextIndex_ = -1       # next piece index
-    eventHandler_ = None  # Events handler
+    eventHandler_ = eventHandler()  # Events handler
 
     # Methods
     #
 
     # Construction
     def __init__(self, handler = None):
-        
+
         random.seed()
 
         # Events handler
-        self.eventHandler_ = handler if not None == handler else eventHandler()
+        self.eventHandler_ = handler if handler is not None else eventHandler()
 
         # Build the tetraminos'list
         for shape in shapes.shapes_:
@@ -76,9 +76,9 @@ class board(object):
 
     # Game's parameters
     def parameters(self):
-        return self.parameters_ 
+        return self.parameters_
 
-    def setParameters(self, params = None):   
+    def setParameters(self, params = None):
         self.parameters_ = tetrisParameters(params)
         self.score = 0
         self.lines = 0
@@ -88,9 +88,9 @@ class board(object):
         # Initialization of tetraminos (no rotation)
         for sPiece in self.tetraminos_:
             sPiece.rotateBack()
-        
+
         self.playField_  = []
-        
+
         # Add dirty lines ...
         maxLines = consts.PLAYFIELD_HEIGHT - piece.PIECE_HEIGHT - 1
         if self.parameters_.dirtyLines_ > maxLines:
@@ -100,8 +100,8 @@ class board(object):
 
         for _ in range(self.parameters_.dirtyLines_):
             self._addDirtyLine()
-        
-        # other lines are empty 
+
+        # other lines are empty
         for _ in range(self.parameters_.dirtyLines_, consts.PLAYFIELD_HEIGHT):
             self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
@@ -152,7 +152,7 @@ class board(object):
         return self.nextIndex_
     def setNextPieceIndex(self, index):
         self.nextIndex_ = index
-    
+
     # About a piece ...
     #  returns blocks'datas
     def nextPieceDatas(self):
@@ -173,13 +173,13 @@ class board(object):
         # New indexes
         self.currentPiece_.index_ = self._newPieceIndex() if -1 == self.nextPieceIndex() else self.nextPieceIndex()
         self.setNextPieceIndex(self._newPieceIndex())
-        
+
         # The piece is a the top of the game play, centered horizontally
         self.currentPiece_.leftPos_ = int((consts.PLAYFIELD_WIDTH - piece.PIECE_WIDTH) / 2)
         self.currentPiece_.topPos_ = consts.PLAYFIELD_HEIGHT + self.tetraminos_[self.currentPiece_.index_].verticalOffset()
         self.currentPiece_.shadowTopPos_ = -1       # no shadow
         self.currentPiece_.rotationIndex_ = 0       # no rotation
-        self.tetraminos_[self.currentPiece_.index_].rotateBack()    
+        self.tetraminos_[self.currentPiece_.index_].rotateBack()
 
         # Notify the display manager
         self.eventHandler_.nextPieceIndexChanged(self.nextPieceIndex())
@@ -194,15 +194,15 @@ class board(object):
 
     # anti-clockwise
     def rotateLeft(self):
-        
+
         # Rotate
         rotIndex = self.tetraminos_[self.currentPiece_.index_].rotateLeft()
 
         # Possible ?
         if True == self._canMove():
             self.currentPiece_.rotationIndex_ = rotIndex
-            
-            # Apply rotation 
+
+            # Apply rotation
             self.piecePosChanged()
             return True
 
@@ -217,32 +217,32 @@ class board(object):
     # Move left
     #
     def left(self):
-        
+
         # Test position
         if True == self._canMove(leftPos = self.currentPiece_.leftPos_ - 1):
             # Correct
             self.currentPiece_.leftPos_ -= 1
-            
+
             # apply chgmnt
             self.piecePosChanged()
             return True
-        
+
         # Impossible
         return False
 
     # Move right
     #
     def right(self):
-        
+
         # Test position
         if True == self._canMove(leftPos = self.currentPiece_.leftPos_ + 1):
             # Correct
             self.currentPiece_.leftPos_ += 1
-            
+
             # apply chgmnt
             self.piecePosChanged()
             return True
-        
+
         # Impossible
         return False
 
@@ -251,23 +251,23 @@ class board(object):
        return self._down()
 
     def _down(self, newPiece = False):
-        
+
         # Test position
         if True == self._canMove(topPos = self.currentPiece_.topPos_ - 1):
             # correct
             self.currentPiece_.topPos_ -= 1
             self.piecePosChanged()
             return True
-        
+
         if not newPiece:
             self._reachLowerPos()
-    
+
         return False
 
     # Go down (as many lines as possible)
     #
     def fall(self):
-        
+
         bottom = self._minTopPosition()
         delta = self.currentPiece_.topPos_ - bottom
         self.currentPiece_.topPos_ = bottom
@@ -275,7 +275,7 @@ class board(object):
         # updates ...
         self.piecePosChanged()
         self._reachLowerPos(delta)
-    
+
     # "private" methods
     #
 
@@ -289,9 +289,9 @@ class board(object):
     def _canMove(self, leftPos = None, topPos = None):
 
         # No coordinates => use current pos.
-        if None == leftPos:
+        if leftPos is None:
             leftPos = self.currentPiece_.leftPos_
-        if None == topPos:
+        if topPos is None:
             topPos = self.currentPiece_.topPos_
 
         # Piece's datas
@@ -304,14 +304,14 @@ class board(object):
         for y in range(maxY, -1, -1):
             for x in range(piece.PIECE_WIDTH):
                 if not consts.COLOUR_ID_BOARD == datas[y][x]:
-                    # "real" position of the block 
+                    # "real" position of the block
                     realX = x + leftPos
-                    realY = topPos - y 
+                    realY = topPos - y
 
                     # out of the gameplay's limits ?
                     if realX < 0 or realY < 0 or realX >= consts.PLAYFIELD_WIDTH : # or realY >= PLAYFIELD_HEIGHT
                         return False
-                    
+
                     # Is there a block at this place ?
                     if realY < consts.PLAYFIELD_HEIGHT and not self.playField_[realY][realX] == 0:
                         return False
@@ -353,7 +353,7 @@ class board(object):
             # Remove the line from the screen
             self.playField_.pop(index)
 
-            # Add a new empty line 
+            # Add a new empty line
             self.playField_.append([0] * consts.PLAYFIELD_WIDTH)
 
     # Add a randomly generated dirty line at the bottom of the gameplay
@@ -373,20 +373,20 @@ class board(object):
 
             # next bit value
             sBit *= 2
-        
+
         # Add the line
         self.playField_.append(line)
-    
+
     # The piece is at the lowest possible level
     #
     def _reachLowerPos(self, downRowcount = 0):
-        
+
         # put it
         self._putPiece()
-        
+
         # Notify
         self.eventHandler_.pieceReachedLowerPos()
-        
+
         # Are line(s) completed ?
         # Check the 4 possible lines
         completedLines = []
@@ -404,11 +404,11 @@ class board(object):
             #if not 0 == currentLineValue:
             if not foundEmpty:
                 completedLines.insert(0,line)
-                
+
         for lineIndex in completedLines:
             # Animate
             self.eventHandler_.lineCompleted(lineIndex)
-            
+
             # update datas
             self._clearLine(lineIndex)
 
@@ -425,13 +425,13 @@ class board(object):
             else:
                 # 4 !
                 delta += 800    # * 800 ?
-            
+
             mult = 100 + consts.SCORE_SPEED_GAME * downRowcount + consts.SCORE_DIRTY_LINES * self.parameters_.dirtyLines_ + consts.SCORE_LEVEL_VALUATION * self.lines_
             if False == self.parameters_.shadow_:
                 mult+=consts.SCORE_NO_SHADOW
-            
+
             self.eventHandler_.incScore(int(delta*mult/100))
-            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines + completedCount)            
+            self.eventHandler_.allLinesCompletedRemoved(completedCount, self.lines + completedCount)
 
         # Get a new piece
         self.newPiece()

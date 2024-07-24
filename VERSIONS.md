@@ -1,3 +1,8 @@
+#### Version 0.10.1
+* 22 july 2024
+* Corrections
+    - Correction of pyRight warnings
+    - Retrait de la compatibilité avec casioPlot
 
 #### Version 0.9.1
 * 25 sept. 2023
@@ -40,7 +45,7 @@
 + Scores handling
 + Press "Enter" to start & quit game
 + Bug fixes
-    - Error while displaying and computing Level 
+    - Error while displaying and computing Level
     - Escaping the game while playing
     - Game finished : wait for key pressed (Esc ou Quit) to close the window
     - Regression : score and # lines errors

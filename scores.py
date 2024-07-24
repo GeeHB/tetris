@@ -14,15 +14,15 @@
 import consts
 
 # scores object
-#   Handles scores 
+#   Handles scores
 #
 class scores(object):
-    
+
     # Members
     #
     user_               = ""        # Current user name
     scores_             = None      # Score list (for all users)
-    
+
     # Construction
     #
     def __init__(self, name):
@@ -33,15 +33,15 @@ class scores(object):
     #   return the list of topScores for the current User (or top 10 for all if no user is specified)
     #
     def add(self, newScore):
-        
+
         # Load the scores
         self._load()
-        
+
         # no scores
         tops = [(-1, None)]
 
         # Add to the list (must be unique)
-        if newScore != None and newScore not in self.scores_:
+        if newScore is not None and self.scores_ is not None and newScore not in self.scores_:
             parse = True
             index = 0
             while parse:
@@ -57,57 +57,58 @@ class scores(object):
                     index += 1
                     if index == len(self.scores_):
                         parse = False          # end of the list
-            
+
             # Last pos.
             if index == len(self.scores_):
                 self.scores_.append((newScore, self.user_))
 
         # Hall of fame
-        if self.user_:
-            # Search for user's previous scores in the global table
-            index = 0
-            parse = True if index < len(self.scores_) else False
-            while parse:
-                score = self.scores_[index]
+        if self.scores_ is not None:
+            if self.user_:
+                # Search for user's previous scores in the global table
+                index = 0
+                parse = True if index < len(self.scores_) else False
+                while parse:
+                    score = self.scores_[index]
 
-                if self.user_ == score[1]:
-                    # Add to the top list
+                    if self.user_ == score[1]:
+                        # Add to the top list
+                        tops.append(score)
+
+                        if score[0] == newScore:
+                            tops[0] = (len(tops) - 2, None)      # keep its index
+
+                    # Next ...
+                    index += 1
+                    if index == len(self.scores_) or len(tops) == consts.SCORES_MAX_COUNT:
+                        parse = False
+            else:
+                # Returns the first elements of the global table
+                size = len(self.scores_)
+                max =  consts.SCORES_MAX_COUNT if size > consts.SCORES_MAX_COUNT else size
+                for index in range(max):
+                    score = self.scores_[index]
                     tops.append(score)
 
-                    if score[0] == newScore:                    
+                    # Current score ?
+                    if score[0] == newScore:
                         tops[0] = (len(tops) - 2, None)      # keep its index
 
-                # Next ...
-                index += 1
-                if index == len(self.scores_) or len(tops) == consts.SCORES_MAX_COUNT:
-                    parse = False                        
-        else:
-            # Returns the first elements of the global table
-            size = len(self.scores_)
-            max =  consts.SCORES_MAX_COUNT if size > consts.SCORES_MAX_COUNT else size
-            for index in range(max):
-                score = self.scores_[index]
-                tops.append(score)
-
-                # Current score ?
-                if score[0] == newScore:                    
-                    tops[0] = (len(tops) - 2, None)      # keep its index
-        
         # Update on disk
         self._save()
-        
+
         # returns the top list
         return tops
-        
+
     #
     # "Private" methods
     #
-    
+
     # Load all the scores
     #   returns True if scores has been read, False in all other cases
     #
     def _load(self):
-        
+
         self.scores_ = []
 
         # Read & parse the file
@@ -118,7 +119,7 @@ class scores(object):
                     # remove EOL
                     if line[len(line) - 1] == "\n":
                         line = line[:len(line) - 1]
-                    
+
                     values = line.split(consts.SCORES_FILE_SEP)
                     if values[0].isnumeric():
                         self.scores_.append((int(values[0]), values[1] if 2 == len(values) else "" ))
@@ -132,30 +133,31 @@ class scores(object):
 
         # done ?
         return len(self.scores_) > 0
- 
+
     # Save the scores
     #
     def _save(self):
-        try:
-            file = open(consts.SCORES_FILE, "w")
-            userCount = 0
-            for index in range(len(self.scores_)) :
-                line = str(self.scores_[index][0])
-                
-                if self.scores_[index][1] == self.user_:
-                    userCount += 1
-                
-                if len(self.scores_[index][1]):    
-                    line+=consts.SCORES_FILE_SEP
-                    line+=self.scores_[index][1]
-                
-                if userCount <= consts.SCORES_MAX_COUNT:
-                    line+="\n"
-                    file.write(line)
-            file.close()
-        except:
-            return False
-        
+        if self.scores_ is not None:
+            try:
+                file = open(consts.SCORES_FILE, "w")
+                userCount = 0
+                for index in range(len(self.scores_)) :
+                    line = str(self.scores_[index][0])
+
+                    if self.scores_[index][1] == self.user_:
+                        userCount += 1
+
+                    if len(self.scores_[index][1]):
+                        line+=consts.SCORES_FILE_SEP
+                        line+=self.scores_[index][1]
+
+                    if userCount <= consts.SCORES_MAX_COUNT:
+                        line+="\n"
+                        file.write(line)
+                file.close()
+            except:
+                return False
+
         # done
-        return True  
+        return True
 # EOF

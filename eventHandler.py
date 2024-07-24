@@ -5,7 +5,7 @@
 #   Author     :   JHB
 #
 #   Description :   Handle the notifications to update display
-#                   
+#
 #                   This is an abstract class
 #
 #   Comment    :   Python 3.xx
@@ -33,7 +33,7 @@ class eventHandler(object):
     # Resizable ?
     #
     @property
-    def resizable(self):
+    def resizable(self) -> bool:
         return True
     @resizable.setter
     def resizable(self, value):
@@ -43,49 +43,49 @@ class eventHandler(object):
     #   The piece must be erased from its previous pos and redrawwn at the new position
     #
     def piecePosChanged(self, newState):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.piecePosChanged(newState)
 
     # A tetramino is at the lowest possible position
     #
     def pieceReachedLowerPos(self):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.pieceReachedLowerPos()
 
     # Increase the score
     #
     def incScore(self, inc):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.incScore(inc)
 
     # The game level just changed
     #
     def levelChanged(self, newLevel):
         self.level = newLevel
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.levelChanged(newLevel)
 
     # A line has just been completed (but is still visible)
     #
     def lineCompleted(self, rowIndex):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.lineCompleted(rowIndex)
 
     # ...
     #
     def allLinesCompletedRemoved(self, rowCount, totalLines):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.allLinesCompletedRemoved(rowCount)
 
     # New index for the "next piece"
     #
     def nextPieceIndexChanged(self, nextPieceIndex):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.nextPieceIndexChanged(nextPieceIndex)
 
     # The game is over
     #
     def gameFinished(self):
-        if None != self.nextHandler_:
+        if self.nextHandler_ is not None:
             self.nextHandler_.gameFinished()
 # EOF

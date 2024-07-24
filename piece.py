@@ -22,24 +22,24 @@ class piece(object):
     rotate_ = 0         # rotation index (ie. index of the piece to draw)
     maxRotate_ = 0      # max. rotation(s) allowed for the piece ( = 360°)
     vertOffset_ = -1    # Initial vert. offset (ie. count of empty lines starting from bottom)
-    
+
     # Construction
     #
     def __init__(self, other = None, template = None):
-        if not other == None:
+        if other is not None:
             # Recopy
             self.rotate_ = other.rotate_
             self.maxRotate_ = other.maxRotate_
             self.vertOffset_ = other.vertOffset_
-            
+
             # Copy all the rotation states
             for state in other.points_:
                 self.points_.append(self._copy(state))
-        elif not template == None:
+        elif template is not None:
             # From a template
             self.points_ = []
             self.rotate_ = 0
-            
+
             # Copy all the states
             ordO = ord('0')
             for shape in template:
@@ -63,7 +63,7 @@ class piece(object):
             self.vertOffset_ = 3
             while self.points_[0][self.vertOffset_] == [0,0,0,0] and self.vertOffset_ >= 0:
                 self.vertOffset_-=1 # One line up
-            
+
             # value = self.verticalOffset
         else:
             # By default the piece is empty
@@ -96,11 +96,11 @@ class piece(object):
     #
     def rotateLeft(self):
         self.rotate_ += 1
-        
+
         # 360° ?
         if self.rotate_ >= self.maxRotate_:
             self.rotate_ = 0
-        
+
         return self.rotate_
 
     # Clockwise rotation
@@ -110,7 +110,7 @@ class piece(object):
             self.rotate_ = 0
         else:
             self.rotate_ -= 1
-            
+
             # 360° ?
             if self.rotate_ < 0:
                 self.rotate_ = self.maxRotate_ - 1
@@ -158,7 +158,7 @@ class pieceStatus(object):
 
     # Construction
     def __init__(self, index = -1, x = 0, y = 0, rotation = 0, other = None):
-        if not None == other:
+        if other is not None:
             self.index_ = other.index_
             self.leftPos_ = other.leftPos_
             self.topPos_ = other.topPos_
@@ -173,5 +173,5 @@ class pieceStatus(object):
 
     # deep equal
     def __eq__(self, other):
-        return True if not other == None and self.index_ == other.index_ and self.leftPos_ == other.leftPos_ and self.topPos_ == other.topPos_ and self.rotationIndex_ == other.rotationIndex_ else False
+        return True if other is not None and self.index_ == other.index_ and self.leftPos_ == other.leftPos_ and self.topPos_ == other.topPos_ and self.rotationIndex_ == other.rotationIndex_ else False
 # EOF

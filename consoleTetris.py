@@ -16,7 +16,7 @@ import tetrisGame
 class consoleTetris(tetrisGame.tetrisGame):
 
     term_ = None      # curses term.
-    
+
     # Construction
     def __init__(self):
 
@@ -30,6 +30,7 @@ class consoleTetris(tetrisGame.tetrisGame):
     #
     def waitForEvent(self):
         wait = True
+        c = ''
         while wait:
             c = self.checkKeyboard()
             if len(c) :
@@ -49,12 +50,12 @@ class consoleTetris(tetrisGame.tetrisGame):
         oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
-        try:        
-            while True:            
+        try:
+            while True:
                 try:
                     c = sys.stdin.read(1)
                     break
-                except IOError: 
+                except IOError:
                     pass
         finally:
             termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)

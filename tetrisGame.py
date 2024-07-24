@@ -4,8 +4,8 @@
 #
 #   Author     :   JHB
 #
-#   Description :   Tetris'outputs - abstract class 
-#                   
+#   Description :   Tetris'outputs - abstract class
+#
 #   Comment    :   min Python 3.xx
 #
 
@@ -13,14 +13,16 @@ import consts
 from eventHandler import eventHandler
 from piece import PIECE_WIDTH, PIECE_HEIGHT, pieceStatus
 from sharedTools import colorizer as color
+from board import board
 
 # tetrisGame - abstract class
 #
 class tetrisGame(eventHandler):
 
+    EVT_NONE        = 0
     EVT_KEYDOWN     = 1  # By default the event doesn't exist
     EVT_QUIT        = 2
-    
+
     # Default keys
     # can (must) be overloaded
     KEY_LEFT        = 'q'
@@ -43,9 +45,9 @@ class tetrisGame(eventHandler):
     STATUS_RUNNING = 2
     STATUS_STOPPED = 4
     STATUS_CANCELED = 8
-    
+
     # Members
-    board_  = None
+    board_  = board()
     status_ = STATUS_CREATED  # Just created
     currentPos_ = None
 
@@ -55,7 +57,7 @@ class tetrisGame(eventHandler):
 
     # Dimensions & position
     gamePos_ = (0, 0, 0, 0)            # (x, y, w, h)
-    
+
     # Construction
     def __init__(self):
         self.status_ = self.STATUS_CREATED
@@ -68,7 +70,7 @@ class tetrisGame(eventHandler):
     # Display "hall of fame"
     #   Basic display on console
     def showScores(self, me, currentScore, bestScores):
-        if None == bestScores:
+        if bestScores is None:
             return
 
         txtColours = color.colorizer(True, False)
@@ -77,9 +79,9 @@ class tetrisGame(eventHandler):
             print(f"\n Best scores for {txtColours.colored(me, formatAttr=[color.textAttribute.BOLD])} :\n")
         else:
             print("\n Best scores :\n")
-        
-        currentPos = -1 if currentScore == None else bestScores[0][0]
-        
+
+        currentPos = -1 if currentScore is None else bestScores[0][0]
+
         for index in range(len(bestScores)-1):
             score = bestScores[index+1]
             line = ">>>" if index == currentPos else " "
@@ -94,7 +96,7 @@ class tetrisGame(eventHandler):
                 print(txtColours.colored(line, color.textColor.RED))
             else:
                 print(line)
-        
+
         # and finally the current score
         if None != currentScore:
             print(f"\nYour score : {txtColours.colored(str(self._formatNumber(currentScore)), formatAttr=[color.textAttribute.BOLD])}")
@@ -125,12 +127,12 @@ class tetrisGame(eventHandler):
     def clear(self):
         pass
 
-    def waitForEvent(self):
-        pass
-    
+    def waitForEvent(self) -> tuple[int,str]:
+        return (self.EVT_NONE,'')
+
     # Non-blocking access to the keyboard
     #   return a char
-    def checkKeyboard(self):
+    def checkKeyboard(self) -> str:
         return ''
 
     # Set a "pointer" to the game'board
@@ -142,7 +144,7 @@ class tetrisGame(eventHandler):
     #
     def start(self):
         # Check the object state
-        if self.STATUS_INIT == self.status_ or self.STATUS_STOPPED == self.status_:
+        if self.board_ is not None and (self.STATUS_INIT == self.status_ or self.STATUS_STOPPED == self.status_):
             # Initializations ...
             self.currentPos_ = None
 
@@ -152,7 +154,7 @@ class tetrisGame(eventHandler):
             # Let's go
             self.status_ = self.STATUS_RUNNING
             self.board_.start()
-            
+
             self.updateDisplay()       # redondant ?
             return True
 
@@ -177,9 +179,9 @@ class tetrisGame(eventHandler):
         self.drawScore()
         self.drawLevel()
         self.drawLines()
-        
+
     def drawBoard(self):
-        if None == self.board_: # Anything to draw ?
+        if self.board_ is None: # Anything to draw ?
             return
 
         leftFirst, top, w, h = self._changeOrigin(0,0,True)
@@ -187,18 +189,18 @@ class tetrisGame(eventHandler):
         # Draw all the blocks (colored or not)
         for y in range(consts.PLAYFIELD_HEIGHT):
             left = leftFirst
-            for x in range(consts.PLAYFIELD_WIDTH):        
+            for x in range(consts.PLAYFIELD_WIDTH):
                 self._drawSingleBlock(left, top, w, h, self.board_.playField_[y][x])
                 left+=w
             top-=h
-       
+
     def updateDisplay(self):
         pass
-    
-    def _drawNumValue(self, index, value):           
+
+    def _drawNumValue(self, index, value):
         text = self.itemTexts_[index] + " : " + self._formatNumber(value)
         self._drawText(index, text)
-    
+
     # Draw a line of text (and erase the prrevious value)
     def _drawText(self, index, text):
         pass
@@ -213,8 +215,8 @@ class tetrisGame(eventHandler):
     #
     #   returns a tuple (x,y, dx, dy) in the new coordonate system
     #       dx, dy  are the width and height of the block in the screen
-    # 
-    def _changeOrigin(self, x, y, inBoard = True):
+    #
+    def _changeOrigin(self, x, y, inBoard = True) -> tuple[int, int, int, int]:
         return (x,y,1,1)
 
     # Draw a single colored block
@@ -235,9 +237,9 @@ class tetrisGame(eventHandler):
     #
     def piecePosChanged(self, newState):
         # Any changes (or rotation) ?
-        if self.currentPos_ == None  or self.currentPos_ != newState: 
+        if self.currentPos_ is None  or self.currentPos_ != newState:
             # Erase the tetramino (and maybe it's shadow)
-            if None != self.currentPos_:                    
+            if self.currentPos_ is not None:
                 self._drawSinglePiece(self.board_.pieceDatas(self.currentPos_.index_, self.currentPos_.rotationIndex_), self.currentPos_.leftPos_, self.currentPos_.topPos_, True, consts.COLOUR_ID_BOARD)
                 if -1 != self.currentPos_.shadowTopPos_:
                     # then the shadow
@@ -247,12 +249,12 @@ class tetrisGame(eventHandler):
             if -1 != newState.shadowTopPos_:
                 # first : the shadow
                 self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.shadowTopPos_ , True, consts.COLOUR_ID_SHADOW)
-            
+
             # and then the tetramino (can recover the shadow !!!!)
             self._drawSinglePiece(self.board_.pieceDatas(newState.index_, newState.rotationIndex_), newState.leftPos_, newState.topPos_)
 
             self.updateDisplay()
-            
+
             self.currentPos_ = pieceStatus(other = newState)
 
     # A tetramino is at the lowest possible position
@@ -268,7 +270,7 @@ class tetrisGame(eventHandler):
         self.board_.incScore(inc)
         self.drawScore()
         self.updateDisplay()
-        
+
     # The game level just changed
     #
     def levelChanged(self, newLevel):
@@ -276,13 +278,13 @@ class tetrisGame(eventHandler):
         self.board_.level = newLevel
         self.drawLevel()
         self.updateDisplay()
-        
+
     # ...
-    # 
+    #
     def allLinesCompletedRemoved(self, rowCount, totalLines):
         super().allLinesCompletedRemoved(rowCount, totalLines)
         self.board_.lines = totalLines
-        
+
         self.drawBoard()
         self.drawLines()
         self.updateDisplay()
@@ -299,24 +301,24 @@ class tetrisGame(eventHandler):
     def gameFinished(self):
         super().gameFinished()
         self.status_ = self.STATUS_STOPPED
-    
+
     #   "internal" methods
     #
-    
+
     # Draw a tetramino using the given colour
     #   inBoard : True => draw in the board, False => draw "next" piece
     #
     def _drawSinglePiece(self, datas, cornerX, cornerY, inBoard = True, colourID = None):
-        
+
         # First visible row ID
         if True == inBoard:
             rowFirst =  consts.PLAYFIELD_HEIGHT -1 - cornerY
             rowFirst = rowFirst* -1 if rowFirst < 0 else 0
         else:
             rowFirst = 0    # all rows are visible
-        
+
         xFirst,y,w,h = self._changeOrigin(cornerX, cornerY - rowFirst, inBoard)
-        
+
         for row in range(rowFirst, PIECE_HEIGHT):
             x = xFirst
             for col in range(PIECE_WIDTH):
@@ -329,11 +331,11 @@ class tetrisGame(eventHandler):
     # Display the next piece
     #
     def _drawNextPiece(self, pieceIndex):
-        # Erase the previous piece 
+        # Erase the previous piece
         self._eraseNextPiece(0, 0, 4, 4, consts.COLOUR_ID_BOARD)
-        
+
         # ... and then draw the new one
-        if -1 != pieceIndex :     
+        if -1 != pieceIndex :
             datas = self.board_.nextPieceDatas()
             self._drawSinglePiece(datas, 0, 0, False)
 
